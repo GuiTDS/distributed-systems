@@ -76,18 +76,23 @@ public class Server extends Thread
               int idOperacao = mensagemRecebida.getIdOperation();
               switch(idOperacao) {
               case 1:
+            	  Message message = new Message();
             	  System.out.println("Cadastro solicitado");
+            	  
             	  User user = new User( mensagemRecebida.getName(),mensagemRecebida.getEmail(), mensagemRecebida.getPassword());
             	  SignUpValidator validator = new SignUpValidator();
-            	  
-            	  if(validator.isValid(user)) {
+            	  validator.setUser(user);
+
+            	  if(validator.isValid()) {
             		  System.out.println("Cadastro realizado com sucesso!");
-            		  Message message = new Message();
-            		  message.setOpResponseCode(200);
+            		  message.setOpResponseCode(validator.getOpResponse());
             		  out.println(message.messageToJson()); // mandar json com resposta 200
             	  }
             	  else {
             		  System.out.println("Cadastro nao realizado!"); //mandar json com resposta 500 e uma mensagem informando o erro.
+            		  message.setOpResponseCode(500);
+            		  message.setErrorMessage(validator.getErrorMessage());
+            		  out.println(message.messageToJson());
             	  }
             	 
             	  break;

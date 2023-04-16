@@ -51,23 +51,23 @@ public class Client {
 		int op = Integer.parseInt(stdIn.readLine());
 
 		if (op == 1) {
-		System.out.println("Informe o nome: ");
-		String name = stdIn.readLine();
-		System.out.println("Informe o email: ");
-        String email = stdIn.readLine();
-        System.out.println("Informe senha: ");
-        String password = stdIn.readLine();
-        
-        Message message = new Message();
-        message.setIdOperation(1);
-        message.setName(name);
-        message.setEmail(email);
-        message.setPassword(password);
-        
-       // String mensagemJson = message.messageToJson();
-        out.println(message.messageToJson()); 
-        String resposta = in.readLine();
-        System.out.println("resposta no cliente: " + resposta);
+			System.out.println("Informe o nome: ");
+			String name = stdIn.readLine();
+			System.out.println("Informe o email: ");
+	        String email = stdIn.readLine();
+	        System.out.println("Informe senha: ");
+	        String password = stdIn.readLine();
+	        
+	        Message message = new Message();
+	        message.setIdOperation(1);
+	        message.setName(name);
+	        message.setEmail(email);
+	        message.setPassword(password);
+	        
+	        out.println(message.messageToJson()); 
+	        String respostaCadastro = in.readLine();
+	        System.out.println("resposta no cliente: " + respostaCadastro);
+	        //validar a mensagem recebida 'respostaCadastro' para decidir a proxima etapa.
 		}
 		else {
 			break;

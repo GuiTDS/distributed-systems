@@ -2,24 +2,31 @@ package control;
 
 import model.User;
 
-public class SignUpValidator {
-	private String errorMessage;
-	private int opResponse;
-	
-	public boolean isValid(User user) {
-		String name = user.getName();
-		// validando nome
-		// validando se existem numeros no nome
-		if(name.length() < 3 || name.length() >32) {
-			this.errorMessage = "O nome deve possuir ao menos 3 caracteres e no maximo 32";
-			this.opResponse = 500;
+public class SignUpValidator extends Validator {
+	private User user;
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public boolean isValid() {
+		ValidaCampo validaCampo = new ValidaCampo();
+		if (!validaCampo.validaCampoNome(this.user.getName())) {
+			System.out.println("Falhou validar nome");
+			super.errorMessage = "O nome nao pode possuir numeros e deve ter no maximo 32 caracteres";
+			super.opResponse = 500;
 			return false;
-		}	else if(name.replaceAll("[^a-zA-Z]", "").length() > 0) {
-				this.errorMessage = "O nome nao pode possuir numeros";
-				this.opResponse = 500;
-				return false;
+		} else if (!validaCampo.validaCampoSenha(this.user.getPassword())) {
+			System.out.println("Falhou validar senha");
+			super.errorMessage = "A senha deve possuir no minimo 8 e no maximo 32 caracteres";
+			super.opResponse = 500;
+			return false;
+		} else if(!validaCampo.validaCampoEmail(this.user.getEmail())) {
+			System.out.println("Falhou validar email");
+			super.errorMessage = "O email deve possuir um @ e deve possuir no minimo 16 e no maximo 50 caracteres";
+			return false;
 		}
-		this.opResponse = 200;
+		super.opResponse = 200;
 		return true;
 	}
 }

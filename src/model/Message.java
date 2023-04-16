@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 public class Message {
 	private int idOperation, opResponseCode;
-	private String name, password, email;
+	private String name, password, email, errorMessage;
 	
 	public int getIdOperation() {
 		return idOperation;
@@ -36,7 +36,12 @@ public class Message {
 	public void setOpResponseCode(int opResponseCode) {
 		this.opResponseCode = opResponseCode;
 	}
-	
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 	public String messageToJson() {
 		return new Gson().toJson(this);
 	}
