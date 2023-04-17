@@ -103,12 +103,6 @@ public class Server extends Thread
             	  System.out.println("Opcao invalida");
             	  break;
               }
-              /* String email = mensagemRecebida.getEmail();
-              String senha = mensagemRecebida.getSenha();
-              System.out.println("id operacao: " + idOperacao);
-              System.out.println("email recebido: " + email);
-              System.out.println("Senha Recebida: " + senha);
-               */
               out.println(inputLine); 
 
               if (inputLine.equals("Bye.")) 
