@@ -42,7 +42,6 @@ public class Client {
 	//String userInput;
 
         System.out.println ("Type Message (\"Bye.\" to quit)");
-        Gson gson = new Gson();
 	while (true) 
            {
 		System.out.println("Informe operacao: ");
@@ -66,7 +65,9 @@ public class Client {
 	        
 	        out.println(message.messageToJson()); 
 	        String respostaCadastro = in.readLine();
-	        System.out.println("resposta no cliente: " + respostaCadastro);
+	        in.readLine(); // limpa o 'buffer' ===> Limpa a string que enviamos para o servidor. ### Fazer isso toda vez que enviar mensagem para o server
+	        System.out.println("resposta no cliente : " + respostaCadastro);
+	        
 	        //validar a mensagem recebida 'respostaCadastro' para decidir a proxima etapa.
 		}
 		else {

@@ -1,10 +1,13 @@
-package control;
-
-import model.User;
+package model;
 
 public class SignUpValidator extends Validator {
 	private User user;
 	
+	public SignUpValidator(User user) {
+		super();
+		this.user = user;
+	}
+
 	public void setUser(User user) {
 		this.user = user;
 	}

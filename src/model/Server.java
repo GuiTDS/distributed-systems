@@ -5,7 +5,7 @@ import java.net.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import control.SignUpValidator;
+import control.UserControl;
 
 import java.io.*; 
 
@@ -69,8 +69,9 @@ public class Server extends Thread
 
          String inputLine; 
          Gson gson = new GsonBuilder().setPrettyPrinting().create();
-         while ((inputLine = in.readLine()) != null) 
-             { 
+         while (true) 
+             {  
+        	  inputLine = in.readLine();
               System.out.println ("Mensagem recebida: " + inputLine); 
               Message mensagemRecebida = gson.fromJson(inputLine, Message.class);
               int idOperacao = mensagemRecebida.getIdOperation();
@@ -80,18 +81,25 @@ public class Server extends Thread
             	  System.out.println("Cadastro solicitado");
             	  
             	  User user = new User( mensagemRecebida.getName(),mensagemRecebida.getEmail(), mensagemRecebida.getPassword());
-            	  SignUpValidator validator = new SignUpValidator();
-            	  validator.setUser(user);
+            	  SignUpValidator validator = new SignUpValidator(user);
 
             	  if(validator.isValid()) {
-            		  System.out.println("Cadastro realizado com sucesso!");
-            		  message.setOpResponseCode(validator.getOpResponse());
-            		  out.println(message.messageToJson()); // mandar json com resposta 200
+            		  System.out.println("Informacoes validadas com sucesso!");
+            		  UserControl userControl = new UserControl();
+            		  if(userControl.signUpUser(user)) {
+            			  message.setOpResponseCode(validator.getOpResponse());
+                		  out.println(message.messageToJson()); // mandar json com resposta 200
+            		  } else {
+            			  System.out.println("Erro ao cadastrar no banco de dados!");
+            		  }
+            		  
             	  }
             	  else {
-            		  System.out.println("Cadastro nao realizado!"); //mandar json com resposta 500 e uma mensagem informando o erro.
+            		  System.out.println("Informacoes nao validadas!"); //mandar json com resposta 500 e uma mensagem informando o erro.
             		  message.setOpResponseCode(500);
             		  message.setErrorMessage(validator.getErrorMessage());
+            		  System.out.println("MENSAGEM DE ERRO A SER ENVIADA: " + message.getErrorMessage());
+            		 out.flush();
             		  out.println(message.messageToJson());
             	  }
             	 
@@ -107,7 +115,7 @@ public class Server extends Thread
 
               if (inputLine.equals("Bye.")) 
                   break; 
-              
+        	  
              } 
 
          out.close(); 
