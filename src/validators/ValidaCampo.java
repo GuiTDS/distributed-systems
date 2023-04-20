@@ -1,4 +1,4 @@
-package model;
+package validators;
 
 public class ValidaCampo {
 	private final int minLenName = 3, maxLenName = 32; //name
@@ -8,7 +8,6 @@ public class ValidaCampo {
 	
 	public boolean validaCampoNome(String name) {
 		//valida tamanho do nome
-		System.out.println("Validando nome");
 		if(name.length() < this.minLenName || name.length() > this.maxLenName) {
 			return false;
 		} // validando se o nome possui numeros

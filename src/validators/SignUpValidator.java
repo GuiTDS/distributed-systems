@@ -1,16 +1,19 @@
-package model;
+package validators;
+
+import model.User;
 
 public class SignUpValidator extends Validator {
 	private User user;
 	
-	public SignUpValidator(User user) {
+	/*public SignUpValidator(User user) {
 		super();
 		this.user = user;
-	}
+	} */
 
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
 
 	public boolean isValid() {
 		ValidaCampo validaCampo = new ValidaCampo();

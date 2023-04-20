@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 public class Client {
     public static void main(String[] args) throws IOException {
@@ -37,49 +38,75 @@ public class Client {
             System.exit(1);
         }
 
-	BufferedReader stdIn = new BufferedReader(
-                                   new InputStreamReader(System.in));
-	//String userInput;
-
-        System.out.println ("Type Message (\"Bye.\" to quit)");
-	while (true) 
-           {
-		System.out.println("Informe operacao: ");
-		System.out.println("1 - cadastro");
-		System.out.println("2 - Atualizar Cadastro");
-		int op = Integer.parseInt(stdIn.readLine());
-
-		if (op == 1) {
-			System.out.println("Informe o nome: ");
-			String name = stdIn.readLine();
-			System.out.println("Informe o email: ");
-	        String email = stdIn.readLine();
-	        System.out.println("Informe senha: ");
-	        String password = stdIn.readLine();
-	        
-	        Message message = new Message();
-	        message.setIdOperation(1);
-	        message.setName(name);
-	        message.setEmail(email);
-	        message.setPassword(password);
-	        
-	        out.println(message.messageToJson()); 
-	        String respostaCadastro = in.readLine();
-	        in.readLine(); // limpa o 'buffer' ===> Limpa a string que enviamos para o servidor. ### Fazer isso toda vez que enviar mensagem para o server
-	        System.out.println("resposta no cliente : " + respostaCadastro);
-	        
-	        //validar a mensagem recebida 'respostaCadastro' para decidir a proxima etapa.
-		}
-		else {
-			break;
-		}
-		
-	   }
-
-	out.close();
-	in.close();
-	stdIn.close();
-	echoSocket.close();
-    }
+		BufferedReader stdIn = new BufferedReader(
+	                                   new InputStreamReader(System.in));
+		boolean run = true;
+		Gson gson = new Gson();
+		String name, email, password;
+		String respostaServidor;
+		JsonObject message = new JsonObject();
+		while (run) {
+			System.out.println("Informe operacao: ");
+			System.out.println("1 - cadastro");
+			System.out.println("2 - Atualizar Cadastro");
+			System.out.println("3 - Realizar login");
+			System.out.println("0 - Sair");
+			int op = Integer.parseInt(stdIn.readLine());
+			switch(op) {
+			case 1: //CADASTRO NO SISTEMA
+				System.out.println("Informe o nome: ");
+				name = stdIn.readLine();
+				System.out.println("Informe o email: ");
+		        email = stdIn.readLine();
+		        System.out.println("Informe senha: ");
+		        password = stdIn.readLine();
+		        
+		        message.addProperty("id_operacao", 1);
+		        message.addProperty("nome", name);
+		        message.addProperty("email", email);
+		        message.addProperty("senha", password);
+		        out.println(message.toString()); 
+		        
+		        respostaServidor = in.readLine();
+		        in.readLine(); // limpa o 'buffer' ===> Limpa a string que enviamos para o servidor. ### Fazer isso toda vez que enviar mensagem para o server
+		        System.out.println("Cliente => resposta no cliente : " + respostaServidor);
+		        JsonObject jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
+		        if(jsonRecebido.get("codigo").getAsInt() == 200)
+		        	System.out.println("Cliente => Cadastro realizado com sucesso!");
+		        else {
+		        	System.out.println("Cliente => Cadastro nao realizado!");
+		        }
+		        
+		        break;
+			case 2: //ATUALIZAÇÃO DE CADASTRO
+				System.out.println("Solicitacao de atualizacao de cadastro");
+				break;
+			case 3://LOGIN
+				System.out.println("Informe email:");
+				email = stdIn.readLine();
+				System.out.println("Informe senha:");
+				password = stdIn.readLine();
+				message.addProperty("id_operacao", 3);
+				message.addProperty("email", email);
+				message.addProperty("senha", password);
+				out.println(message.toString());
+				respostaServidor = in.readLine();
+				in.readLine();
+				System.out.println("Cliente => resposta do servidor: " + respostaServidor);
+				break;
+				
+			case 0:
+				System.out.println("Saindo da aplicacao"); //Enviar uma mensagem para o servidor com o codigo para sair, se nao o server recebe null;
+				run = false;
+				break;
+			}
+		        //validar a mensagem recebida 'respostaCadastro' para decidir a proxima etapa.
+		   }
+	
+		out.close();
+		in.close();
+		stdIn.close();
+		echoSocket.close();
+	    }
 }
 

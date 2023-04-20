@@ -4,8 +4,10 @@ import java.net.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import control.UserControl;
+import validators.SignUpValidator;
 
 import java.io.*; 
 
@@ -72,40 +74,38 @@ public class Server extends Thread
          while (true) 
              {  
         	  inputLine = in.readLine();
-              System.out.println ("Mensagem recebida: " + inputLine); 
-              Message mensagemRecebida = gson.fromJson(inputLine, Message.class);
-              int idOperacao = mensagemRecebida.getIdOperation();
+              System.out.println ("Server => Mensagem recebida: " + inputLine); 
+              JsonObject jsonRecebido = gson.fromJson(inputLine, JsonObject.class);
+              int idOperacao = jsonRecebido.get("id_operacao").getAsInt();
+              
               switch(idOperacao) {
               case 1:
-            	  Message message = new Message();
-            	  System.out.println("Cadastro solicitado");
+            	  //Message message = new Message();
+            	  JsonObject message = new JsonObject();
+            	  System.out.println("Server => Cadastro solicitado");
             	  
-            	  User user = new User( mensagemRecebida.getName(),mensagemRecebida.getEmail(), mensagemRecebida.getPassword());
-            	  SignUpValidator validator = new SignUpValidator(user);
+            	  User user = new User(jsonRecebido.get("nome").getAsString(), jsonRecebido.get("email").getAsString(),jsonRecebido.get("senha").getAsString());
+            	  UserControl userControl = new UserControl();
 
-            	  if(validator.isValid()) {
-            		  System.out.println("Informacoes validadas com sucesso!");
-            		  UserControl userControl = new UserControl();
-            		  if(userControl.signUpUser(user)) {
-            			  message.setOpResponseCode(validator.getOpResponse());
-                		  out.println(message.messageToJson()); // mandar json com resposta 200
-            		  } else {
-            			  System.out.println("Erro ao cadastrar no banco de dados!");
-            		  }
-            		  
+            	  if(userControl.signUpUser(user)) {
+            		  System.out.println("Usuario cadastrado no banco de dados com sucesso!");
+            		  message.addProperty("codigo", userControl.getValidator().getOpResponse());
+            		  out.println(message.toString()); // mandar json com resposta 200
             	  }
             	  else {
-            		  System.out.println("Informacoes nao validadas!"); //mandar json com resposta 500 e uma mensagem informando o erro.
-            		  message.setOpResponseCode(500);
-            		  message.setErrorMessage(validator.getErrorMessage());
-            		  System.out.println("MENSAGEM DE ERRO A SER ENVIADA: " + message.getErrorMessage());
-            		 out.flush();
-            		  out.println(message.messageToJson());
+            		  System.out.println("Erro ao cadastrar usuario no banco de dados!"); //mandar json com resposta 500 e uma mensagem informando o erro.
+            		  message.addProperty("codigo", userControl.getValidator().getOpResponse());
+            		  message.addProperty("mensagem", userControl.getValidator().getErrorMessage());
+            		  out.println(message);
             	  }
             	 
             	  break;
               case 2:
             	  System.out.println("Atualizar Cadastro solicitado");
+            	  break;
+              case 3:
+            	  System.out.println("Server => Pedido de login");
+            	  out.println("Pedido de login");
             	  break;
               default:
             	  System.out.println("Opcao invalida");
@@ -116,7 +116,8 @@ public class Server extends Thread
               if (inputLine.equals("Bye.")) 
                   break; 
         	  
-             } 
+              
+             }
 
          out.close(); 
          in.close(); 
