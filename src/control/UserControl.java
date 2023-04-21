@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import model.User;
 import validators.SignUpValidator;
+import validators.ValidaCampo;
 
 
 
@@ -63,7 +64,6 @@ public class UserControl {
 				System.out.println(nome);*/
 				UUID uuid = UUID.randomUUID();
 				String token = uuid.toString();
-				System.out.println("vai inserir o token");
 				try {
 					sql = "UPDATE usuarios SET token = ? WHERE email = ? AND senha = ?";
 					pstm = conn.prepareStatement(sql);

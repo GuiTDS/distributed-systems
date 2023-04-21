@@ -75,11 +75,12 @@ public class Server extends Thread
          String inputLine; 
          Gson gson = new GsonBuilder().setPrettyPrinting().create();
          
-         JsonObject message = new JsonObject();
+         //JsonObject message = new JsonObject();
          JsonValidator jsonValidator = new JsonValidator();
          UserControl userControl = new UserControl();
          while (true) 
              {  
+        	  JsonObject message = new JsonObject();
         	  System.out.println("----------- SERVIDOR -----------");
         	  inputLine = in.readLine();
         	  if(inputLine == null) {
@@ -113,7 +114,7 @@ public class Server extends Thread
             		  System.out.println("Erro ao cadastrar usuario no banco de dados!"); //mandar json com resposta 500 e uma mensagem informando o erro.
             		  message.addProperty("codigo", userControl.getValidator().getOpResponse());
             		  message.addProperty("mensagem", userControl.getValidator().getErrorMessage());
-            		  out.println(message);
+            		  out.println(message.toString());
             	  }
             	  break;
               case 2:
@@ -122,10 +123,18 @@ public class Server extends Thread
               case 3:
             	  System.out.println("Server => Pedido de login");
             	  User userLogin = new User(jsonRecebido.get("email").getAsString(), jsonRecebido.get("senha").getAsString());
+            
             	  if(userControl.authenticateUser(userLogin)) {
-            		  System.out.println("Usuario autenticado com sucesso!");
-            		  message.addProperty("mensagem", "usuario autenticado no banco...logando");
-            		  out.println(message);
+            		  System.out.println("Usuario autenticado");
+            		  message.addProperty("codigo", 200);
+            		  message.addProperty("token", "fazer a funcao que devolve o token");
+            		  message.addProperty("id_usuario", "Fazer funcao que devolve o id_usuario");
+            		  out.println(message.toString());
+            	  } else {
+            		  System.out.println("Usuario nao autenticado");
+            		  message.addProperty("codigo", 500);
+            		  message.addProperty("mensagem", "usuario NAO autenticado(fazer uma classe de validacao de login)");
+            		  out.println(message.toString());
             	  }
             	  
             	  break;
