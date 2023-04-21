@@ -40,7 +40,7 @@ public class Client {
 
 		BufferedReader stdIn = new BufferedReader(
 	                                   new InputStreamReader(System.in));
-		boolean run = true;
+		boolean run = true, login = false;
 		Gson gson = new Gson();
 		String name, email, password;
 		String respostaServidor;
@@ -61,14 +61,14 @@ public class Client {
 		        System.out.println("Informe senha: ");
 		        password = stdIn.readLine();
 		        
-		        message.addProperty("id_operacao", 1);
+		        message.addProperty("id_operacao", 1);//arrumar id_operacao
 		        message.addProperty("nome", name);
 		        message.addProperty("email", email);
 		        message.addProperty("senha", password);
 		        out.println(message.toString()); 
+		        //out.println("enviando msg que nao eh json");
 		        
 		        respostaServidor = in.readLine();
-		        in.readLine(); // limpa o 'buffer' ===> Limpa a string que enviamos para o servidor. ### Fazer isso toda vez que enviar mensagem para o server
 		        System.out.println("Cliente => resposta no cliente : " + respostaServidor);
 		        JsonObject jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
 		        if(jsonRecebido.get("codigo").getAsInt() == 200)
@@ -80,8 +80,14 @@ public class Client {
 		        break;
 			case 2: //ATUALIZAÇÃO DE CADASTRO
 				System.out.println("Solicitacao de atualizacao de cadastro");
+				if(login) {
+					System.out.println("Prosseguindo para atualizacao de cadastro...");
+					//completar
+				} else {
+					System.out.println("O usuario deve estar logado para atualizar cadastro...");
+				}
 				break;
-			case 3://LOGIN
+			case 3: //LOGIN
 				System.out.println("Informe email:");
 				email = stdIn.readLine();
 				System.out.println("Informe senha:");
@@ -91,7 +97,7 @@ public class Client {
 				message.addProperty("senha", password);
 				out.println(message.toString());
 				respostaServidor = in.readLine();
-				in.readLine();
+				//in.readLine();
 				System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 				break;
 				
