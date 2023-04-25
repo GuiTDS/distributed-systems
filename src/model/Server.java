@@ -109,9 +109,10 @@ public class Server extends Thread
             		  out.println(message.toString()); // mandar json com resposta 200
             	  }
             	  else {
+            		  String errorMessage = (userControl.getValidator().getErrorMessage() != null) ? userControl.getValidator().getErrorMessage(): userControl.getValidator().getBdError();
             		  System.out.println("Erro ao cadastrar usuario no banco de dados!"); //mandar json com resposta 500 e uma mensagem informando o erro.
-            		  message.addProperty("codigo", userControl.getValidator().getOpResponse());
-            		  message.addProperty("mensagem", userControl.getValidator().getErrorMessage());
+            		  message.addProperty("codigo", userControl.getValidator().getFailOpCode());
+            		  message.addProperty("mensagem", errorMessage);
             		  out.println(message.toString());
             	  }
             	  break;
@@ -135,6 +136,9 @@ public class Server extends Thread
             		  out.println(message.toString());
             	  }
             	  
+            	  break;
+              case 4:
+            	  System.out.println("Server => Reportar incidente");
             	  break;
               default:
             	  System.out.println("Opcao invalida");

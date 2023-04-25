@@ -15,6 +15,12 @@ public abstract class Validator {
 	public int getOpResponse() {
 		return opResponse;
 	}
+
+	public int getFailOpCode() {
+		return failOpCode;
+	}
+	
+	
 	
 	
 }

@@ -4,16 +4,18 @@ import model.User;
 
 public class SignUpValidator extends Validator {
 	private User user;
-	
-	/*public SignUpValidator(User user) {
-		super();
-		this.user = user;
-	} */
-
+	private String bdError;
 	public void setUser(User user) {
 		this.user = user;
 	}
 	
+	public void setBdError(String error) {
+		this.bdError = error;
+	}
+
+	public String getBdError() {
+		return bdError;
+	}
 
 	public boolean isValid() {
 		ValidaCampo validaCampo = new ValidaCampo();

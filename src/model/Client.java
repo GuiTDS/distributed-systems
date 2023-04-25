@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -44,12 +45,11 @@ public class Client {
 		Gson gson = new Gson();
 		String name, email, password;
 		String respostaServidor;
-		JsonObject message = new JsonObject();
+		JsonObject message = new JsonObject(),jsonRecebido = new JsonObject();
 		while (run) {
 			System.out.println("Informe operacao: ");
 			System.out.println("1 - cadastro");
-			System.out.println("2 - Atualizar Cadastro");
-			System.out.println("3 - Realizar login");
+			System.out.println("2 - Realizar login");
 			System.out.println("0 - Sair");
 			int op = Integer.parseInt(stdIn.readLine());
 			switch(op) {
@@ -70,7 +70,7 @@ public class Client {
 		        
 		        respostaServidor = in.readLine();
 		        System.out.println("Cliente => resposta no cliente : " + respostaServidor);
-		        JsonObject jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
+		        jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
 		        if(jsonRecebido.get("codigo").getAsInt() == 200)
 		        	System.out.println("Cliente => Cadastro realizado com sucesso!");
 		        else {
@@ -78,16 +78,8 @@ public class Client {
 		        }
 		        
 		        break;
-			case 2: //ATUALIZAÇÃO DE CADASTRO
-				System.out.println("Solicitacao de atualizacao de cadastro");
-				if(login) {
-					System.out.println("Prosseguindo para atualizacao de cadastro...");
-					//completar
-				} else {
-					System.out.println("O usuario deve estar logado para atualizar cadastro...");
-				}
-				break;
-			case 3: //LOGIN
+			case 2:
+				//LOGIN
 				System.out.println("Informe email:");
 				email = stdIn.readLine();
 				System.out.println("Informe senha:");
@@ -99,12 +91,103 @@ public class Client {
 				respostaServidor = in.readLine();
 				//in.readLine();
 				System.out.println("Cliente => resposta do servidor: " + respostaServidor);
-				break;
-				
+				jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
+				if(jsonRecebido.get("codigo").getAsInt() == 200) {
+					System.out.println("Login realizado...");
+					login = true;
+					String token = jsonRecebido.get("token").getAsString();
+					int userId = jsonRecebido.get("id_usuario").getAsInt();
+					System.out.println("Cliente => token: " + token);
+					System.out.println("Cliente => id_usuario: " + userId);
+					while(login) {
+						System.out.println("Bem vindo!");
+						System.out.println("1 - Reportar incidente");
+						System.out.println("2 - Solicitar lista de incidentes na rodovia");
+						System.out.println("3 - Solicitar incidentes reportados por mim");
+						System.out.println("4 - Remover incidente");
+						System.out.println("5 - Atualizar Cadastro");
+						System.out.println("6 - Remover Cadastro");
+						System.out.println("0 - Sair");
+						int opLogin = Integer.parseInt(stdIn.readLine());
+						switch(opLogin) {
+						case 1:
+							System.out.println("------REPORTAR INCIDENTE------");
+							System.out.println("Qual o tipo do incidente?");
+							System.out.println("1 - Vento");
+							System.out.println("2 - Chuva");
+							System.out.println("3 - Nevoeiro (Neblina)");
+							System.out.println("4 - Neve");
+							System.out.println("5 - Gelo na pista");
+							System.out.println("6 - Granizo");
+							System.out.println("7 - Transito parado");
+							System.out.println("8 - Filas de transito");
+							System.out.println("9 - Transito lento");
+							System.out.println("10 - Acidente desconhecido (ex: Acidente com carros)");
+							System.out.println("11 - Incidente desconhecido (ex: Pista rachado, pedras na pista)");
+							System.out.println("12 - Trabalhos na estrada");
+							System.out.println("13 - Bloqueio de pista");
+							System.out.println("14 - Bloqueia de estrada");
+							
+							int incidentType = Integer.parseInt(stdIn.readLine());//tipo do incidente
+							System.out.println("Informe a rodovia:");
+							String highway = stdIn.readLine(); // rodovia
+							System.out.println("Informe o KM do incidente:");
+							int km = Integer.parseInt(stdIn.readLine()); //km
+							Date date = new Date(); // data
+							System.out.println("Informe o dia do incidente:");
+							date.setDate(Integer.parseInt(stdIn.readLine()));
+							System.out.println("Inforem o mes do incidente:");
+							date.setMonth(Integer.parseInt(stdIn.readLine()));
+							System.out.println("Informe o ano do incidente:");
+							date.setYear(Integer.parseInt(stdIn.readLine()));
+							message = null;
+							message = new JsonObject();
+							message.addProperty("id_operacao", 4);
+							message.addProperty("data", date.toString());
+							message.addProperty("rodovia", highway);
+							message.addProperty("km", km);
+							message.addProperty("tipo_incidente", incidentType);
+							message.addProperty("token", token);
+							message.addProperty("id_usuario", userId);
+							out.println(message.toString());
+							
+							break;
+						case 2:
+							System.out.println("Solicitando lista de incidentes na rodovia...");
+							break;
+						case 3:
+							System.out.println("Solicitar incidentes reportados por mim...");
+							break;
+						case 4:
+							System.out.println("Remover incidente...");
+							break;
+						case 5:
+							System.out.println("Atulizando cadastro...");
+							break;
+						case 6:
+							System.out.println("Removendo cadastro...");
+							break;
+						case 0:
+							System.out.println("Saindo...");
+							login = false;
+							break;
+						default:
+							System.out.println("Informe uma opcao valida!");
+							break;
+						}
+					}
+					
+				}else {
+					System.out.println("Login nao realizado");
+				}
+				break;		
 			case 0:
 				System.out.println("Saindo da aplicacao"); //Enviar uma mensagem para o servidor com o codigo para sair, se nao o server recebe null;
 				run = false;
 				break;
+			default:
+					System.out.println("Informe uma opcao valida!");
+					break;
 			}
 		        //validar a mensagem recebida 'respostaCadastro' para decidir a proxima etapa.
 		   }
