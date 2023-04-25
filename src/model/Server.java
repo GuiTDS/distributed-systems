@@ -17,7 +17,6 @@ import java.io.*;
 public class Server extends Thread
 { 
  protected Socket clientSocket;
-
  public static void main(String[] args) throws IOException 
    { 
     ServerSocket serverSocket = null; 
@@ -75,7 +74,6 @@ public class Server extends Thread
          String inputLine; 
          Gson gson = new GsonBuilder().setPrettyPrinting().create();
          
-         //JsonObject message = new JsonObject();
          JsonValidator jsonValidator = new JsonValidator();
          UserControl userControl = new UserControl();
          while (true) 
@@ -127,8 +125,8 @@ public class Server extends Thread
             	  if(userControl.authenticateUser(userLogin)) {
             		  System.out.println("Usuario autenticado");
             		  message.addProperty("codigo", 200);
-            		  message.addProperty("token", "fazer a funcao que devolve o token");
-            		  message.addProperty("id_usuario", "Fazer funcao que devolve o id_usuario");
+            		  message.addProperty("token", userLogin.getToken());
+            		  message.addProperty("id_usuario", userLogin.getIdUsuario());
             		  out.println(message.toString());
             	  } else {
             		  System.out.println("Usuario nao autenticado");

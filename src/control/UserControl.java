@@ -23,7 +23,7 @@ public class UserControl {
 		return validator;
 	}
 	
-	public boolean signUpUser(User user) { // esse será o metodo de cadastrar
+	public boolean signUpUser(User user) {
 		conn = new ConexaoControl().conectaBD();
 		this.validator.setUser(user);
 		if(this.validator.isValid()) {
@@ -50,7 +50,7 @@ public class UserControl {
 		conn = new ConexaoControl().conectaBD();
 		
 		try {
-			String sql = "SELECT * FROM usuarios WHERE email = ? AND senha = ?;";
+			String sql = "SELECT id_usuario FROM usuarios WHERE email = ? AND senha = ?;";
 			pstm = conn.prepareStatement(sql);
 			pstm.setString(1, user.getEmail());
 			pstm.setString(2, user.getPassword());
@@ -62,6 +62,8 @@ public class UserControl {
 				System.out.println(id_usuario);
 				String nome = result.getString(2);
 				System.out.println(nome);*/
+				Integer idUsuario = result.getInt(1);
+				user.setIdUsuario(idUsuario);
 				UUID uuid = UUID.randomUUID();
 				String token = uuid.toString();
 				try {
@@ -72,8 +74,9 @@ public class UserControl {
 					pstm.setString(3, user.getPassword());
 					pstm.execute();
 					System.out.println("inseriu token");
+					user.setToken(token);
 					pstm.close(); 
-					return true;
+					return true; // alterar essa funcao para devolver uma string (devolve o token caso seja bem sucedido ou vazio caso falhe);
 				} catch(SQLException erro) {
 					System.out.println("erro no usuario control ao inserir token\n" + erro);
 				}
@@ -88,14 +91,14 @@ public class UserControl {
 		return false;
 	}
 	
-	public void checkToken(int idUsuario) {
+	public void checkToken(User user) { // receber o id e o token
 		conn = new ConexaoControl().conectaBD();
 		try {
 			String sql = "SELECT token FROM usuarios WHERE id_usuario = ?;";
 			pstm = conn.prepareStatement(sql);
-			pstm.setInt(1, idUsuario);
+			pstm.setInt(1, user.getIdUsuario());
 			ResultSet result = pstm.executeQuery();
-			System.out.println(result.getString(0));
+			System.out.println(result.getString(0)); // verificar se o token recebido do BD corresponde ao enviado pelo usuario
 		} catch (SQLException erro) {
 			JOptionPane.showMessageDialog(null, "Usuario control: " + erro);
 		}

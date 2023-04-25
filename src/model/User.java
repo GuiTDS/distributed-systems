@@ -2,7 +2,7 @@ package model;
 
 public class User {
 	private String name, email, password;
-	private int id_usuario;
+	private int idUsuario;
 	private String token;
 
 	public User(String name, String email, String password) {
@@ -41,12 +41,12 @@ public class User {
 		this.password = password;
 	}
 
-	public int getId_usuario() {
-		return id_usuario;
+	public int getIdUsuario() {
+		return idUsuario;
 	}
 
-	public void setId_usuario(int id_usuario) {
-		this.id_usuario = id_usuario;
+	public void setIdUsuario(int idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
 	public String getToken() {
