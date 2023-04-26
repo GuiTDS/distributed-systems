@@ -9,5 +9,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/guitd/Downloads/gson-2.10.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/guitd/Downloads/postgresql-42.6.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/guitd/Downloads/jbcrypt-0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

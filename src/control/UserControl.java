@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import javax.swing.JOptionPane;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import model.User;
 import validators.SignUpValidator;
 
@@ -24,13 +26,13 @@ public class UserControl {
 		conn = new ConexaoControl().conectaBD();
 		this.validator.setUser(user);
 		if(this.validator.isValid()) {
-			//if(checkEmail(user)) {
 			try {
 				String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?);";
+				String passwordHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 				pstm = conn.prepareStatement(sql);	
 				pstm.setString(1, user.getName());
 				pstm.setString(2, user.getEmail());
-				pstm.setString(3, user.getPassword());
+				pstm.setString(3, passwordHash);
 				pstm.execute();
 				pstm.close();
 				return true;
@@ -38,10 +40,6 @@ public class UserControl {
 				JOptionPane.showMessageDialog(null, "Usuario control: " + erro);
 				return false;
 			}
-			/*} else {
-				validator.setBdError("email ja esta cadastrado!");
-				return false;
-			}*/
 		} else {
 			return false;
 		}
@@ -52,35 +50,35 @@ public class UserControl {
 		conn = new ConexaoControl().conectaBD();
 		
 		try {
-			String sql = "SELECT id_usuario FROM usuarios WHERE email = ? AND senha = ?;";
+			String sql = "SELECT id_usuario, senha FROM usuarios WHERE email = ?;";
 			pstm = conn.prepareStatement(sql);
 			pstm.setString(1, user.getEmail());
-			pstm.setString(2, user.getPassword());
 			ResultSet result = pstm.executeQuery();
 			
 			if(result.next()) {
-				/*System.out.println("Printando resultset");
-				Integer id_usuario = result.getInt(1);
-				System.out.println(id_usuario);
-				String nome = result.getString(2);
-				System.out.println(nome);*/
 				Integer idUsuario = result.getInt(1);
 				user.setIdUsuario(idUsuario);
-				UUID uuid = UUID.randomUUID();
-				String token = uuid.toString();
-				try {
-					sql = "UPDATE usuarios SET token = ? WHERE email = ? AND senha = ?";
-					pstm = conn.prepareStatement(sql);
-					pstm.setString(1, token);
-					pstm.setString(2, user.getEmail());
-					pstm.setString(3, user.getPassword());
-					pstm.execute();
-					System.out.println("inseriu token");
-					user.setToken(token);
-					pstm.close(); 
-					return true; // alterar essa funcao para devolver uma string (devolve o token caso seja bem sucedido ou vazio caso falhe);
-				} catch(SQLException erro) {
-					System.out.println("erro no usuario control ao inserir token\n" + erro);
+				String passwordHash = result.getString(2);
+				boolean isPasswordValid = BCrypt.checkpw(user.getPassword(), passwordHash);
+				if(isPasswordValid) {
+					UUID uuid = UUID.randomUUID();
+					String token = uuid.toString();
+					try {
+						sql = "UPDATE usuarios SET token = ? WHERE email = ?;";
+						pstm = conn.prepareStatement(sql);
+						pstm.setString(1, token);
+						pstm.setString(2, user.getEmail());
+						pstm.execute();
+						System.out.println("inseriu token");
+						user.setToken(token);
+						pstm.close(); 
+						return true; // alterar essa funcao para devolver uma string (devolve o token caso seja bem sucedido ou vazio caso falhe);
+					} catch(SQLException erro) {
+						System.out.println("erro no usuario control ao inserir token\n" + erro);
+					}
+				} else {
+					System.out.println("Hash invalido!");
+					return false;
 				}
 				
 			}

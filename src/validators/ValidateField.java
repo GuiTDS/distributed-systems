@@ -23,7 +23,6 @@ public class ValidateField {
 	}
 	
 	public boolean validateEmail(String email) {
-		//System.out.println("validando email");
 		return email.contains("@") && email.length() >= this.minLenEmail && email.length() <= this.maxLenEmail;
 	}
 
