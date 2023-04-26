@@ -100,39 +100,20 @@ public class Client {
 					System.out.println("Cliente => token: " + token);
 					System.out.println("Cliente => id_usuario: " + userId);
 					while(login) {
-						System.out.println("Bem vindo!");
-						System.out.println("1 - Reportar incidente");
-						System.out.println("2 - Solicitar lista de incidentes na rodovia");
-						System.out.println("3 - Solicitar incidentes reportados por mim");
-						System.out.println("4 - Remover incidente");
-						System.out.println("5 - Atualizar Cadastro");
-						System.out.println("6 - Remover Cadastro");
-						System.out.println("0 - Sair");
+						showLoginMenu(); // exibe o menu de seleção para usuario logado
 						int opLogin = Integer.parseInt(stdIn.readLine());
 						switch(opLogin) {
 						case 1:
 							System.out.println("------REPORTAR INCIDENTE------");
-							System.out.println("Qual o tipo do incidente?");
-							System.out.println("1 - Vento");
-							System.out.println("2 - Chuva");
-							System.out.println("3 - Nevoeiro (Neblina)");
-							System.out.println("4 - Neve");
-							System.out.println("5 - Gelo na pista");
-							System.out.println("6 - Granizo");
-							System.out.println("7 - Transito parado");
-							System.out.println("8 - Filas de transito");
-							System.out.println("9 - Transito lento");
-							System.out.println("10 - Acidente desconhecido (ex: Acidente com carros)");
-							System.out.println("11 - Incidente desconhecido (ex: Pista rachado, pedras na pista)");
-							System.out.println("12 - Trabalhos na estrada");
-							System.out.println("13 - Bloqueio de pista");
-							System.out.println("14 - Bloqueia de estrada");
-							
+							showIncidentTypeList(); // exibe lista com os tipos de incidentes possiveis
 							int incidentType = Integer.parseInt(stdIn.readLine());//tipo do incidente
+							
 							System.out.println("Informe a rodovia:");
 							String highway = stdIn.readLine(); // rodovia
+							
 							System.out.println("Informe o KM do incidente:");
 							int km = Integer.parseInt(stdIn.readLine()); //km
+							
 							Date date = new Date(); // data
 							System.out.println("Informe o dia do incidente:");
 							date.setDate(Integer.parseInt(stdIn.readLine()));
@@ -140,7 +121,8 @@ public class Client {
 							date.setMonth(Integer.parseInt(stdIn.readLine()));
 							System.out.println("Informe o ano do incidente:");
 							date.setYear(Integer.parseInt(stdIn.readLine()));
-							message = null;
+							
+							//message = null;
 							message = new JsonObject();
 							message.addProperty("id_operacao", 4);
 							message.addProperty("data", date.toString());
@@ -189,7 +171,6 @@ public class Client {
 					System.out.println("Informe uma opcao valida!");
 					break;
 			}
-		        //validar a mensagem recebida 'respostaCadastro' para decidir a proxima etapa.
 		   }
 	
 		out.close();
@@ -197,5 +178,35 @@ public class Client {
 		stdIn.close();
 		echoSocket.close();
 	    }
+    
+    public static void showLoginMenu() {
+    	System.out.println("Bem vindo!");
+		System.out.println("1 - Reportar incidente");
+		System.out.println("2 - Solicitar lista de incidentes na rodovia");
+		System.out.println("3 - Solicitar incidentes reportados por mim");
+		System.out.println("4 - Remover incidente");
+		System.out.println("5 - Atualizar Cadastro");
+		System.out.println("6 - Remover Cadastro");
+		System.out.println("0 - Sair");
+    }
+    
+    public static void showIncidentTypeList() {
+    	System.out.println("Qual o tipo do incidente?");
+		System.out.println("1 - Vento");
+		System.out.println("2 - Chuva");
+		System.out.println("3 - Nevoeiro (Neblina)");
+		System.out.println("4 - Neve");
+		System.out.println("5 - Gelo na pista");
+		System.out.println("6 - Granizo");
+		System.out.println("7 - Transito parado");
+		System.out.println("8 - Filas de transito");
+		System.out.println("9 - Transito lento");
+		System.out.println("10 - Acidente desconhecido (ex: Acidente com carros)");
+		System.out.println("11 - Incidente desconhecido (ex: Pista rachado, pedras na pista)");
+		System.out.println("12 - Trabalhos na estrada");
+		System.out.println("13 - Bloqueio de pista");
+		System.out.println("14 - Bloqueia de estrada");
+		
+    }
 }
 

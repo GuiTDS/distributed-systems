@@ -10,9 +10,6 @@ import javax.swing.JOptionPane;
 
 import model.User;
 import validators.SignUpValidator;
-import validators.ValidaCampo;
-
-
 
 public class UserControl {
 	private Connection conn;
@@ -27,7 +24,7 @@ public class UserControl {
 		conn = new ConexaoControl().conectaBD();
 		this.validator.setUser(user);
 		if(this.validator.isValid()) {
-			if(checkEmail(user)) {
+			//if(checkEmail(user)) {
 			try {
 				String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?);";
 				pstm = conn.prepareStatement(sql);	
@@ -41,10 +38,10 @@ public class UserControl {
 				JOptionPane.showMessageDialog(null, "Usuario control: " + erro);
 				return false;
 			}
-			} else {
+			/*} else {
 				validator.setBdError("email ja esta cadastrado!");
 				return false;
-			}
+			}*/
 		} else {
 			return false;
 		}
@@ -106,23 +103,6 @@ public class UserControl {
 			System.out.println(result.getString(0)); // verificar se o token recebido do BD corresponde ao enviado pelo usuario
 		} catch (SQLException erro) {
 			JOptionPane.showMessageDialog(null, "Usuario control: " + erro);
-		}
-	}
-	
-	public boolean checkEmail(User user) {
-		conn = new ConexaoControl().conectaBD();
-		try {
-			String sql = "SELECT * FROM usuarios WHERE email = ?;";
-			pstm = conn.prepareStatement(sql);
-			pstm.setString(1,user.getEmail());
-			ResultSet result = pstm.executeQuery();
-			if(result.next())
-					return false;
-			return true;
-			
-		}catch(SQLException erro) {
-			System.out.println("Erro userControl: " + erro);
-			return false;
 		}
 	}
 }
