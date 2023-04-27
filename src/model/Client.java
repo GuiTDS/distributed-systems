@@ -38,7 +38,7 @@ public class Client {
                                + "the connection to: " + serverHostname);
             System.exit(1);
         }
-
+        
 		BufferedReader stdIn = new BufferedReader(
 	                                   new InputStreamReader(System.in));
 		boolean run = true, login = false;

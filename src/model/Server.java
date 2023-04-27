@@ -1,6 +1,8 @@
 package model;
 
 import java.net.*;
+import java.util.ArrayList;
+
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,18 +19,24 @@ import java.io.*;
 public class Server extends Thread
 { 
  protected Socket clientSocket;
+ protected static ArrayList<Socket> loggedInUsers;
  public static void main(String[] args) throws IOException 
    { 
     ServerSocket serverSocket = null; 
-
+    loggedInUsers = new ArrayList<Socket>();
     try { 
          serverSocket = new ServerSocket(10008); 
          System.out.println ("Connection Socket Created");
+         
          try { 
               while (true)
                  {
                   System.out.println ("Waiting for Connection");
-                  new Server (serverSocket.accept()); 
+                  Socket novoCliente = serverSocket.accept();
+                  //new Server (serverSocket.accept()); 
+                  loggedInUsers.add(novoCliente);
+                  new Server(novoCliente);
+                  
                  }
              } 
          catch (IOException e) 
@@ -63,6 +71,8 @@ public class Server extends Thread
 
  public void run()
    {
+	System.out.println("Lista de usuarios logados:");
+	System.out.println(loggedInUsers);
     System.out.println ("New Communication Thread Started");
 
     try { 
@@ -82,8 +92,9 @@ public class Server extends Thread
         	  System.out.println("----------- SERVIDOR -----------");
         	  inputLine = in.readLine();
         	  if(inputLine == null) {
-        		  System.out.println("Desligando servidor");
-        		  System.exit(1);
+        		  System.out.println("Desconectando socket: " + clientSocket.getInetAddress().getHostName());
+        		  loggedInUsers.remove(clientSocket);
+        		  break;
         	  }
               System.out.println ("Server => Mensagem recebida: " + inputLine);
               jsonValidator.setJson(inputLine);
@@ -149,6 +160,8 @@ public class Server extends Thread
               
              }
              }
+         System.out.println("Lista de usuarios logados:");
+         System.out.println(loggedInUsers);
          out.close(); 
          in.close(); 
          clientSocket.close(); 
