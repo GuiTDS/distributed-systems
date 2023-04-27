@@ -24,7 +24,7 @@ public class Client {
         Socket echoSocket = null;
         PrintWriter out = null;
         BufferedReader in = null;
-
+        
         try {
             echoSocket = new Socket(serverHostname, 10008);
             out = new PrintWriter(echoSocket.getOutputStream(), true);
@@ -150,8 +150,15 @@ public class Client {
 							System.out.println("Removendo cadastro...");
 							break;
 						case 0:
-							System.out.println("Saindo...");
 							login = false;
+							message = new JsonObject();
+							message.addProperty("id_operacao", 9);
+							message.addProperty("token", token);
+							message.addProperty("id_usuario", userId);
+							out.println(message.toString());
+							respostaServidor = in.readLine();
+							System.out.println("Cliente => " + respostaServidor);
+							
 							break;
 						default:
 							System.out.println("Informe uma opcao valida!");

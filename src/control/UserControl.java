@@ -54,7 +54,7 @@ public class UserControl {
 			pstm = conn.prepareStatement(sql);
 			pstm.setString(1, user.getEmail());
 			ResultSet result = pstm.executeQuery();
-			
+		
 			if(result.next()) {
 				Integer idUsuario = result.getInt(1);
 				user.setIdUsuario(idUsuario);
@@ -82,7 +82,7 @@ public class UserControl {
 				}
 				
 			}
-			
+		
 			
 		} catch (SQLException erro) {
 			JOptionPane.showMessageDialog(null, "Usuario control: " + erro);
@@ -90,17 +90,25 @@ public class UserControl {
 		}
 		return false;
 	}
-	
-	public void checkToken(User user) { // receber o id e o token
+
+	public boolean checkToken(User user, String token) { // receber o id e o token
 		conn = new ConexaoControl().conectaBD();
 		try {
 			String sql = "SELECT token FROM usuarios WHERE id_usuario = ?;";
 			pstm = conn.prepareStatement(sql);
 			pstm.setInt(1, user.getIdUsuario());
 			ResultSet result = pstm.executeQuery();
-			System.out.println(result.getString(0)); // verificar se o token recebido do BD corresponde ao enviado pelo usuario
+			// verificar se o token recebido do BD corresponde ao enviado pelo usuario
+			if(result.next()) {
+				String tokenDB = result.getString(1);
+				if(token.equals(tokenDB)) {
+					return true;
+				}
+			}
+			return false;
 		} catch (SQLException erro) {
-			JOptionPane.showMessageDialog(null, "Usuario control: " + erro);
+			System.out.println("Erro ao validar token: " + erro);
+			return false;
 		}
 	}
 }

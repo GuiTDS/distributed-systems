@@ -14,7 +14,8 @@ public class JsonValidator extends Validator {
 
 	public boolean isValid() {
 		try {
-      	  JsonObject objJson = new Gson().fromJson(this.json, JsonObject.class); 
+      	  //JsonObject objJson = new Gson().fromJson(this.json, JsonObject.class); 
+			JsonObject objJson = getJsonObject();
       	  if(!objJson.has("id_operacao")) {
       		  super.opResponse = super.failOpCode;
       		  super.errorMessage = "O json recebido nao possui id_operacao!";
@@ -26,5 +27,39 @@ public class JsonValidator extends Validator {
         	super.errorMessage = "A mensagem enviada nao esta no formato Json";
       	  return false;
         }
+	}
+	
+	public boolean isValidLogin() {
+		JsonObject objJson = new Gson().fromJson(this.json, JsonObject.class);
+		if(!objJson.has("email") || !objJson.has("senha")) {
+			super.opResponse = super.failOpCode;
+			super.errorMessage = "O json enviado nao possui os campos necessarios para o login(nome,email,senha)";
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean isValidSignUp() {
+		JsonObject objJson = getJsonObject();
+		if(!objJson.has("nome") || !objJson.has("email") || !objJson.has("senha")) {
+			super.opResponse = super.failOpCode;
+			super.errorMessage = "O json enviado nao possui os campos necessarios para realizar o cadastro(nome,email,senha)";
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean isValidLogout() {
+		JsonObject objJson = getJsonObject();
+		if(!objJson.has("token") || !objJson.has("id_usuario")) {
+			super.opResponse = super.failOpCode;
+			super.errorMessage = "O json enviado nao possui os campos necessarios para realizar logout(token,id_usuario)";
+			return false;
+		}
+		return true;
+	}
+	
+	public JsonObject getJsonObject() {
+		return new Gson().fromJson(this.json, JsonObject.class);
 	}
 }
