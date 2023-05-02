@@ -144,7 +144,22 @@ public class Client {
 							System.out.println("Remover incidente...");
 							break;
 						case 5:
-							System.out.println("Atulizando cadastro...");
+							message = new JsonObject();
+							System.out.println("Atualizando cadastro..."); 
+							System.out.println("Informe o nome: ");
+							name = stdIn.readLine();
+							System.out.println("Informe o email: ");
+					        email = stdIn.readLine();
+					        System.out.println("Informe senha: ");
+					        password = stdIn.readLine();
+					        message.addProperty("id_operacao", 2);
+					        message.addProperty("nome", name);
+					        message.addProperty("email", email);
+					        message.addProperty("senha", password);
+					        message.addProperty("token", token);
+					        message.addProperty("id_usuario", userId);
+					        out.println(message.toString());
+					        //respostaServidor = in.readLine();
 							break;
 						case 6:
 							System.out.println("Removendo cadastro...");

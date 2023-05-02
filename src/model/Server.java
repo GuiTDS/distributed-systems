@@ -132,19 +132,32 @@ public class Server extends Thread
             	  }
             	  break;
               case 2:
-            	  System.out.println("Atualizar Cadastro solicitado");
+            	  System.out.println("Server => Atualizar Cadastro solicitado");
+            	  if(jsonValidator.isValidUpdate()) {
+            		  User user = new User(jsonRecebido.get("nome").getAsString(), jsonRecebido.get("email").getAsString(),
+            				  jsonRecebido.get("senha").getAsString(), jsonRecebido.get("id_usuario").getAsInt());
+            		  if(userControl.checkToken(user, jsonRecebido.get("token").getAsString())) {
+            			  
+            		  }else {
+            			  
+            		  }
+            	  }else {
+            		  message.addProperty("codigo", jsonValidator.getOpResponse());
+            		  message.addProperty("mensagem", jsonValidator.getErrorMessage());
+            		  out.println(message.toString());
+            	  }
             	  break;
               case 3:
             	  //validar json para login
             	  System.out.println("Server => Pedido de login");
             	  if(jsonValidator.isValidLogin()) {
 	            	  User userLogin = new User(jsonRecebido.get("email").getAsString(), jsonRecebido.get("senha").getAsString());
-	            
+	            	  
 	            	  if(userControl.authenticateUser(userLogin)) {
 	            		  loggedInUsers.add(clientSocket);
 	            		  System.out.println("Usuario autenticado");
 	            		  message.addProperty("codigo", 200);
-	            		  message.addProperty("token", userLogin.getToken());
+	            		  message.addProperty("token", userControl.getToken());
 	            		  message.addProperty("id_usuario", userLogin.getIdUsuario());
 	            		  out.println(message.toString());
 	            	  } else {

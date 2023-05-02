@@ -59,6 +59,16 @@ public class JsonValidator extends Validator {
 		return true;
 	}
 	
+	public boolean isValidUpdate() {
+		JsonObject objJson = getJsonObject();
+		if(!objJson.has("token") || !objJson.has("id_usuario") || !objJson.has("nome") || !objJson.has("email") || !objJson.has("senha")) {
+			super.opResponse = super.failOpCode;
+			super.errorMessage = "O json enviado nao possui os campos necessarios para realizar a atualizacao de cadastro(nome,email,senha, id_usuario, token)";
+			return false;
+		}
+		return true;
+	}
+	
 	public JsonObject getJsonObject() {
 		return new Gson().fromJson(this.json, JsonObject.class);
 	}

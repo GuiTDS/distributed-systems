@@ -17,11 +17,26 @@ public class UserControl {
 	private Connection conn;
 	private PreparedStatement pstm;
 	private SignUpValidator validator = new SignUpValidator();
+	private String token;
 	
 	public SignUpValidator getValidator() {
 		return validator;
 	}
 	
+	
+	
+	public String getToken() {
+		return token;
+	}
+
+
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+
+
 	public boolean signUpUser(User user) {
 		conn = new ConexaoControl().conectaBD();
 		this.validator.setUser(user);
@@ -70,11 +85,12 @@ public class UserControl {
 						pstm.setString(2, user.getEmail());
 						pstm.execute();
 						System.out.println("inseriu token");
-						user.setToken(token);
+						this.token = token;
 						pstm.close(); 
-						return true; // alterar essa funcao para devolver uma string (devolve o token caso seja bem sucedido ou vazio caso falhe);
+						return true;
 					} catch(SQLException erro) {
 						System.out.println("erro no usuario control ao inserir token\n" + erro);
+						return false;
 					}
 				} else {
 					System.out.println("Hash invalido!");

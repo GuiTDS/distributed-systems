@@ -3,7 +3,6 @@ package model;
 public class User {
 	private String name, email, password;
 	private int idUsuario;
-	private String token;
 
 	public User(String name, String email, String password) {
 		super();
@@ -17,6 +16,15 @@ public class User {
 		this.password = password;
 	}
 	
+	
+	
+	public User(String name, String email, String password, int idUsuario) {
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.idUsuario = idUsuario;
+	}
+
 	public User(int idUsuario) {
 		this.idUsuario = idUsuario;
 	}
@@ -53,13 +61,7 @@ public class User {
 		this.idUsuario = idUsuario;
 	}
 
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
+	
 	
 	
 }
