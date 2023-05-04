@@ -8,13 +8,15 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class Client {
     public static void main(String[] args) throws IOException {
 
-        String serverHostname = new String ("127.0.0.1");
+        String serverHostname = new String ("10.20.8.93");
 
         if (args.length > 0)
            serverHostname = args[0];
@@ -26,7 +28,7 @@ public class Client {
         BufferedReader in = null;
         
         try {
-            echoSocket = new Socket(serverHostname, 10008);
+            echoSocket = new Socket(serverHostname, 24999);
             out = new PrintWriter(echoSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(
                                         echoSocket.getInputStream()));
@@ -37,13 +39,13 @@ public class Client {
             System.err.println("Couldn't get I/O for "
                                + "the connection to: " + serverHostname);
             System.exit(1);
-        }
+        } 
         
 		BufferedReader stdIn = new BufferedReader(
 	                                   new InputStreamReader(System.in));
 		boolean run = true, login = false;
 		Gson gson = new Gson();
-		String name, email, password;
+		String name, email, password, passwordHash;
 		String respostaServidor;
 		JsonObject message = new JsonObject(),jsonRecebido = new JsonObject();
 		while (run) {
@@ -60,11 +62,13 @@ public class Client {
 		        email = stdIn.readLine();
 		        System.out.println("Informe senha: ");
 		        password = stdIn.readLine();
-		        
-		        message.addProperty("id_operacao", 1);//arrumar id_operacao
+		       // passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());  ARRUMAR O HASH!!
+		        //System.out.println(passwordHash);
+		        message.addProperty("id_operacao", 1);
 		        message.addProperty("nome", name);
 		        message.addProperty("email", email);
 		        message.addProperty("senha", password);
+		        
 		        out.println(message.toString()); 
 		        //out.println("enviando msg que nao eh json");
 		        
@@ -84,6 +88,8 @@ public class Client {
 				email = stdIn.readLine();
 				System.out.println("Informe senha:");
 				password = stdIn.readLine();
+				
+				//passwordHash = BCrypt.hashpw(password, BCrypt.gensalt()); //ARRUMAR O HASH
 				message.addProperty("id_operacao", 3);
 				message.addProperty("email", email);
 				message.addProperty("senha", password);
@@ -191,6 +197,9 @@ public class Client {
 				break;
 			default:
 					System.out.println("Informe uma opcao valida!");
+					out.println("trava tudo!!!");
+					respostaServidor = in.readLine();
+					System.out.println(respostaServidor);
 					break;
 			}
 		   }

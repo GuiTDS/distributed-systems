@@ -25,7 +25,7 @@ public class Server extends Thread
     ServerSocket serverSocket = null; 
     loggedInUsers = new ArrayList<Socket>();
     try { 
-         serverSocket = new ServerSocket(10008); 
+         serverSocket = new ServerSocket(24999); 
          System.out.println ("Connection Socket Created");
          
          try { 
@@ -77,7 +77,7 @@ public class Server extends Thread
                                       true); 
          BufferedReader in = new BufferedReader( 
                  new InputStreamReader( clientSocket.getInputStream())); 
-
+ 
          String inputLine; 
          Gson gson = new GsonBuilder().setPrettyPrinting().create();
          
@@ -162,8 +162,8 @@ public class Server extends Thread
 	            		  out.println(message.toString());
 	            	  } else {
 	            		  System.out.println("Usuario nao autenticado");
-	            		  message.addProperty("codigo", 500);
-	            		  message.addProperty("mensagem", "usuario NAO autenticado(fazer uma classe de validacao de login)");
+	            		  message.addProperty("codigo", userControl.getSignInValidator().getOpResponse());
+	            		  message.addProperty("mensagem", userControl.getSignInValidator().getErrorMessage());
 	            		  out.println(message.toString());
 	            	  }
             	  } else {
@@ -202,6 +202,9 @@ public class Server extends Thread
             	  
               default:
             	  System.out.println("Opcao invalida");
+            	  message.addProperty("codigo", 500);
+            	  message.addProperty("mensagem", "Opcao invalida");
+            	  out.println(message.toString());
             	  break;
               }
 

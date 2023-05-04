@@ -19,6 +19,19 @@ public abstract class Validator {
 	public int getFailOpCode() {
 		return failOpCode;
 	}
+
+	public int getSucessOpCode() {
+		return sucessOpCode;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
+	public void setOpResponse(int opResponse) {
+		this.opResponse = opResponse;
+	}
+	
 	
 	
 	

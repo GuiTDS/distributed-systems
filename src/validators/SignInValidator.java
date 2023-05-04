@@ -8,24 +8,18 @@ import java.sql.SQLException;
 import control.ConexaoControl;
 import model.User;
 
-public class SignUpValidator extends Validator {
+public class SignInValidator extends Validator {
 	private User user;
-
 	private Connection conn;
 	private PreparedStatement pstm;
 	
 	public void setUser(User user) {
 		this.user = user;
 	}
-
+	
 	public boolean isValid() {
 		ValidateField validaCampo = new ValidateField();
-		if (!validaCampo.validateName(this.user.getName())) {
-			System.out.println("Falhou validar nome");
-			super.errorMessage = "O nome nao pode possuir numeros e deve ter no maximo 32 caracteres";
-			super.opResponse = super.failOpCode;
-			return false;
-		} else if (!validaCampo.validatePassword(this.user.getPassword())) {
+		if (!validaCampo.validatePassword(this.user.getPassword())) {
 			System.out.println("Falhou validar senha");
 			super.errorMessage = "A senha deve possuir no minimo 8 e no maximo 32 caracteres";
 			super.opResponse = super.failOpCode;
@@ -35,13 +29,12 @@ public class SignUpValidator extends Validator {
 			super.errorMessage = "O email deve possuir um @ e deve possuir no minimo 16 e no maximo 50 caracteres";
 			super.opResponse = super.failOpCode;
 			return false;
-		} else if(checkEmailBD()) {
-			System.out.println("Email ja cadastrado!");
-			super.errorMessage = "Email ja cadastrado no DB";
+		} else if(!checkEmailBD()) {
+			System.out.println("Email nao cadastrado cadastrado!");
+			super.errorMessage = "Email nao cadastrado no BD";
 			super.opResponse = super.failOpCode;
 			return false;
 		}
-		super.opResponse = super.sucessOpCode;
 		return true;
 	}
 	
