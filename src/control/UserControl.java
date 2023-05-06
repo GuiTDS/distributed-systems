@@ -77,8 +77,7 @@ public class UserControl {
 					Integer idUsuario = result.getInt(1);
 					user.setIdUsuario(idUsuario); // setando o id para enviar para o cliente caso ocorra o login.
 					String passwordHash = result.getString(2);
-					// boolean isPasswordValid = BCrypt.checkpw(user.getPassword(), passwordHash);
-					if (passwordHash == user.getPassword()) {
+					if (passwordHash.equals(user.getPassword())) {
 						UUID uuid = UUID.randomUUID();
 						String token = uuid.toString();
 						try {
@@ -136,6 +135,24 @@ public class UserControl {
 			return false;
 		} catch (SQLException erro) {
 			System.out.println("Erro ao validar token: " + erro);
+			return false;
+		}
+	}
+	
+	public boolean removeToken(User user) {
+		conn = new ConexaoControl().conectaBD();
+		try {
+			String sql = "UPDATE usuarios SET token = ? WHERE id_usuario = ?;";
+			pstm = conn.prepareStatement(sql);
+			pstm.setString(1, null);
+			pstm.setInt(2, user.getIdUsuario());
+			pstm.execute();
+			pstm.close();
+			return true;
+			
+		}catch(SQLException erro) {
+			System.out.println("Erro ao remover token no logout");
+			System.out.println(erro);
 			return false;
 		}
 	}

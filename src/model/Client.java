@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 public class Client {
     public static void main(String[] args) throws IOException {
 
-        String serverHostname = new String ("10.20.8.93");
+        String serverHostname = new String ("192.168.0.9");
 
         if (args.length > 0)
            serverHostname = args[0];
@@ -88,8 +88,7 @@ public class Client {
 				email = stdIn.readLine();
 				System.out.println("Informe senha:");
 				password = stdIn.readLine();
-				
-				//passwordHash = BCrypt.hashpw(password, BCrypt.gensalt()); //ARRUMAR O HASH
+				// FAZER HASH DA SENHA;
 				message.addProperty("id_operacao", 3);
 				message.addProperty("email", email);
 				message.addProperty("senha", password);
@@ -197,9 +196,6 @@ public class Client {
 				break;
 			default:
 					System.out.println("Informe uma opcao valida!");
-					out.println("trava tudo!!!");
-					respostaServidor = in.readLine();
-					System.out.println(respostaServidor);
 					break;
 			}
 		   }
@@ -239,5 +235,7 @@ public class Client {
 		System.out.println("14 - Bloqueia de estrada");
 		
     }
+    
+    
 }
 

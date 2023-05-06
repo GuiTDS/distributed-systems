@@ -152,7 +152,6 @@ public class Server extends Thread
             	  System.out.println("Server => Pedido de login");
             	  if(jsonValidator.isValidLogin()) {
 	            	  User userLogin = new User(jsonRecebido.get("email").getAsString(), jsonRecebido.get("senha").getAsString());
-	            	  
 	            	  if(userControl.authenticateUser(userLogin)) {
 	            		  loggedInUsers.add(clientSocket);
 	            		  System.out.println("Usuario autenticado");
@@ -178,7 +177,6 @@ public class Server extends Thread
             	  break;
             	  
               case 9:
-            	  //validar se existe os campos necessarios no json recebido
             	  System.out.println("Pedido de logout");
             	  if(jsonValidator.isValidLogout()) {
 	            	  User userLogout = new User(jsonRecebido.get("id_usuario").getAsInt());
@@ -186,6 +184,7 @@ public class Server extends Thread
 	            	  if(userControl.checkToken(userLogout, token)) {
 	            		  System.out.println("Token e Id Verificados...Realizando logout");
 	            		  loggedInUsers.remove(clientSocket);
+	            		  userControl.removeToken(userLogout);
 	            		  message.addProperty("codigo", 200);
 	            		  out.println(message.toString());
 	            	  }else {
