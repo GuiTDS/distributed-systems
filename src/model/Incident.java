@@ -16,6 +16,27 @@ public class Incident {
 		this.highway = highway;
 	}
 
+	public Date getDate() {
+		return date;
+	}
+
+	public int getIncidentType() {
+		return incidentType;
+	}
+
+	public int getKm() {
+		return km;
+	}
+
+	public String getHighway() {
+		return highway;
+	}
+
+	public int getIncidentTypes() {
+		return incidentTypes;
+	}
+
+	
 	
 	
 	

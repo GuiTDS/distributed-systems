@@ -179,7 +179,7 @@ public class Server extends Thread
             	  
             	  break;
               case 4:
-            	  System.out.println("Server => Reportar incidente");
+            	  System.out.println("Server => Reportar incidente"); // incidentControl pronto, fazer a table de incidentes no bd;
             	  break;
             	  
               case 9:
