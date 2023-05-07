@@ -13,20 +13,26 @@ import org.mindrot.jbcrypt.BCrypt;
 import model.User;
 import validators.SignInValidator;
 import validators.SignUpValidator;
+import validators.UpdateRegistrationValidator;
 
 public class UserControl {
 	private Connection conn;
 	private PreparedStatement pstm;
 	private SignUpValidator signUpValidator = new SignUpValidator();
 	private SignInValidator signInValidator = new SignInValidator();
+	private UpdateRegistrationValidator updateRegistrationValidator = new UpdateRegistrationValidator();
 	private String token;
 
-	public SignUpValidator getValidator() {
+	public SignUpValidator getSignUpValidator() {
 		return signUpValidator;
 	}
 
 	public SignInValidator getSignInValidator() {
 		return signInValidator;
+	}
+
+	public UpdateRegistrationValidator getUpdateRegistrationValidator() {
+		return updateRegistrationValidator;
 	}
 
 	public String getToken() {
@@ -89,6 +95,7 @@ public class UserControl {
 							System.out.println("inseriu token");
 							this.token = token;
 							pstm.close();
+							signInValidator.setOpResponse(signInValidator.getSucessOpCode());
 							return true;
 						} catch (SQLException erro) {
 							System.out.println("erro no usuario control ao inserir token\n" + erro);
@@ -115,6 +122,40 @@ public class UserControl {
 				return false;
 			}
 		}
+		return false;
+	}
+	
+	public boolean updateRegistration(User user, String token) {
+		conn = new ConexaoControl().conectaBD(); 
+		this.updateRegistrationValidator.setUser(user);
+		if(updateRegistrationValidator.isValid()) {
+			if(checkToken(user,token)) {
+				try {
+					String sql = "UPDATE usuarios SET nome = ?, email = ?, senha = ? WHERE id_usuario = ?"; // CASO PRECISE ATUALIZAR O TOKEN, MUDAR AQUI
+					pstm = conn.prepareStatement(sql);
+					pstm.setString(1, user.getName());
+					pstm.setString(2, user.getEmail());
+					pstm.setString(3, user.getPassword());
+					pstm.setInt(4, user.getIdUsuario());
+					pstm.execute();
+					System.out.println("Atualizou os dados do usuario!");
+					pstm.close();
+					return true;
+				}catch(SQLException erro) {
+					System.out.println("Erro no update: " + erro);
+					updateRegistrationValidator.setErrorMessage("Erro ao atualizar dados no BD");
+					updateRegistrationValidator.setOpResponse(updateRegistrationValidator.getFailOpCode());
+					return false;
+				}
+				
+			} else {
+				System.out.println("NAO VALIDOU O TOKEN");
+				updateRegistrationValidator.setErrorMessage("Erro ao validar token");
+				updateRegistrationValidator.setOpResponse(updateRegistrationValidator.getFailOpCode());
+				return false;
+			}
+		}
+		System.out.println("NAO VALIDOU OS CAMPOS NECESSARIOS DO UPDATE");
 		return false;
 	}
 

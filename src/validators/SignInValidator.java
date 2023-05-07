@@ -10,8 +10,7 @@ import model.User;
 
 public class SignInValidator extends Validator {
 	private User user;
-	private Connection conn;
-	private PreparedStatement pstm;
+
 	
 	public void setUser(User user) {
 		this.user = user;
@@ -30,21 +29,21 @@ public class SignInValidator extends Validator {
 			super.opResponse = super.failOpCode;
 			return false;
 		} else if(!checkEmailBD()) {
-			System.out.println("Email nao cadastrado cadastrado!");
-			super.errorMessage = "Email nao cadastrado no BD";
-			super.opResponse = super.failOpCode;
-			return false;
-		}
-		return true;
-	}
-	
+			System.out.println("Email nao cadastrado cadastrado!"); 
+			super.errorMessage = "Email ou senha incorretos"; 
+			super.opResponse = super.failOpCode; 
+			return false; 
+		} 
+		return true; 
+	} 
+	 
 	public boolean checkEmailBD() {
-		conn = new ConexaoControl().conectaBD();
+		super.conn = new ConexaoControl().conectaBD();
 		try {
 			String sql = "SELECT * FROM usuarios WHERE email = ?;";
-			pstm = conn.prepareStatement(sql);
-			pstm.setString(1,user.getEmail());
-			ResultSet result = pstm.executeQuery();
+			super.pstm = super.conn.prepareStatement(sql);
+			super.pstm.setString(1,user.getEmail());
+			ResultSet result = super.pstm.executeQuery();
 			if(result.next())
 					return true;
 			return false;

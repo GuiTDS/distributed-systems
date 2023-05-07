@@ -164,7 +164,13 @@ public class Client {
 					        message.addProperty("token", token);
 					        message.addProperty("id_usuario", userId);
 					        out.println(message.toString());
-					        //respostaServidor = in.readLine();
+					        respostaServidor = in.readLine();
+					        jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
+					        if(jsonRecebido.get("codigo").getAsInt() == 200) {
+					        	System.out.println("Atualizacao realizada com sucesso!");
+					        } else {
+					        	System.out.println("Erro ao cadastrar: " + jsonRecebido.get("mensagem").getAsString());
+					        }
 							break;
 						case 6:
 							System.out.println("Removendo cadastro...");

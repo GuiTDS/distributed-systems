@@ -117,12 +117,12 @@ public class Server extends Thread
 	
 	            	  if(userControl.signUpUser(userSignUp)) {
 	            		  System.out.println("Usuario cadastrado no banco de dados com sucesso!");
-	            		  message.addProperty("codigo", userControl.getValidator().getOpResponse());
+	            		  message.addProperty("codigo", userControl.getSignUpValidator().getOpResponse());
 	            		  out.println(message.toString()); // mandar json com resposta 200
 	            	  }
 	            	  else {
-	            		  message.addProperty("codigo", userControl.getValidator().getFailOpCode());
-	            		  message.addProperty("mensagem", userControl.getValidator().getErrorMessage());
+	            		  message.addProperty("codigo", userControl.getSignUpValidator().getFailOpCode());
+	            		  message.addProperty("mensagem", userControl.getSignUpValidator().getErrorMessage());
 	            		  out.println(message.toString());
 	            	  }
             	  } else {
@@ -136,10 +136,16 @@ public class Server extends Thread
             	  if(jsonValidator.isValidUpdate()) {
             		  User user = new User(jsonRecebido.get("nome").getAsString(), jsonRecebido.get("email").getAsString(),
             				  jsonRecebido.get("senha").getAsString(), jsonRecebido.get("id_usuario").getAsInt());
-            		  if(userControl.checkToken(user, jsonRecebido.get("token").getAsString())) {
-            			  
+            		  if(userControl.updateRegistration(user, jsonRecebido.get("token").getAsString())) {
+            			  System.out.println("Atualizacao de cadastro realizada com sucesso!");
+            			  message.addProperty("codigo", userControl.getUpdateRegistrationValidator().getOpResponse());
+            			  message.addProperty("token", jsonRecebido.get("token").getAsString());// devolvendo o msm token, verificar isso!!!
+            			  out.println(message.toString());
             		  }else {
-            			  
+            			  System.out.println("Erro ao atualizar cadastro!");
+            			  message.addProperty("codigo", userControl.getUpdateRegistrationValidator().getOpResponse());
+            			  message.addProperty("mensagem", userControl.getUpdateRegistrationValidator().getErrorMessage());
+            			  out.println(message.toString());
             		  }
             	  }else {
             		  message.addProperty("codigo", jsonValidator.getOpResponse());
@@ -155,7 +161,7 @@ public class Server extends Thread
 	            	  if(userControl.authenticateUser(userLogin)) {
 	            		  loggedInUsers.add(clientSocket);
 	            		  System.out.println("Usuario autenticado");
-	            		  message.addProperty("codigo", 200);
+	            		  message.addProperty("codigo", userControl.getSignInValidator().getOpResponse());
 	            		  message.addProperty("token", userControl.getToken());
 	            		  message.addProperty("id_usuario", userLogin.getIdUsuario());
 	            		  out.println(message.toString());
