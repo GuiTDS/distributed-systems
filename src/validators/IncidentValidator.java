@@ -24,7 +24,7 @@ public class IncidentValidator extends Validator {
 			super.setErrorMessage("O codigo do incidente informado nao existe");
 			super.setOpResponse(super.getFailOpCode());
 			return false;
-		}
+		}//validar a data aqui
 		super.setOpResponse(super.getSucessOpCode());
 		return true;
 	}

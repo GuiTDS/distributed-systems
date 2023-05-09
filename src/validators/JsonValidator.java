@@ -69,6 +69,16 @@ public class JsonValidator extends Validator {
 		return true;
 	}
 	
+	public boolean isValidReportIncident() {
+		JsonObject objJson = getJsonObject();
+		if(!objJson.has("id_usuario") || !objJson.has("token") || !objJson.has("data") || !objJson.has("rodovia") || !objJson.has("km") || !objJson.has("tipo_incidente")) {
+			super.opResponse = super.failOpCode;
+			super.errorMessage = "O json enviado nao possui os campos necessarios para reportar incidente(id_usuario, token, data, rodovia, km, tipo_incidente)";
+			return false;
+		}
+		return true;
+	}
+
 	public JsonObject getJsonObject() {
 		return new Gson().fromJson(this.json, JsonObject.class);
 	}

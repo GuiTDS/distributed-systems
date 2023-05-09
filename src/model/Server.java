@@ -1,8 +1,12 @@
 package model;
 
 import java.net.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-
+import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
+import control.IncidentControl;
 import control.UserControl;
 import validators.JsonValidator;
 import validators.SignUpValidator;
@@ -83,6 +88,8 @@ public class Server extends Thread
          
          JsonValidator jsonValidator = new JsonValidator();
          UserControl userControl = new UserControl();
+         IncidentControl incidentControl = new IncidentControl();
+         
          while (true) 
              {  
         	  JsonObject message = new JsonObject();
@@ -179,7 +186,33 @@ public class Server extends Thread
             	  
             	  break;
               case 4:
-            	  System.out.println("Server => Reportar incidente"); // incidentControl pronto, fazer a table de incidentes no bd;
+            	  System.out.println("Server => Reportar incidente");
+            	  if(jsonValidator.isValidReportIncident()) {
+            		  //validar o usuario --> checar o token e o id_usuario,
+            		  //validar as informacoes do incidente
+            		  //cadastrar incidente
+            		  //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            		  String date = jsonRecebido.get("data").getAsString();
+            		  //LocalDateTime dateTime = LocalDateTime.parse(date,formatter);//verificar se o parse deu certo pra validar a data;
+            		  
+            		  User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+            		  String token = jsonRecebido.get("token").getAsString();      		  
+            		  Incident incident = new Incident(date, jsonRecebido.get("tipo_incidente").getAsInt(),jsonRecebido.get("km").getAsInt(), jsonRecebido.get("rodovia").getAsString());
+            		  if(incidentControl.reportIncident(incident, jsonRecebido.get("id_usuario").getAsInt())) {
+            			  System.out.println("Incidente reportador com sucesso!");
+            			  message.addProperty("codigo", incidentControl.getIncidentValidator().getOpResponse());
+            			  out.println(message.toString());
+            		  }else {
+            			  System.out.println("Erro ao reportar acidente");
+            			  message.addProperty("codigo", incidentControl.getIncidentValidator().getOpResponse());
+            			  message.addProperty("mensagem", incidentControl.getIncidentValidator().getErrorMessage());
+            			  out.println(message.toString());
+            		  }
+            	  } else {
+            		 message.addProperty("codigo", jsonValidator.getOpResponse());
+            		 message.addProperty("mensagem", jsonValidator.getErrorMessage());
+            		 out.println(message.toString());
+            	  }
             	  break;
             	  
               case 9:

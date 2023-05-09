@@ -6,6 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -14,7 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class Client {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParseException {
 
         String serverHostname = new String ("192.168.0.9");
 
@@ -119,24 +123,36 @@ public class Client {
 							System.out.println("Informe o KM do incidente:");
 							int km = Integer.parseInt(stdIn.readLine()); //km
 							
-							Date date = new Date(); // data
-							System.out.println("Informe o dia do incidente:");
-							date.setDate(Integer.parseInt(stdIn.readLine()));
-							System.out.println("Inforem o mes do incidente:");
-							date.setMonth(Integer.parseInt(stdIn.readLine()));
+							LocalDateTime dateTime = LocalDateTime.now();
+							DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 							System.out.println("Informe o ano do incidente:");
-							date.setYear(Integer.parseInt(stdIn.readLine()));
+							int year = Integer.parseInt(stdIn.readLine());
+							dateTime = dateTime.withYear(year);
+							System.out.println("Inforem o mes do incidente:");
+							int month = Integer.parseInt(stdIn.readLine());
+							dateTime = dateTime.withMonth(month);
+							System.out.println("Informe o dia do incidente:");
+							int day = Integer.parseInt(stdIn.readLine());
+							dateTime = dateTime.withDayOfMonth(day);
+							System.out.println("Informe a hora do incidente:");
+							int hour = Integer.parseInt(stdIn.readLine());
+							dateTime = dateTime.withHour(hour);
+							System.out.println("Informe o minuto do incidente:");
+							int minutes = Integer.parseInt(stdIn.readLine());
+							dateTime = dateTime.withMinute(minutes);
+							String formatDate = dateTime.format(formatter);
 							
-							//message = null;
 							message = new JsonObject();
 							message.addProperty("id_operacao", 4);
-							message.addProperty("data", date.toString());
+							message.addProperty("data", formatDate);
 							message.addProperty("rodovia", highway);
 							message.addProperty("km", km);
 							message.addProperty("tipo_incidente", incidentType);
 							message.addProperty("token", token);
 							message.addProperty("id_usuario", userId);
 							out.println(message.toString());
+							respostaServidor = in.readLine();
+							System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 							
 							break;
 						case 2:
