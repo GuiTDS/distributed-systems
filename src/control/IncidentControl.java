@@ -51,6 +51,11 @@ public class IncidentControl {
 				System.out.println(erro);
 				incidentValidator.setOpResponse(incidentValidator.getFailOpCode());
 				return false;
+			}catch(Exception e) {
+				incidentValidator.setErrorMessage("Erro ao converter data");
+				System.out.println(e);
+				incidentValidator.setOpResponse(incidentValidator.getFailOpCode());
+				return false;
 			}
 		}
 		return false;

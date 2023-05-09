@@ -185,7 +185,7 @@ public class Client {
 					        if(jsonRecebido.get("codigo").getAsInt() == 200) {
 					        	System.out.println("Atualizacao realizada com sucesso!");
 					        } else {
-					        	System.out.println("Erro ao cadastrar: " + jsonRecebido.get("mensagem").getAsString());
+					        	System.out.println("Erro ao atualizar cadastro: " + jsonRecebido.get("mensagem").getAsString());
 					        }
 							break;
 						case 6:

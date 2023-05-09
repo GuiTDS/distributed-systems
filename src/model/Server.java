@@ -7,6 +7,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,16 +25,39 @@ import control.UserControl;
 import validators.JsonValidator;
 import validators.SignUpValidator;
 
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.TextArea;
 import java.io.*; 
 
 public class Server extends Thread
 { 
  protected Socket clientSocket;
- protected static ArrayList<Socket> loggedInUsers;
+
+ protected static HashMap<Integer, String> loggedInUsers;
+ protected static TextArea textArea;
  public static void main(String[] args) throws IOException 
    { 
+	 JFrame frame = new JFrame();
+		frame.setBounds(100, 100, 475, 550);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		textArea = new TextArea();
+		textArea.setEditable(false);
+		textArea.setBounds(16, 120, 440, 338);
+		frame.getContentPane().add(textArea);
+		
+		JLabel lblNewLabel = new JLabel("Lista de usuários logados");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblNewLabel.setBounds(107, 35, 259, 50);
+		frame.getContentPane().add(lblNewLabel);
+		frame.setVisible(true);
+		
     ServerSocket serverSocket = null; 
-    loggedInUsers = new ArrayList<Socket>();
+    
+    loggedInUsers = new HashMap<Integer,String>();
+    
     try { 
          serverSocket = new ServerSocket(24999); 
          System.out.println ("Connection Socket Created");
@@ -166,7 +195,7 @@ public class Server extends Thread
             	  if(jsonValidator.isValidLogin()) {
 	            	  User userLogin = new User(jsonRecebido.get("email").getAsString(), jsonRecebido.get("senha").getAsString());
 	            	  if(userControl.authenticateUser(userLogin)) {
-	            		  loggedInUsers.add(clientSocket);
+	            		  loggedInUsers.put(userLogin.getIdUsuario(), userLogin.getEmail());
 	            		  System.out.println("Usuario autenticado");
 	            		  message.addProperty("codigo", userControl.getSignInValidator().getOpResponse());
 	            		  message.addProperty("token", userControl.getToken());
@@ -191,9 +220,8 @@ public class Server extends Thread
             		  //validar o usuario --> checar o token e o id_usuario,
             		  //validar as informacoes do incidente
             		  //cadastrar incidente
-            		  //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            		  
             		  String date = jsonRecebido.get("data").getAsString();
-            		  //LocalDateTime dateTime = LocalDateTime.parse(date,formatter);//verificar se o parse deu certo pra validar a data;
             		  
             		  User user = new User(jsonRecebido.get("id_usuario").getAsInt());
             		  String token = jsonRecebido.get("token").getAsString();      		  
@@ -221,8 +249,10 @@ public class Server extends Thread
 	            	  User userLogout = new User(jsonRecebido.get("id_usuario").getAsInt());
 	            	  String token = jsonRecebido.get("token").getAsString();
 	            	  if(userControl.checkToken(userLogout, token)) {
+	            		 
 	            		  System.out.println("Token e Id Verificados...Realizando logout");
 	            		  loggedInUsers.remove(clientSocket);
+	            		  loggedInUsers.remove(userLogout.getIdUsuario());
 	            		  userControl.removeToken(userLogout);
 	            		  message.addProperty("codigo", 200);
 	            		  out.println(message.toString());
@@ -251,6 +281,14 @@ public class Server extends Thread
         	  
               
              }
+             if(loggedInUsers.size() > 0) {
+            	 loggedInUsers.forEach((id,email) -> {
+      			  textArea.setText(id + ", " + email + "\n");
+      		  }); 
+             } else {
+            	 textArea.setText("");
+             }
+         	 
              }
          System.out.println("Lista de usuarios logados:");
          System.out.println(loggedInUsers);
