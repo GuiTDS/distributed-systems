@@ -43,7 +43,7 @@ public class JsonValidator extends Validator {
 		JsonObject objJson = new Gson().fromJson(this.json, JsonObject.class);
 		if(!objJson.has("email") || !objJson.has("senha")) {
 			super.opResponse = super.failOpCode;
-			super.errorMessage = "O json enviado nao possui os campos necessarios para o login(nome,email,senha)";
+			super.errorMessage = "O json enviado nao possui os campos necessarios para o login(email,senha)";
 			return false;
 		}else {
 			try {
@@ -80,11 +80,11 @@ public class JsonValidator extends Validator {
 		}
 	}
 	
-	public boolean isValidLogout() {
+	public boolean isValidIdToken() {
 		JsonObject objJson = getJsonObject();
 		if(!objJson.has("token") || !objJson.has("id_usuario")) {
 			super.opResponse = super.failOpCode;
-			super.errorMessage = "O json enviado nao possui os campos necessarios para realizar logout(token,id_usuario)";
+			super.errorMessage = "O json enviado nao possui os campos necessarios(token,id_usuario)";
 			return false;
 		}else {
 			try {
@@ -133,10 +133,10 @@ public class JsonValidator extends Validator {
 			try {
 				String token = objJson.get("token").getAsString();
 				int user_id = objJson.get("id_usuario").getAsInt();
-				String data = objJson.get("data").getAsString();
-				String rodovia = objJson.get("rodovia").getAsString();
+				String date = objJson.get("data").getAsString();
+				String highway = objJson.get("rodovia").getAsString();
 				int km = objJson.get("km").getAsInt();
-				int tipo_incidente = objJson.get("tipo_incidente").getAsInt();
+				int incident_type = objJson.get("tipo_incidente").getAsInt();
 				return true;
 			}catch(UnsupportedOperationException e) {
 				super.opResponse = super.failOpCode;
@@ -145,6 +145,26 @@ public class JsonValidator extends Validator {
 			}
 		
 	}
+	}
+	
+	public boolean isValidMyReports() {
+		JsonObject objJson = getJsonObject();
+		if(!objJson.has("token") || !objJson.has("id_usuario")) {
+			super.opResponse = super.failOpCode;
+			super.errorMessage = "O json enviado nao possui os campos necessarios para solicitar os incidentes reportados(token,id_usuario)";
+			return false;
+		}else {
+			try {
+				String token = objJson.get("token").getAsString();
+				int user_id = objJson.get("id_usuario").getAsInt();
+				return true;
+			}catch(UnsupportedOperationException e) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "O json possui campos nulos!";
+				return false;
+			}
+			
+		}
 	}
 
 	public JsonObject getJsonObject() {

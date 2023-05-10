@@ -3,6 +3,7 @@ package control;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -59,5 +60,34 @@ public class IncidentControl {
 			}
 		}
 		return false;
+	}
+	
+	public boolean getMyReports(int userId) {
+		//devolver a lista de incidentes reportados pelo usuario
+		
+		conn = new ConexaoControl().conectaBD();
+		try {
+			String sql = "SELECT rodovia, data_incidente FROM incidentes WHERE id_usuario = ?;";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, userId);
+			ResultSet result = pstm.executeQuery();
+			// verificar se o token recebido do BD corresponde ao enviado pelo usuario
+			if (result.next()) {
+				
+				do {
+					int i = 1;
+					System.out.println(result.getString(i));
+					i++;
+					Timestamp time = result.getTimestamp(i);
+					System.out.println(time);
+					i++;
+				}while(result.next());
+				return true;
+			}
+			return false;
+		} catch (SQLException erro) {
+			System.out.println("Erro ao validar token: " + erro);
+			return false;
+		}
 	}
 }

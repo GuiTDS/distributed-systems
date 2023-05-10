@@ -20,9 +20,10 @@ import com.google.gson.JsonObject;
 public class Client {
     public static void main(String[] args) throws IOException, ParseException {
 
-        String serverHostname = new String ("26.20.133.105");
+        String serverHostname = new String ("192.168.0.13");
         //ip ruivo: 26.10.188.162 
         //ip kenji: 26.20.133.105
+        //meu ip casa: 192.168.0.13
         if (args.length > 0)
            serverHostname = args[0];
         System.out.println ("Attemping to connect to host " +
@@ -161,6 +162,13 @@ public class Client {
 							break;
 						case 3:
 							System.out.println("Solicitar incidentes reportados por mim...");
+							message = new JsonObject();
+							message.addProperty("id_operacao", 6);
+							message.addProperty("token", token);
+							message.addProperty("id_usuario", userId);
+							out.println(message.toString());
+							respostaServidor = in.readLine();
+							System.out.println(respostaServidor);
 							break;
 						case 4:
 							System.out.println("Remover incidente...");

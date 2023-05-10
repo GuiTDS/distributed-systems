@@ -122,6 +122,7 @@ public class Server extends Thread
          while (true) 
              {  
         	  JsonObject message = new JsonObject();
+        	  
         	  System.out.println("----------- SERVIDOR -----------");
         	  System.out.println("Quantidade de usuarios logados: " + loggedInUsers.size());
     		  System.out.println("Lista de usuarios logados:");
@@ -243,9 +244,24 @@ public class Server extends Thread
             	  }
             	  break;
             	  
+              case 6:
+            	  System.out.println("Server => Solicitacao de incidentes reportados pelo usuario");
+            	  if(jsonValidator.isValidMyReports()) {
+            		  //criar usuario e validar token
+            		  if(incidentControl.getMyReports(jsonRecebido.get("id_usuario").getAsInt())) {
+            			  
+            		  }
+            		  
+            		  
+            	  }else {
+            		  message.addProperty("codigo", jsonValidator.getOpResponse());
+            		  message.addProperty("mensagem", jsonValidator.getErrorMessage());
+            		  out.println(message);
+            	  }
+            	  break;
               case 9:
             	  System.out.println("Pedido de logout");
-            	  if(jsonValidator.isValidLogout()) {
+            	  if(jsonValidator.isValidIdToken()) {
 	            	  User userLogout = new User(jsonRecebido.get("id_usuario").getAsInt());
 	            	  String token = jsonRecebido.get("token").getAsString();
 	            	  if(userControl.checkToken(userLogout, token)) {
