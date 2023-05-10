@@ -18,12 +18,12 @@ public class SignInValidator extends Validator {
 	
 	public boolean isValid() {
 		ValidateField validaCampo = new ValidateField();
-		if (!validaCampo.validatePassword(this.user.getPassword())) {
+		if (this.user.getPassword() == null || !validaCampo.validatePassword(this.user.getPassword())) {
 			System.out.println("Falhou validar senha");
 			super.errorMessage = "A senha deve possuir no minimo 8 e no maximo 32 caracteres";
 			super.opResponse = super.failOpCode;
 			return false;
-		} else if(!validaCampo.validateEmail(this.user.getEmail())) {
+		} else if(this.user.getEmail() == null || !validaCampo.validateEmail(this.user.getEmail())) {
 			System.out.println("Falhou validar email");
 			super.errorMessage = "O email deve possuir um @ e deve possuir no minimo 16 e no maximo 50 caracteres";
 			super.opResponse = super.failOpCode;

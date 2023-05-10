@@ -3,6 +3,7 @@ package validators;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 
 public class JsonValidator extends Validator {
 	private String json;
@@ -20,13 +21,22 @@ public class JsonValidator extends Validator {
       		  super.opResponse = super.failOpCode;
       		  super.errorMessage = "O json recebido nao possui id_operacao!";
       		  return false;
+      	  }else {
+	      		try {
+	      		  int id_operacao = objJson.get("id_operacao").getAsInt();  
+	      		  return true;
+	      	  }catch(UnsupportedOperationException e) {
+	  			super.opResponse = super.failOpCode;
+	  			super.errorMessage = "O json possui campos nulos!";
+	  			return false;
+	      	  }  
       	  }
-      	  return true;
         } catch (JsonParseException e) {
         	super.opResponse = super.failOpCode;
         	super.errorMessage = "A mensagem enviada nao esta no formato Json";
       	  return false;
         }
+		
 	}
 	
 	public boolean isValidLogin() {
@@ -35,8 +45,18 @@ public class JsonValidator extends Validator {
 			super.opResponse = super.failOpCode;
 			super.errorMessage = "O json enviado nao possui os campos necessarios para o login(nome,email,senha)";
 			return false;
-		}
-		return true;
+		}else {
+			try {
+				String email = objJson.get("email").getAsString();
+				String password = objJson.get("senha").getAsString();
+				return true;
+			}catch(UnsupportedOperationException e) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "O json possui campos nulos!";
+				return false;
+			}
+		
+	}
 	}
 	
 	public boolean isValidSignUp() {
@@ -45,8 +65,19 @@ public class JsonValidator extends Validator {
 			super.opResponse = super.failOpCode;
 			super.errorMessage = "O json enviado nao possui os campos necessarios para realizar o cadastro(nome,email,senha)";
 			return false;
+		}else {
+			try {
+				String name = objJson.get("nome").getAsString(); 
+				String email = objJson.get("email").getAsString();
+				String password = objJson.get("senha").getAsString();
+				return true;
+			}catch(UnsupportedOperationException e) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "O json possui campos nulos!";
+				return false;
+			}
+			
 		}
-		return true;
 	}
 	
 	public boolean isValidLogout() {
@@ -55,8 +86,18 @@ public class JsonValidator extends Validator {
 			super.opResponse = super.failOpCode;
 			super.errorMessage = "O json enviado nao possui os campos necessarios para realizar logout(token,id_usuario)";
 			return false;
+		}else {
+			try {
+				String token = objJson.get("token").getAsString();
+				int user_id = objJson.get("id_usuario").getAsInt();
+				return true;
+			}catch(UnsupportedOperationException e) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "O json possui campos nulos!";
+				return false;
+			}
+			
 		}
-		return true;
 	}
 	
 	public boolean isValidUpdate() {
@@ -65,8 +106,21 @@ public class JsonValidator extends Validator {
 			super.opResponse = super.failOpCode;
 			super.errorMessage = "O json enviado nao possui os campos necessarios para realizar a atualizacao de cadastro(nome,email,senha, id_usuario, token)";
 			return false;
-		}
-		return true;
+		}else {
+			try {
+				String email = objJson.get("email").getAsString();
+				String password = objJson.get("senha").getAsString();
+				String name = objJson.get("nome").getAsString();
+				String token = objJson.get("token").getAsString();
+				int user_id = objJson.get("id_usuario").getAsInt();
+				return true;
+			}catch(UnsupportedOperationException e) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "O json possui campos nulos!";
+				return false;
+			}
+		
+	}
 	}
 	
 	public boolean isValidReportIncident() {
@@ -75,8 +129,22 @@ public class JsonValidator extends Validator {
 			super.opResponse = super.failOpCode;
 			super.errorMessage = "O json enviado nao possui os campos necessarios para reportar incidente(id_usuario, token, data, rodovia, km, tipo_incidente)";
 			return false;
-		}
-		return true;
+		}else {
+			try {
+				String token = objJson.get("token").getAsString();
+				int user_id = objJson.get("id_usuario").getAsInt();
+				String data = objJson.get("data").getAsString();
+				String rodovia = objJson.get("rodovia").getAsString();
+				int km = objJson.get("km").getAsInt();
+				int tipo_incidente = objJson.get("tipo_incidente").getAsInt();
+				return true;
+			}catch(UnsupportedOperationException e) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "O json possui campos nulos!";
+				return false;
+			}
+		
+	}
 	}
 
 	public JsonObject getJsonObject() {

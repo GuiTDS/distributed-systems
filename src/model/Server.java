@@ -59,7 +59,7 @@ public class Server extends Thread
     loggedInUsers = new HashMap<Integer,String>();
     
     try { 
-         serverSocket = new ServerSocket(24999); 
+         serverSocket = new ServerSocket(24001); 
          System.out.println ("Connection Socket Created");
          
          try { 
@@ -299,7 +299,7 @@ public class Server extends Thread
     catch (IOException e) 
         { 
          System.err.println("Problem with Communication Server");
-         System.exit(1); 
+         
         } 
     }
 } 

@@ -20,8 +20,9 @@ import com.google.gson.JsonObject;
 public class Client {
     public static void main(String[] args) throws IOException, ParseException {
 
-        String serverHostname = new String ("192.168.0.9");
-
+        String serverHostname = new String ("26.20.133.105");
+        //ip ruivo: 26.10.188.162 
+        //ip kenji: 26.20.133.105
         if (args.length > 0)
            serverHostname = args[0];
         System.out.println ("Attemping to connect to host " +
@@ -32,7 +33,7 @@ public class Client {
         BufferedReader in = null;
         
         try {
-            echoSocket = new Socket(serverHostname, 24999);
+            echoSocket = new Socket(serverHostname, 24001);
             out = new PrintWriter(echoSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(
                                         echoSocket.getInputStream()));
@@ -71,8 +72,8 @@ public class Client {
 		        message.addProperty("id_operacao", 1);
 		        message.addProperty("nome", name);
 		        message.addProperty("email", email);
-		        message.addProperty("senha", password);
-		        
+		       message.addProperty("senha", password);
+		       // message.add("senha", null);
 		        out.println(message.toString()); 
 		        //out.println("enviando msg que nao eh json");
 		        
@@ -191,6 +192,16 @@ public class Client {
 						case 6:
 							System.out.println("Removendo cadastro...");
 							break;
+							
+						case 8:
+							message = new JsonObject();
+							message.addProperty("id_operacao", 9);
+							message.addProperty("token", "8=======D");
+							message.addProperty("id_usuario", 234);
+							out.println(message.toString());
+							respostaServidor = in.readLine();
+							System.out.println("Cliente => " + respostaServidor);
+							
 						case 0:
 							login = false;
 							message = new JsonObject();
@@ -211,7 +222,8 @@ public class Client {
 				}else {
 					System.out.println("Login nao realizado");
 				}
-				break;		
+				break;
+		
 			case 0:
 				System.out.println("Saindo da aplicacao"); //Enviar uma mensagem para o servidor com o codigo para sair, se nao o server recebe null;
 				run = false;

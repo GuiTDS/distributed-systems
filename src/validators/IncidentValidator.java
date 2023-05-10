@@ -12,15 +12,15 @@ public class IncidentValidator extends Validator {
 	@Override
 	public boolean isValid() { //FALTA VALIDAR O DATE
 		ValidateField validaCampo = new ValidateField();
-		if(!validaCampo.validateHighway(incident.getHighway())) {
+		if(incident.getHighway() == null || !validaCampo.validateHighway(incident.getHighway())) {
 			super.setErrorMessage("A rodovia deve seguir o formato: BR-111");
 			super.setOpResponse(super.getFailOpCode());
 			return false;
-		} else if(!validaCampo.validateKM(incident.getKm())) {
+		} else if((Integer)incident.getKm() == null || !validaCampo.validateKM(incident.getKm())) {
 			super.setErrorMessage("O KM deve possuir no minimo 1 e no maximo 3 digitos");
 			super.setOpResponse(super.getFailOpCode());
 			return false;
-		} else if(!validaCampo.validateIncidentType(incident.getIncidentType(), incident.getIncidentTypes())) {
+		} else if((Integer)incident.getIncidentType() == null || !validaCampo.validateIncidentType(incident.getIncidentType(), incident.getIncidentTypes())) {
 			super.setErrorMessage("O codigo do incidente informado nao existe");
 			super.setOpResponse(super.getFailOpCode());
 			return false;
