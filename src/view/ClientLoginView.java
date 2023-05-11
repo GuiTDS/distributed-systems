@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -18,14 +19,22 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JTextField;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import javax.swing.JPasswordField;
+
 public class ClientLoginView {
 
 	private JFrame frame;
 	private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;
-    private JTextField textField;
-    private JTextField textField_1;
+    private JTextField emailField;
+    private JsonObject message, jsonServidor;
+    private String respostaServidor;
+    private Gson gson = new Gson();
+    private JPasswordField passwordField;
+    
 	/**
 	 * Launch the application.
 	 */
@@ -54,22 +63,47 @@ public class ClientLoginView {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 550, 510);
+		frame.setBounds(100, 100, 550, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
 		JButton btnLogin = new JButton("Login");
+		btnLogin.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnLogin.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) { // REALIZAR LOGIN
+				message = new JsonObject();
+				String email = emailField.getText();
+				String password = new String(passwordField.getPassword());
+				String passwordHash = hashed(password);
+				message.addProperty("id_operacao", 3);
+				message.addProperty("email", email);
+				message.addProperty("senha", passwordHash);
+				System.out.println("Cliente => " + message.toString());
+				out.println(message.toString());
+				try {
+					respostaServidor = in.readLine();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				System.out.println("Cliente => resposta do servidor: " + respostaServidor);
+				jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
+				if (jsonServidor.get("codigo").getAsInt() == 200) {
+					//ABRIR TELA PRINCIPAL
+					JOptionPane.showMessageDialog(frame, "Login realizado com sucesso!");
+				}else {
+					//EXIBE ERRO
+					JOptionPane.showMessageDialog(frame, jsonServidor.get("mensagem").getAsString());
+				}
 			}
 		});
 		btnLogin.setBounds(182, 282, 141, 43);
 		frame.getContentPane().add(btnLogin);
 		
 		JButton btnSignUp = new JButton("Cadastro");
-		btnSignUp.addActionListener(new ActionListener() {
+		btnSignUp.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnSignUp.addActionListener(new ActionListener() { // ABRIR TELA DE CADASTRO
 			public void actionPerformed(ActionEvent e) {
-			ClientSignUpView signUpView = new ClientSignUpView();
+			ClientSignUpView signUpView = new ClientSignUpView(clientSocket, out, in);
 			signUpView.setVisible(true);
 				
 			}
@@ -84,27 +118,26 @@ public class ClientLoginView {
 		frame.getContentPane().add(lblNewLabel_2);
 		
 		JLabel lblEmail = new JLabel("Email");
-		lblEmail.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-		lblEmail.setBounds(234, 100, 38, 20);
+		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblEmail.setBounds(234, 100, 51, 20);
 		frame.getContentPane().add(lblEmail);
 		
-		textField = new JTextField();
-		textField.setBounds(136, 130, 235, 19);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
+		emailField = new JTextField();
+		emailField.setBounds(136, 130, 235, 19);
+		frame.getContentPane().add(emailField);
+		emailField.setColumns(10);
 		
 		JLabel lblPassword = new JLabel("Senha");
-		lblPassword.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-		lblPassword.setBounds(234, 173, 38, 20);
+		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblPassword.setBounds(234, 173, 51, 20);
 		frame.getContentPane().add(lblPassword);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(136, 203, 235, 19);
-		frame.getContentPane().add(textField_1);
+		passwordField = new JPasswordField();
+		passwordField.setBounds(136, 211, 235, 19);
+		frame.getContentPane().add(passwordField);
 		//SOQUETES
 		try {
-            clientSocket = new Socket("localhost", 10008);
+            clientSocket = new Socket("localhost", 24001);
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
@@ -115,5 +148,22 @@ public class ClientLoginView {
             System.out.println("Erro ao conectar ao servidor: " + e.getMessage());
             System.exit(1);
         }
+	}
+	
+	public static String hashed(String pswd) {
+
+		String hashed = "";
+
+		for (int i = 0; i < pswd.length(); i++) {
+			char c = pswd.charAt(i);
+			int asciiValue = (int) c;
+			int novoAsciiValue = asciiValue + pswd.length();
+			if (novoAsciiValue > 127) {
+				novoAsciiValue = novoAsciiValue - 127 + 32;
+			}
+			char novoCaractere = (char) novoAsciiValue;
+			hashed += novoCaractere;
+		}
+		return hashed;
 	}
 }
