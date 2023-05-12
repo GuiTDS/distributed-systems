@@ -63,7 +63,7 @@ public class ClientLoginView {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 550, 500);
+		frame.setBounds(100, 100, 520, 510);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		JButton btnLogin = new JButton("Login");
@@ -90,6 +90,8 @@ public class ClientLoginView {
 				if (jsonServidor.get("codigo").getAsInt() == 200) {
 					//ABRIR TELA PRINCIPAL
 					JOptionPane.showMessageDialog(frame, "Login realizado com sucesso!");
+					ClientSignedInView signedInView = new ClientSignedInView(clientSocket, out, in);
+					signedInView.setVisible(true);
 				}else {
 					//EXIBE ERRO
 					JOptionPane.showMessageDialog(frame, jsonServidor.get("mensagem").getAsString());

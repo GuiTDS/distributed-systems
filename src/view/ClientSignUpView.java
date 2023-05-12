@@ -28,9 +28,7 @@ import java.awt.event.ActionEvent;
 public class ClientSignUpView extends JFrame {
 
 	private JPanel contentPane;
-	private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+
     private JTextField nameField;
     private JTextField emailField;
     private JPasswordField passwordField;
@@ -61,12 +59,10 @@ public class ClientSignUpView extends JFrame {
 	 * @param out 
 	 */
 	public ClientSignUpView(Socket clientSocket, PrintWriter out, BufferedReader in) {
-		this.clientSocket = clientSocket;
-		this.out = out;
-		this.in = in;
+	
 		//out.println("Enviando dados para o server a partir do mesmo socket mas em tela diferente");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setBounds(100, 100, 549, 510);
+		setBounds(100, 100, 520, 510);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -74,7 +70,7 @@ public class ClientSignUpView extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Cadastro");
-		lblNewLabel.setFont(new Font("Times New Roman", Font.PLAIN, 25));
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		lblNewLabel.setBounds(196, 31, 97, 44);
 		contentPane.add(lblNewLabel);
 		
