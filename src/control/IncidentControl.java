@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import model.Incident;
 import validators.IncidentValidator;
@@ -15,9 +17,10 @@ import validators.IncidentValidator;
 public class IncidentControl {
 	private Connection conn;
 	private PreparedStatement pstm;
-	IncidentValidator incidentValidator = new IncidentValidator();
-	UserControl userControl = new UserControl();
-	
+	private IncidentValidator incidentValidator = new IncidentValidator();
+	private UserControl userControl = new UserControl();
+	private JsonArray incidentsArray = new JsonArray();
+
 	public IncidentValidator getIncidentValidator() {
 		return incidentValidator;
 	}
@@ -25,12 +28,12 @@ public class IncidentControl {
 	public boolean reportIncident(Incident incident, int id_usuario) {
 		conn = new ConexaoControl().conectaBD();
 		incidentValidator.setIncident(incident);
-		if(incidentValidator.isValid()) {
+		if (incidentValidator.isValid()) {
 			try {
 				String sql = "INSERT INTO incidentes (rodovia, data_incidente, km, tipo_incidente, id_usuario) VALUES (?, ?, ?, ?, ?);";
-				//String passwordHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+				// String passwordHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 				Timestamp timestamp;
-				
+
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 				LocalDateTime dataFormatada = LocalDateTime.parse(incident.getDate(), formatter);
 				timestamp = Timestamp.valueOf(dataFormatada);
@@ -49,7 +52,7 @@ public class IncidentControl {
 				System.out.println(erro);
 				incidentValidator.setOpResponse(incidentValidator.getFailOpCode());
 				return false;
-			}catch(Exception e) {
+			} catch (Exception e) {
 				incidentValidator.setErrorMessage("Erro ao converter data");
 				System.out.println(e);
 				incidentValidator.setOpResponse(incidentValidator.getFailOpCode());
@@ -58,30 +61,57 @@ public class IncidentControl {
 		}
 		return false;
 	}
-	
+
 	public boolean getMyReports(int userId) {
-		//devolver a lista de incidentes reportados pelo usuario
-		
+		// devolver a lista de incidentes reportados pelo usuario
 		conn = new ConexaoControl().conectaBD();
 		try {
-			String sql = "SELECT rodovia, data_incidente FROM incidentes WHERE id_usuario = ?;";
+			String sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE id_usuario = ?;";
 			pstm = conn.prepareStatement(sql);
 			pstm.setInt(1, userId);
 			ResultSet result = pstm.executeQuery();
 			// verificar se o token recebido do BD corresponde ao enviado pelo usuario
-			if (result.next()) {
-				
-				do {
-					int i = 1;
-					System.out.println(result.getString(i));
-					i++;
-					Timestamp time = result.getTimestamp(i);
-					System.out.println(time);
-					i++;
-				}while(result.next());
-				return true;
+			while (result.next()) {
+				JsonObject incident = new JsonObject();
+				incident.addProperty("id_incidente", result.getInt("id_incidente"));
+				Timestamp time = result.getTimestamp("data_incidente");
+				incident.addProperty("data", time.toString());
+				incident.addProperty("rodovia", result.getString("rodovia"));
+				incident.addProperty("km", result.getInt("km"));
+				incident.addProperty("tipo_incidente", result.getInt("tipo_incidente"));
+				incidentsArray.add(incident);
 			}
+			System.out.println("TESTE NO INCIDENT CONTROL");
+			System.out.println(incidentsArray);
+			return true;
+		} catch (SQLException erro) {
+			System.out.println("Erro ao validar token: " + erro);
 			return false;
+		}
+	}
+
+	public boolean getListOfIncidents(String highway, String date,String km, int period) {
+		System.out.println("EXECUTANDO SQL PARA PEDIR LISTA DE INCIDENTES");
+		conn = new ConexaoControl().conectaBD();
+		try {
+			String sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ?;";
+			pstm = conn.prepareStatement(sql);
+			pstm.setString(1, highway);
+			ResultSet result = pstm.executeQuery();
+			System.out.println("EXECUTANDO SQL PARA PEDIR LISTA DE INCIDENTES");
+			while (result.next()) {
+				JsonObject incident = new JsonObject();
+				incident.addProperty("id_incidente", result.getInt("id_incidente"));
+				Timestamp time = result.getTimestamp("data_incidente");
+				incident.addProperty("data", time.toString());
+				incident.addProperty("rodovia", result.getString("rodovia"));
+				incident.addProperty("km", result.getInt("km"));
+				incident.addProperty("tipo_incidente", result.getInt("tipo_incidente"));
+				incidentsArray.add(incident);
+			}
+			System.out.println("TESTE NO INCIDENT CONTROL(LISTA DE INCIDENTES NA RODOVIA)");
+			System.out.println(incidentsArray);
+			return true;
 		} catch (SQLException erro) {
 			System.out.println("Erro ao validar token: " + erro);
 			return false;

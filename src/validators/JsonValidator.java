@@ -167,6 +167,27 @@ public class JsonValidator extends Validator {
 		}
 	}
 
+	public boolean isValidRequestListOfIncidents() {
+		JsonObject objJson = getJsonObject();
+		if(!objJson.has("rodovia") || !objJson.has("data") || !objJson.has("faixa_km") || !objJson.has("periodo")) {
+			super.opResponse = super.failOpCode;
+			super.errorMessage = "O json enviado nao possui os campos necessarios para solicitar os incidentes (rodovia, data, faixa_km, periodo)";
+			return false;
+		}else {
+			try {
+				String rodovia = objJson.get("rodovia").getAsString();
+				String data = objJson.get("data").getAsString();
+				String faixa_km = objJson.get("faixa_km").getAsString();
+				int periodo = objJson.get("periodo").getAsInt();
+				return true;
+			}catch(UnsupportedOperationException e) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "O json possui campos nulos!";
+				return false;
+			}
+		}
+	}
+
 	public JsonObject getJsonObject() {
 		return new Gson().fromJson(this.json, JsonObject.class);
 	}

@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 public class Client {
 	public static void main(String[] args) throws IOException, ParseException {
 
-		String serverHostname = new String("10.20.8.76");
+		String serverHostname = new String("localhost");
 		// ip ruivo: 26.10.188.162
 		// ip kenji: 26.20.133.105
 		// meu ip casa: 192.168.0.13
@@ -107,6 +107,9 @@ public class Client {
 						int userId = jsonRecebido.get("id_usuario").getAsInt();
 						System.out.println("Cliente => token: " + token);
 						System.out.println("Cliente => id_usuario: " + userId);
+						LocalDateTime dateTime = LocalDateTime.now();
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+						int year, month, day;
 						while (login) {
 							showLoginMenu(); // exibe o menu de seleção para usuario logado
 							int opLogin = Integer.parseInt(stdIn.readLine());
@@ -122,16 +125,15 @@ public class Client {
 									System.out.println("Informe o KM do incidente:");
 									int km = Integer.parseInt(stdIn.readLine()); // km
 
-									LocalDateTime dateTime = LocalDateTime.now();
-									DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+									dateTime = LocalDateTime.now();
 									System.out.println("Informe o ano do incidente:");
-									int year = Integer.parseInt(stdIn.readLine());
+									year = Integer.parseInt(stdIn.readLine());
 									dateTime = dateTime.withYear(year);
 									System.out.println("Inforem o mes do incidente:");
-									int month = Integer.parseInt(stdIn.readLine());
+									month = Integer.parseInt(stdIn.readLine());
 									dateTime = dateTime.withMonth(month);
 									System.out.println("Informe o dia do incidente:");
-									int day = Integer.parseInt(stdIn.readLine());
+									day = Integer.parseInt(stdIn.readLine());
 									dateTime = dateTime.withDayOfMonth(day);
 									System.out.println("Informe a hora do incidente:");
 									int hour = Integer.parseInt(stdIn.readLine());
@@ -157,6 +159,40 @@ public class Client {
 									break;
 								case 2:
 									System.out.println("Solicitando lista de incidentes na rodovia...");
+									System.out.println("Informe a rodovia: ");
+									String rodovia = stdIn.readLine();
+									System.out.println("Informe faixa do KM do incidente:");
+									String faixaKm = stdIn.readLine(); // km
+
+									dateTime = LocalDateTime.now();
+									formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+									System.out.println("Informe o ano do incidente:");
+									year = Integer.parseInt(stdIn.readLine());
+									dateTime = dateTime.withYear(year);
+									System.out.println("Inforem o mes do incidente:");
+									month = Integer.parseInt(stdIn.readLine());
+									dateTime = dateTime.withMonth(month);
+									System.out.println("Informe o dia do incidente:");
+									day = Integer.parseInt(stdIn.readLine());
+									dateTime = dateTime.withDayOfMonth(day);
+									formatDate = dateTime.format(formatter);
+
+									System.out.println("Informe o perido: ");
+									System.out.println("1 - manha (06:00 - 11:59)");
+									System.out.println("2 - tarde (12:00 - 17:59)");
+									System.out.println("3 - noite (18:00 - 23:59)");
+									System.out.println("4 - madrugada (00:00 - 05:59)");
+									int periodo = Integer.parseInt(stdIn.readLine());
+
+									message = new JsonObject();
+									message.addProperty("id_operacao", 5);
+									message.addProperty("rodovia", rodovia);
+									message.addProperty("data", formatDate.toString());
+									message.addProperty("faixa_km", faixaKm);
+									message.addProperty("periodo", periodo);
+									System.out.println();
+									System.out.println("Cliente => " + message.toString());
+									out.println(message.toString());
 									break;
 								case 3:
 									System.out.println("Solicitar incidentes reportados por mim...");

@@ -25,6 +25,7 @@ public class Server extends Thread {
 	protected static TextArea textArea;
 	protected static String usuariosLogados;
 	protected int idLoggedInUser;
+
 	public static void main(String[] args) throws IOException {
 		JFrame frame = new JFrame();
 		frame.setBounds(100, 100, 475, 550);
@@ -241,7 +242,22 @@ public class Server extends Thread {
 								out.println(message.toString());
 							}
 							break;
+						case 5:
+							System.out.println("Solicitacao de incidentes na rodovia");
+							if(jsonValidator.isValidRequestListOfIncidents()) {
+								String highway = jsonRecebido.get("rodovia").getAsString();
+								String date = jsonRecebido.get("data").getAsString();
+								String km = jsonRecebido.get("faixa_km").getAsString();
+								int period = jsonRecebido.get("periodo").getAsInt();
+								if(incidentControl.getListOfIncidents(highway, date, km, period)) {
 
+								}
+							}else {
+								message.addProperty("codigo", jsonValidator.getOpResponse());
+								message.addProperty("mensagem", jsonValidator.getErrorMessage());
+								System.out.println(message.toString());
+							}
+							break;
 						case 6:
 							System.out.println("Server => Solicitacao de incidentes reportados pelo usuario");
 							if (jsonValidator.isValidMyReports()) {
@@ -305,10 +321,10 @@ public class Server extends Thread {
 			System.err.println("Problem with Communication Server");
 			loggedInUsers.remove(idLoggedInUser);
 			reloadInterface();
-			
+
 		}
 	}
-	
+
 	public void reloadInterface() {
 		usuariosLogados = "";
 		if (loggedInUsers.size() > 0) {
