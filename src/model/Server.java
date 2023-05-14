@@ -24,7 +24,7 @@ public class Server extends Thread {
 	protected static HashMap<Integer, String> loggedInUsers;
 	protected static TextArea textArea;
 	protected static String usuariosLogados;
-
+	protected int idLoggedInUser;
 	public static void main(String[] args) throws IOException {
 		JFrame frame = new JFrame();
 		frame.setBounds(100, 100, 475, 550);
@@ -186,6 +186,7 @@ public class Server extends Thread {
 										jsonRecebido.get("senha").getAsString());
 								if (userControl.authenticateUser(userLogin)) {
 									loggedInUsers.put(userLogin.getIdUsuario(), userLogin.getEmail());
+									idLoggedInUser = userLogin.getIdUsuario();
 									System.out.println("Usuario autenticado");
 									message.addProperty("codigo", userControl.getSignInValidator().getOpResponse());
 									message.addProperty("token", userControl.getToken());
@@ -293,26 +294,31 @@ public class Server extends Thread {
 					}
 
 				}
-				usuariosLogados = "";
-				if (loggedInUsers.size() > 0) {
-
-					loggedInUsers.forEach((id, email) -> {
-						usuariosLogados += id + ", " + email + "\n";
-					});
-				} else {
-					textArea.setText("");
-				}
-				textArea.setText(usuariosLogados);
-
+				reloadInterface();
 			}
 			System.out.println("Lista de usuarios logados:");
-			System.out.println("teste");
 			System.out.println(loggedInUsers);
 			out.close();
 			in.close();
 			clientSocket.close();
 		} catch (IOException e) {
 			System.err.println("Problem with Communication Server");
+			loggedInUsers.remove(idLoggedInUser);
+			reloadInterface();
+			
 		}
+	}
+	
+	public void reloadInterface() {
+		usuariosLogados = "";
+		if (loggedInUsers.size() > 0) {
+
+			loggedInUsers.forEach((id, email) -> {
+				usuariosLogados += id + ", " + email + "\n";
+			});
+		} else {
+			textArea.setText("");
+		}
+		textArea.setText(usuariosLogados);
 	}
 }
