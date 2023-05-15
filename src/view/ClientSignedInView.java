@@ -5,9 +5,13 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.google.gson.JsonObject;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.ParseException;
@@ -26,7 +30,8 @@ public class ClientSignedInView extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, int userId, String token) {
+	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, int userId,
+			String token) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -41,11 +46,12 @@ public class ClientSignedInView extends JFrame {
 
 	/**
 	 * Create the frame.
-	 * @param in 
-	 * @param out 
-	 * @param clientSocket 
-	 * @param token 
-	 * @param id 
+	 * 
+	 * @param in
+	 * @param out
+	 * @param clientSocket
+	 * @param token
+	 * @param id
 	 */
 	public ClientSignedInView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId, String token) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -55,12 +61,12 @@ public class ClientSignedInView extends JFrame {
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		JLabel welcomeLbl = new JLabel("Bem vindo!");
 		welcomeLbl.setBounds(192, 10, 122, 31);
 		welcomeLbl.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		contentPane.add(welcomeLbl);
-		
+
 		JButton btnNewButton = new JButton("Reportar Incidente");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -72,32 +78,50 @@ public class ClientSignedInView extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
+
 			}
 		});
 		btnNewButton.setBounds(123, 85, 267, 31);
 		contentPane.add(btnNewButton);
-		
+
 		JButton btnSolicitarListaDe = new JButton("Solicitar lista de incidentes");
 		btnSolicitarListaDe.setBounds(123, 136, 267, 31);
 		contentPane.add(btnSolicitarListaDe);
-		
+
 		JButton btnNewButton_4 = new JButton("Solicitar lista de incidentes reportados por mim");
 		btnNewButton_4.setBounds(123, 189, 267, 31);
 		contentPane.add(btnNewButton_4);
-		
+
 		JButton btnNewButton_6 = new JButton("Sair");
+		btnNewButton_6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JsonObject message = new JsonObject();
+				message.addProperty("id_operacao", 9);
+				message.addProperty("token", token);
+				message.addProperty("id_usuario", userId);
+				System.out.println("Cliente => " + message.toString());
+				out.println(message.toString());
+				try {
+					String respostaServidor = in.readLine();
+					System.out.println("Cliente => Resposta servidor: " + respostaServidor);
+					dispose();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnNewButton_6.setBounds(192, 411, 122, 31);
 		contentPane.add(btnNewButton_6);
-		
+
 		JButton btnNewButton_4_1 = new JButton("Remover incidente");
 		btnNewButton_4_1.setBounds(123, 240, 267, 31);
 		contentPane.add(btnNewButton_4_1);
-		
+
 		JButton btnNewButton_4_1_1 = new JButton("Atualizar cadastro");
 		btnNewButton_4_1_1.setBounds(123, 292, 267, 31);
 		contentPane.add(btnNewButton_4_1_1);
-		
+
 		JButton btnNewButton_4_1_1_1 = new JButton("Remover cadastro");
 		btnNewButton_4_1_1_1.setBounds(123, 345, 267, 31);
 		contentPane.add(btnNewButton_4_1_1_1);
