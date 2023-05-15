@@ -82,7 +82,6 @@ public class ClientLoginView {
 				try {
 					respostaServidor = in.readLine();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				System.out.println("Cliente => resposta do servidor: " + respostaServidor);

@@ -6,9 +6,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,6 +29,9 @@ public class ClientSignedInView extends JFrame {
 	 * 
 	 */
 	private JPanel contentPane;
+	private Gson gson = new Gson();
+	private JsonObject message, jsonServidor;
+    private String respostaServidor;
 
 	/**
 	 * Launch the application.
@@ -67,8 +73,8 @@ public class ClientSignedInView extends JFrame {
 		welcomeLbl.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		contentPane.add(welcomeLbl);
 
-		JButton btnNewButton = new JButton("Reportar Incidente");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnReportIncident = new JButton("Reportar Incidente");
+		btnReportIncident.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ReportIncidentView reportView;
 				try {
@@ -81,49 +87,65 @@ public class ClientSignedInView extends JFrame {
 
 			}
 		});
-		btnNewButton.setBounds(123, 85, 267, 31);
-		contentPane.add(btnNewButton);
+		btnReportIncident.setBounds(123, 85, 267, 31);
+		contentPane.add(btnReportIncident);
 
-		JButton btnSolicitarListaDe = new JButton("Solicitar lista de incidentes");
-		btnSolicitarListaDe.setBounds(123, 136, 267, 31);
-		contentPane.add(btnSolicitarListaDe);
+		JButton btnRequestIncidentList = new JButton("Solicitar lista de incidentes");
+		btnRequestIncidentList.setBounds(123, 136, 267, 31);
+		contentPane.add(btnRequestIncidentList);
 
-		JButton btnNewButton_4 = new JButton("Solicitar lista de incidentes reportados por mim");
-		btnNewButton_4.setBounds(123, 189, 267, 31);
-		contentPane.add(btnNewButton_4);
+		JButton btnRequestMyIncidents = new JButton("Solicitar lista de incidentes reportados por mim");
+		btnRequestMyIncidents.setBounds(123, 189, 267, 31);
+		contentPane.add(btnRequestMyIncidents);
 
-		JButton btnNewButton_6 = new JButton("Sair");
-		btnNewButton_6.addActionListener(new ActionListener() {
+		JButton btnLogout = new JButton("Sair");
+		btnLogout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JsonObject message = new JsonObject();
+				message = new JsonObject();
 				message.addProperty("id_operacao", 9);
 				message.addProperty("token", token);
 				message.addProperty("id_usuario", userId);
 				System.out.println("Cliente => " + message.toString());
 				out.println(message.toString());
 				try {
-					String respostaServidor = in.readLine();
+					respostaServidor = in.readLine();
 					System.out.println("Cliente => Resposta servidor: " + respostaServidor);
-					dispose();
+					jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
+					if(jsonServidor.get("coigo").getAsInt() == 200)
+						dispose();
+					else{
+						JOptionPane.showMessageDialog(contentPane, jsonServidor.get("mensagem").getAsString());
+						dispose();
+					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(contentPane, "Erro ao ler resposta do servidor!");
+				} catch(NullPointerException e1) {
+					JOptionPane.showMessageDialog(contentPane, "Erro de comunicacao com o servidor!(Erro no campo do json)");
 				}
 			}
 		});
-		btnNewButton_6.setBounds(192, 411, 122, 31);
-		contentPane.add(btnNewButton_6);
+		btnLogout.setBounds(192, 411, 122, 31);
+		contentPane.add(btnLogout);
 
-		JButton btnNewButton_4_1 = new JButton("Remover incidente");
-		btnNewButton_4_1.setBounds(123, 240, 267, 31);
-		contentPane.add(btnNewButton_4_1);
+		JButton btnRemoveIncident = new JButton("Remover incidente");
+		btnRemoveIncident.setBounds(123, 240, 267, 31);
+		contentPane.add(btnRemoveIncident);
 
-		JButton btnNewButton_4_1_1 = new JButton("Atualizar cadastro");
-		btnNewButton_4_1_1.setBounds(123, 292, 267, 31);
-		contentPane.add(btnNewButton_4_1_1);
+		JButton btnUpdateAccount = new JButton("Atualizar cadastro");
+		btnUpdateAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//atualizar cadastro
+				UpdateAccountView updateAccountView;
+				updateAccountView = new UpdateAccountView(clientSocket, out, in, userId, token);
+				updateAccountView.setVisible(true);
+			}
+		});
+		btnUpdateAccount.setBounds(123, 292, 267, 31);
+		contentPane.add(btnUpdateAccount);
 
-		JButton btnNewButton_4_1_1_1 = new JButton("Remover cadastro");
-		btnNewButton_4_1_1_1.setBounds(123, 345, 267, 31);
-		contentPane.add(btnNewButton_4_1_1_1);
+		JButton btnRemoveAccount = new JButton("Remover cadastro");
+		btnRemoveAccount.setBounds(123, 345, 267, 31);
+		contentPane.add(btnRemoveAccount);
 	}
 }

@@ -143,7 +143,7 @@ public class UserControl {
 					return true;
 				}catch(SQLException erro) {
 					System.out.println("Erro no update: " + erro);
-					updateRegistrationValidator.setErrorMessage("Erro ao atualizar dados no BD");
+					updateRegistrationValidator.setErrorMessage("Erro ao atualizar dados no BD");//CASO O EMAIL JA EXISTA NO BD, CAI NESSE CATCH
 					updateRegistrationValidator.setOpResponse(updateRegistrationValidator.getFailOpCode());
 					return false;
 				}
