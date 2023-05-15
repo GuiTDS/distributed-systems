@@ -179,6 +179,7 @@ public class JsonValidator extends Validator {
 				String data = objJson.get("data").getAsString();
 				String faixa_km = objJson.get("faixa_km").getAsString();
 				int periodo = objJson.get("periodo").getAsInt();
+				super.opResponse = super.sucessOpCode;
 				return true;
 			}catch(UnsupportedOperationException e) {
 				super.opResponse = super.failOpCode;

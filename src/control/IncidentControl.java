@@ -19,10 +19,14 @@ public class IncidentControl {
 	private PreparedStatement pstm;
 	private IncidentValidator incidentValidator = new IncidentValidator();
 	private UserControl userControl = new UserControl();
-	private JsonArray incidentsArray = new JsonArray();
+	private JsonArray incidentsArray;
 
 	public IncidentValidator getIncidentValidator() {
 		return incidentValidator;
+	}
+
+	public JsonArray getIncidentsArray() {
+		return incidentsArray;
 	}
 
 	public boolean reportIncident(Incident incident, int id_usuario) {
@@ -31,7 +35,6 @@ public class IncidentControl {
 		if (incidentValidator.isValid()) {
 			try {
 				String sql = "INSERT INTO incidentes (rodovia, data_incidente, km, tipo_incidente, id_usuario) VALUES (?, ?, ?, ?, ?);";
-				// String passwordHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 				Timestamp timestamp;
 
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -90,31 +93,39 @@ public class IncidentControl {
 		}
 	}
 
-	public boolean getListOfIncidents(String highway, String date,String km, int period) {
-		System.out.println("EXECUTANDO SQL PARA PEDIR LISTA DE INCIDENTES");
+	public boolean getListOfIncidents(Incident reqIncident, String km, int period) {
 		conn = new ConexaoControl().conectaBD();
-		try {
-			String sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ?;";
-			pstm = conn.prepareStatement(sql);
-			pstm.setString(1, highway);
-			ResultSet result = pstm.executeQuery();
-			System.out.println("EXECUTANDO SQL PARA PEDIR LISTA DE INCIDENTES");
-			while (result.next()) {
-				JsonObject incident = new JsonObject();
-				incident.addProperty("id_incidente", result.getInt("id_incidente"));
-				Timestamp time = result.getTimestamp("data_incidente");
-				incident.addProperty("data", time.toString());
-				incident.addProperty("rodovia", result.getString("rodovia"));
-				incident.addProperty("km", result.getInt("km"));
-				incident.addProperty("tipo_incidente", result.getInt("tipo_incidente"));
-				incidentsArray.add(incident);
+		if (incidentValidator.isValidGetListOfIncidents(reqIncident, km, period)) {
+			//JA ESTA DEVOLVENDO O ARRAY DE INCIDENTES CORRETAMENTE, POREM FALTA FILTRAR OS RESULTADOS PARA A FAIXA DE KM E O PERIODO SOLICITADO
+			incidentsArray = new JsonArray();
+			try {
+				String sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ?;";
+				pstm = conn.prepareStatement(sql);
+				pstm.setString(1, reqIncident.getHighway());
+				ResultSet result = pstm.executeQuery();
+				while (result.next()) {
+					JsonObject incident = new JsonObject();
+					incident.addProperty("id_incidente", result.getInt("id_incidente"));
+					Timestamp time = result.getTimestamp("data_incidente");
+					incident.addProperty("data", time.toString());
+					incident.addProperty("rodovia", result.getString("rodovia"));
+					incident.addProperty("km", result.getInt("km"));
+					incident.addProperty("tipo_incidente", result.getInt("tipo_incidente"));
+					incidentsArray.add(incident);
+				}
+				System.out.println("TESTE NO INCIDENT CONTROL(LISTA DE INCIDENTES NA RODOVIA)");
+				System.out.println(incidentsArray);
+				incidentValidator.setOpResponse(incidentValidator.getSucessOpCode());
+				return true;
+			} catch (SQLException erro) {
+				System.out.println("Erro ao requerir lista de incidentes na pista: " + erro);
+				incidentValidator.setOpResponse(incidentValidator.getFailOpCode());
+				incidentValidator.setErrorMessage("Erro de conexao com BD");
+				return false;
 			}
-			System.out.println("TESTE NO INCIDENT CONTROL(LISTA DE INCIDENTES NA RODOVIA)");
-			System.out.println(incidentsArray);
-			return true;
-		} catch (SQLException erro) {
-			System.out.println("Erro ao validar token: " + erro);
-			return false;
 		}
+		return false;
+
 	}
+
 }

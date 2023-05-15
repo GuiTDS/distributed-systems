@@ -16,6 +16,11 @@ public class Incident {
 		this.highway = highway;
 	}
 
+	public Incident(String date, String highway) {
+		this.date = date;
+		this.highway = highway;
+	}
+
 	public String getDate() {
 		return date;
 	}

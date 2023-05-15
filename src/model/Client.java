@@ -193,6 +193,8 @@ public class Client {
 									System.out.println();
 									System.out.println("Cliente => " + message.toString());
 									out.println(message.toString());
+									respostaServidor = in.readLine();
+									System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 									break;
 								case 3:
 									System.out.println("Solicitar incidentes reportados por mim...");

@@ -60,5 +60,17 @@ public class ValidateField {
 		}
 		return false;
 	}
+
+	public boolean validateKmRange(String kmRange) {
+		if(kmRange.trim().length() >= 3 && kmRange.trim().length() <= 7)
+			return true;
+		return false;
+	}
+
+	public boolean validatePeriod(int period) {
+		if(period < 1 || period > 4) 
+			return false;
+		return true;
+	}
 	
 }

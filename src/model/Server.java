@@ -245,12 +245,14 @@ public class Server extends Thread {
 						case 5:
 							System.out.println("Solicitacao de incidentes na rodovia");
 							if(jsonValidator.isValidRequestListOfIncidents()) {
-								String highway = jsonRecebido.get("rodovia").getAsString();
-								String date = jsonRecebido.get("data").getAsString();
 								String km = jsonRecebido.get("faixa_km").getAsString();
 								int period = jsonRecebido.get("periodo").getAsInt();
-								if(incidentControl.getListOfIncidents(highway, date, km, period)) {
-
+								Incident incident = new Incident(jsonRecebido.get("data").getAsString(), jsonRecebido.get("rodovia").getAsString());
+								if(incidentControl.getListOfIncidents(incident, km, period)) {
+									message.addProperty("codigo", incidentControl.getIncidentValidator().getOpResponse());
+									message.add("lista_incidentes", incidentControl.getIncidentsArray());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
 								}
 							}else {
 								message.addProperty("codigo", jsonValidator.getOpResponse());
