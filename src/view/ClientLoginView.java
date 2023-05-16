@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -99,7 +100,7 @@ public class ClientLoginView {
 				}
 			}
 		});
-		btnLogin.setBounds(182, 282, 141, 43);
+		btnLogin.setBounds(182, 268, 141, 43);
 		frame.getContentPane().add(btnLogin);
 		
 		JButton btnSignUp = new JButton("Cadastro");
@@ -110,7 +111,7 @@ public class ClientLoginView {
 			signUpView.setVisible(true);	
 			}
 		});
-		btnSignUp.setBounds(182, 348, 141, 43);
+		btnSignUp.setBounds(182, 331, 141, 43);
 		frame.getContentPane().add(btnSignUp);
 		
 		JLabel lblNewLabel_2 = new JLabel("");
@@ -137,6 +138,24 @@ public class ClientLoginView {
 		passwordField = new JPasswordField();
 		passwordField.setBounds(136, 211, 235, 19);
 		frame.getContentPane().add(passwordField);
+		
+		JButton btnRequestListOfIncidents = new JButton("Solicitar lista de incidentes");
+		btnRequestListOfIncidents.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//abrir tela de solicitaçao de lista de incidentes
+				try {
+					RequestListOfIncidentsView listOfIncidentsView = new RequestListOfIncidentsView(clientSocket, out, in);
+					listOfIncidentsView.setVisible(true);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		btnRequestListOfIncidents.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnRequestListOfIncidents.setBounds(136, 394, 245, 43);
+		frame.getContentPane().add(btnRequestListOfIncidents);
 		//SOQUETES
 		try {
             clientSocket = new Socket("localhost", 24001);

@@ -115,13 +115,10 @@ public class ReportIncidentView extends JFrame {
 		incidentTypeField.setBounds(145, 103, 214, 21);
 		contentPane.add(incidentTypeField);
 		
-		JFormattedTextField dateField = new JFormattedTextField();
-		MaskFormatter maskData = new MaskFormatter("####-##-## ##:##:##");
-		maskData.install(dateField);
-		dateField.setText("");
+		
+		MaskFormatter maskData = new MaskFormatter("####-##-## ##:##:##"); //mascara da data
+		JFormattedTextField dateField = new JFormattedTextField(maskData);
 		dateField.setBounds(145, 330, 214, 19);
-		
-		
 		contentPane.add(dateField);
 		
 		JButton btnNewButton = new JButton("Reportar");

@@ -90,12 +90,13 @@ public class ClientSignedInView extends JFrame {
 		btnReportIncident.setBounds(123, 85, 267, 31);
 		contentPane.add(btnReportIncident);
 
-		JButton btnRequestIncidentList = new JButton("Solicitar lista de incidentes");
-		btnRequestIncidentList.setBounds(123, 136, 267, 31);
-		contentPane.add(btnRequestIncidentList);
-
 		JButton btnRequestMyIncidents = new JButton("Solicitar lista de incidentes reportados por mim");
-		btnRequestMyIncidents.setBounds(123, 189, 267, 31);
+		btnRequestMyIncidents.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//solicitar incidentes reportados por mim
+			}
+		});
+		btnRequestMyIncidents.setBounds(123, 145, 267, 31);
 		contentPane.add(btnRequestMyIncidents);
 
 		JButton btnLogout = new JButton("Sair");
@@ -129,7 +130,12 @@ public class ClientSignedInView extends JFrame {
 		contentPane.add(btnLogout);
 
 		JButton btnRemoveIncident = new JButton("Remover incidente");
-		btnRemoveIncident.setBounds(123, 240, 267, 31);
+		btnRemoveIncident.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//remover incidente
+			}
+		});
+		btnRemoveIncident.setBounds(123, 206, 267, 31);
 		contentPane.add(btnRemoveIncident);
 
 		JButton btnUpdateAccount = new JButton("Atualizar cadastro");
@@ -141,11 +147,16 @@ public class ClientSignedInView extends JFrame {
 				updateAccountView.setVisible(true);
 			}
 		});
-		btnUpdateAccount.setBounds(123, 292, 267, 31);
+		btnUpdateAccount.setBounds(123, 260, 267, 31);
 		contentPane.add(btnUpdateAccount);
 
 		JButton btnRemoveAccount = new JButton("Remover cadastro");
-		btnRemoveAccount.setBounds(123, 345, 267, 31);
+		btnRemoveAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//remover cadastro
+			}
+		});
+		btnRemoveAccount.setBounds(123, 321, 267, 31);
 		contentPane.add(btnRemoveAccount);
 	}
 }
