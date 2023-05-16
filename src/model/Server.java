@@ -264,8 +264,12 @@ public class Server extends Thread {
 							System.out.println("Server => Solicitacao de incidentes reportados pelo usuario");
 							if (jsonValidator.isValidMyReports()) {
 								// criar usuario e validar token
-								if (incidentControl.getMyReports(jsonRecebido.get("id_usuario").getAsInt())) {
-
+								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+								if (incidentControl.getMyReports(user, jsonRecebido.get("token").getAsString())) {
+									message.addProperty("codigo", incidentControl.getIncidentValidator().getOpResponse());
+									message.add("lista_incidentes", incidentControl.getIncidentsArray());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
 								}
 
 							} else {

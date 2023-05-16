@@ -12,6 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import model.Incident;
+import model.User;
 import validators.IncidentValidator;
 
 public class IncidentControl {
@@ -65,32 +66,42 @@ public class IncidentControl {
 		return false;
 	}
 
-	public boolean getMyReports(int userId) {
+	public boolean getMyReports(User user, String token) {
 		// devolver a lista de incidentes reportados pelo usuario
 		conn = new ConexaoControl().conectaBD();
-		try {
-			String sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE id_usuario = ?;";
-			pstm = conn.prepareStatement(sql);
-			pstm.setInt(1, userId);
-			ResultSet result = pstm.executeQuery();
-			// verificar se o token recebido do BD corresponde ao enviado pelo usuario
-			while (result.next()) {
-				JsonObject incident = new JsonObject();
-				incident.addProperty("id_incidente", result.getInt("id_incidente"));
-				Timestamp time = result.getTimestamp("data_incidente");
-				incident.addProperty("data", time.toString());
-				incident.addProperty("rodovia", result.getString("rodovia"));
-				incident.addProperty("km", result.getInt("km"));
-				incident.addProperty("tipo_incidente", result.getInt("tipo_incidente"));
-				incidentsArray.add(incident);
+		if(userControl.checkToken(user, token)){
+			try {
+				String sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE id_usuario = ?;";
+				pstm = conn.prepareStatement(sql);
+				pstm.setInt(1, user.getIdUsuario());
+				ResultSet result = pstm.executeQuery();
+				incidentsArray = new JsonArray();
+				while (result.next()) {
+					JsonObject incident = new JsonObject();
+					incident.addProperty("id_incidente", result.getInt("id_incidente"));
+					Timestamp time = result.getTimestamp("data_incidente");
+					incident.addProperty("data", time.toString());
+					incident.addProperty("rodovia", result.getString("rodovia"));
+					incident.addProperty("km", result.getInt("km"));
+					incident.addProperty("tipo_incidente", result.getInt("tipo_incidente"));
+					incidentsArray.add(incident);
+				}
+				System.out.println("TESTE NO INCIDENT CONTROL");
+				System.out.println(incidentsArray);
+				incidentValidator.setOpResponse(incidentValidator.getSucessOpCode());
+				return true;
+			} catch (SQLException erro) {
+				System.out.println("Erro com o BD: " + erro);
+				incidentValidator.setOpResponse(incidentValidator.getFailOpCode());
+				incidentValidator.setErrorMessage("Erro com o BD!");
+				return false;
 			}
-			System.out.println("TESTE NO INCIDENT CONTROL");
-			System.out.println(incidentsArray);
-			return true;
-		} catch (SQLException erro) {
-			System.out.println("Erro ao validar token: " + erro);
+		}else {
+			incidentValidator.setOpResponse(incidentValidator.getFailOpCode());
+			incidentValidator.setErrorMessage("Erro ao validar token!");
 			return false;
 		}
+		
 	}
 
 	public boolean getListOfIncidents(Incident reqIncident, String km, int period) {
@@ -143,7 +154,7 @@ public class IncidentControl {
 				String sql;
 				if (km.equals("")) {
 					System.out.println("Server: FAIXA DE KM VAZIA");
-					sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ? and data_incidente >= ? and data_incidente <= ?;";
+					sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ? and data_incidente >= ? and data_incidente <= ? ORDER BY data_incidente;";
 					pstm = conn.prepareStatement(sql);
 					pstm.setString(1, reqIncident.getHighway());
 					pstm.setTimestamp(2, timestampBegin);
@@ -153,7 +164,7 @@ public class IncidentControl {
 					String[] kmRange = km.split("-");
 					int beginRange = Integer.parseInt(kmRange[0]);
 					int endRange = Integer.parseInt(kmRange[1]);
-					sql = sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ? and data_incidente >= ? and data_incidente <= ? and km >= ? and km <= ?;";
+					sql = sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ? and data_incidente >= ? and data_incidente <= ? and km >= ? and km <= ? ORDER BY data_incidente;";
 					pstm = conn.prepareStatement(sql);
 					pstm.setString(1, reqIncident.getHighway());
 					pstm.setTimestamp(2, timestampBegin);

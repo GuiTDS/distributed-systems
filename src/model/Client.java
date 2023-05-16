@@ -216,7 +216,7 @@ public class Client {
 									System.out.println("Cliente => " + message.toString());
 									out.println(message.toString());
 									respostaServidor = in.readLine();
-									System.out.println(respostaServidor);
+									System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 									break;
 								case 4:
 									System.out.println("Remover incidente...");

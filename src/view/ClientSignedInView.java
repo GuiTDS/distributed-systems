@@ -94,9 +94,12 @@ public class ClientSignedInView extends JFrame {
 		btnRequestMyIncidents.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//solicitar incidentes reportados por mim
+				RequestMyListOfIncidentsView myListOfIncidents = new RequestMyListOfIncidentsView(clientSocket, out, in, userId, token);
+				myListOfIncidents.setVisible(true);
+				
 			}
 		});
-		btnRequestMyIncidents.setBounds(123, 145, 267, 31);
+		btnRequestMyIncidents.setBounds(123, 202, 267, 31);
 		contentPane.add(btnRequestMyIncidents);
 
 		JButton btnLogout = new JButton("Sair");
@@ -126,17 +129,8 @@ public class ClientSignedInView extends JFrame {
 				}
 			}
 		});
-		btnLogout.setBounds(192, 411, 122, 31);
+		btnLogout.setBounds(192, 382, 122, 31);
 		contentPane.add(btnLogout);
-
-		JButton btnRemoveIncident = new JButton("Remover incidente");
-		btnRemoveIncident.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//remover incidente
-			}
-		});
-		btnRemoveIncident.setBounds(123, 206, 267, 31);
-		contentPane.add(btnRemoveIncident);
 
 		JButton btnUpdateAccount = new JButton("Atualizar cadastro");
 		btnUpdateAccount.addActionListener(new ActionListener() {
@@ -147,7 +141,7 @@ public class ClientSignedInView extends JFrame {
 				updateAccountView.setVisible(true);
 			}
 		});
-		btnUpdateAccount.setBounds(123, 260, 267, 31);
+		btnUpdateAccount.setBounds(123, 259, 267, 31);
 		contentPane.add(btnUpdateAccount);
 
 		JButton btnRemoveAccount = new JButton("Remover cadastro");
@@ -156,7 +150,23 @@ public class ClientSignedInView extends JFrame {
 				//remover cadastro
 			}
 		});
-		btnRemoveAccount.setBounds(123, 321, 267, 31);
+		btnRemoveAccount.setBounds(123, 317, 267, 31);
 		contentPane.add(btnRemoveAccount);
+		
+		JButton btnRequestListOfIncidents = new JButton("Solicitar lista de incidentes");
+		btnRequestListOfIncidents.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//abrir a tela de solicitar lista de incidentes
+				try {
+					RequestListOfIncidentsView listOfIncidentsView = new RequestListOfIncidentsView(clientSocket, out, in);
+					listOfIncidentsView.setVisible(true);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnRequestListOfIncidents.setBounds(123, 141, 267, 31);
+		contentPane.add(btnRequestListOfIncidents);
 	}
 }
