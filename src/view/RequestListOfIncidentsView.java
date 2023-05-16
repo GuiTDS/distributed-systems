@@ -31,7 +31,7 @@ public class RequestListOfIncidentsView extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField kmRangeField;
-
+	private static String tempText;
 	/**
 	 * Launch the application.
 	 */
@@ -153,9 +153,11 @@ public class RequestListOfIncidentsView extends JFrame {
 					JsonObject jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
 					JsonArray incidentsArr = jsonRecebido.get("lista_incidentes").getAsJsonArray();
 					System.out.println("------LISTA DE INCIDENTES------");
+					tempText = "";
 					incidentsArr.forEach((incident) -> {
-						System.out.println(incident);
+						tempText += incident.getAsJsonObject().get("rodovia").getAsString() + " ," +  incident.getAsJsonObject().get("km").getAsInt() + " ," + incident.getAsJsonObject().get("data").getAsString() + "\n";
 					});
+					incidentsArea.setText(tempText);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
