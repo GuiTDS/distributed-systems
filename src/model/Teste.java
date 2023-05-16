@@ -11,7 +11,7 @@ import com.google.gson.JsonObject;
 public class Teste {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		/*// TODO Auto-generated method stub
 		Gson Json = new Gson();
 		
 		JsonArray array = new JsonArray();
@@ -25,7 +25,12 @@ public class Teste {
 		JsonObject mensagem = new JsonObject();
 		mensagem.addProperty("teste", "teste");
 		mensagem.add("array",array);
-		System.out.println(mensagem);
+		System.out.println(mensagem);*/
+
+		String str1 = "1234-1345";
+		String[] strArr = str1.split("-");
+		System.out.println(strArr[0]);
+		System.out.println(strArr[1]);
 
 			     
 		

@@ -111,7 +111,7 @@ public class ClientSignedInView extends JFrame {
 					respostaServidor = in.readLine();
 					System.out.println("Cliente => Resposta servidor: " + respostaServidor);
 					jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
-					if(jsonServidor.get("coigo").getAsInt() == 200)
+					if(jsonServidor.get("codigo").getAsInt() == 200)
 						dispose();
 					else{
 						JOptionPane.showMessageDialog(contentPane, jsonServidor.get("mensagem").getAsString());

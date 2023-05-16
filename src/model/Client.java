@@ -175,6 +175,8 @@ public class Client {
 									System.out.println("Informe o dia do incidente:");
 									day = Integer.parseInt(stdIn.readLine());
 									dateTime = dateTime.withDayOfMonth(day);
+									dateTime = dateTime.withHour(0);
+									dateTime = dateTime.withMinute(0);
 									formatDate = dateTime.format(formatter);
 
 									System.out.println("Informe o perido: ");

@@ -96,12 +96,72 @@ public class IncidentControl {
 	public boolean getListOfIncidents(Incident reqIncident, String km, int period) {
 		conn = new ConexaoControl().conectaBD();
 		if (incidentValidator.isValidGetListOfIncidents(reqIncident, km, period)) {
-			//JA ESTA DEVOLVENDO O ARRAY DE INCIDENTES CORRETAMENTE, POREM FALTA FILTRAR OS RESULTADOS PARA A FAIXA DE KM E O PERIODO SOLICITADO
+			// JA ESTA DEVOLVENDO O ARRAY DE INCIDENTES CORRETAMENTE, POREM FALTA FILTRAR OS
+			// RESULTADOS PARA A FAIXA DE KM E O PERIODO SOLICITADO
+			// SELECT * FROM incidentes WHERE data_incidente >= '2023-05-14
+			// 16:55:00'::timestamp
+			// AND data_incidente <= '2023-05-14 20:00:00'::timestamp order by
+			// data_incidente asc
 			incidentsArray = new JsonArray();
 			try {
-				String sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ?;";
-				pstm = conn.prepareStatement(sql);
-				pstm.setString(1, reqIncident.getHighway());
+				Timestamp timestampBegin, timestampEnd;
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+				LocalDateTime dataFormatada = LocalDateTime.parse(reqIncident.getDate(), formatter);
+				LocalDateTime localDateBegin, localDateEnd;
+				if (period == 1) {
+					localDateBegin = dataFormatada.withHour(6);
+					localDateBegin = localDateBegin.withMinute(0);
+					localDateBegin = localDateBegin.withSecond(0);
+					localDateEnd = dataFormatada.withHour(11);
+					localDateEnd = localDateEnd.withMinute(59);
+					localDateEnd = localDateEnd.withSecond(0);
+				} else if (period == 2) {
+					localDateBegin = dataFormatada.withHour(12);
+					localDateBegin = localDateBegin.withMinute(0);
+					localDateBegin = localDateBegin.withSecond(0);
+					localDateEnd = dataFormatada.withHour(17);
+					localDateEnd = localDateEnd.withMinute(59);
+					localDateEnd = localDateEnd.withSecond(0);
+				} else if (period == 3) {
+					localDateBegin = dataFormatada.withHour(18);
+					localDateBegin = localDateBegin.withMinute(0);
+					localDateBegin = localDateBegin.withSecond(0);
+					localDateEnd = dataFormatada.withHour(23);
+					localDateEnd = localDateEnd.withMinute(59);
+					localDateEnd = localDateEnd.withSecond(0);
+				} else {
+					localDateBegin = dataFormatada.withHour(0);
+					localDateBegin = localDateBegin.withMinute(0);
+					localDateBegin = localDateBegin.withSecond(0);
+					localDateEnd = dataFormatada.withHour(5);
+					localDateEnd = localDateEnd.withMinute(59);
+					localDateEnd = localDateEnd.withSecond(0);
+				}
+				timestampBegin = Timestamp.valueOf(localDateBegin);
+				timestampEnd = Timestamp.valueOf(localDateEnd);
+
+				System.out.println("Data de comeco do filtro: " + timestampBegin.toString());
+				System.out.println("Data de fim do filtro: " + timestampEnd.toString());
+				String sql;
+				if (km.equals("")) {
+					sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ? and data_incidente >= ? and data_incidente <= ?;";
+					pstm = conn.prepareStatement(sql);
+					pstm.setString(1, reqIncident.getHighway());
+					pstm.setTimestamp(2, timestampBegin);
+					pstm.setTimestamp(3, timestampEnd);
+				} else {
+					String[] kmRange = km.split("-");
+					int beginRange = Integer.parseInt(kmRange[0]);
+					int endRange = Integer.parseInt(kmRange[1]);
+					sql = sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ? and data_incidente >= ? and data_incidente <= ? and km >= ? and km <= ?;";
+					pstm = conn.prepareStatement(sql);
+					pstm.setString(1, reqIncident.getHighway());
+					pstm.setTimestamp(2, timestampBegin);
+					pstm.setTimestamp(3, timestampEnd);
+					pstm.setInt(4, beginRange);
+					pstm.setInt(5, endRange);
+				}
+
 				ResultSet result = pstm.executeQuery();
 				while (result.next()) {
 					JsonObject incident = new JsonObject();

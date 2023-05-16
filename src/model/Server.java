@@ -244,7 +244,7 @@ public class Server extends Thread {
 							break;
 						case 5:
 							System.out.println("Solicitacao de incidentes na rodovia");
-							if(jsonValidator.isValidRequestListOfIncidents()) {
+							if(jsonValidator.isValidRequestListOfIncidents()) { // ja esta devolvendo a lista de incidentes , porem quando a faixa_km é vazio o servidor nao devolve nada ao cliente;
 								String km = jsonRecebido.get("faixa_km").getAsString();
 								int period = jsonRecebido.get("periodo").getAsInt();
 								Incident incident = new Incident(jsonRecebido.get("data").getAsString(), jsonRecebido.get("rodovia").getAsString());
