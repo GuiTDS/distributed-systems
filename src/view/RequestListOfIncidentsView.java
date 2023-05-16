@@ -65,7 +65,7 @@ public class RequestListOfIncidentsView extends JFrame {
 	 * @throws ParseException
 	 */
 	public RequestListOfIncidentsView(Socket clientSocket, PrintWriter out, BufferedReader in) throws ParseException {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 979, 515);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

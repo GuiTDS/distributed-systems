@@ -59,7 +59,7 @@ public class UpdateAccountView extends JFrame {
 	 * @param clientSocket
 	 */
 	public UpdateAccountView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId, String token) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 520, 510);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

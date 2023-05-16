@@ -67,7 +67,7 @@ public class RequestMyListOfIncidentsView extends JFrame {
 	 */
 	public RequestMyListOfIncidentsView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId,
 			String token) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 980, 514);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -84,12 +84,22 @@ public class RequestMyListOfIncidentsView extends JFrame {
 		btnEditIncident.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// editar incidente
-				/*
-				 * int i = table.getSelectedRow();
-				 * System.out.println( table.getValueAt(i, 0));
-				 * System.out.println( table.getValueAt(i, 1));
-				 * System.out.println( table.getValueAt(i, 2));
-				 */
+				try {
+					int i = table.getSelectedRow();
+					int incidentId = (Integer)table.getValueAt(i, 0);
+					String highway = (String)table.getValueAt(i, 1);
+					int km = (Integer)table.getValueAt(i, 2);
+					String data = (String)table.getValueAt(i, 3);
+					System.out.println(incidentId);
+					System.out.println(highway);
+					System.out.println(km);
+					System.out.println(data);
+					
+				} catch (ArrayIndexOutOfBoundsException outOfIndexError) {
+					JOptionPane.showMessageDialog(contentPane, "Selecione uma linha antes de editar!");
+				}
+				
+
 			}
 		});
 		btnEditIncident.setBounds(245, 380, 140, 42);
@@ -118,8 +128,8 @@ public class RequestMyListOfIncidentsView extends JFrame {
 
 		table = new JTable();
 		model = new DefaultTableModel();
-		Object[] column = { "Rodovia", "KM", "Data" };
-		Object[] row = new Object[3];
+		Object[] column = { "Id_incidente", "Rodovia", "KM", "Data" };
+		Object[] row = new Object[4];
 		model.setColumnIdentifiers(column);
 		table.setModel(model);
 		scrollPane.setViewportView(table);
@@ -127,9 +137,10 @@ public class RequestMyListOfIncidentsView extends JFrame {
 		if (getListOfIncidents(userId, token, out, in)) {
 			JsonArray incidentsArr = incidentList.get("lista_incidentes").getAsJsonArray();
 			incidentsArr.forEach((incident) -> {
-				row[0] = incident.getAsJsonObject().get("rodovia").getAsString();
-				row[1] = incident.getAsJsonObject().get("km").getAsInt();
-				row[2] = incident.getAsJsonObject().get("data").getAsString();
+				row[0] = incident.getAsJsonObject().get("id_incidente").getAsInt();
+				row[1] = incident.getAsJsonObject().get("rodovia").getAsString();
+				row[2] = incident.getAsJsonObject().get("km").getAsInt();
+				row[3] = incident.getAsJsonObject().get("data").getAsString();
 				model.addRow(row);
 			});
 		} else {
