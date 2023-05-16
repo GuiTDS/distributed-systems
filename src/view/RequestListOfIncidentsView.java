@@ -26,12 +26,20 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.ParseException;
 import java.awt.event.ActionEvent;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import java.awt.Color;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.border.EtchedBorder;
 
 public class RequestListOfIncidentsView extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField kmRangeField;
 	private static String tempText;
+	private JTable table;
+	private DefaultTableModel model;
 	/**
 	 * Launch the application.
 	 */
@@ -69,11 +77,6 @@ public class RequestListOfIncidentsView extends JFrame {
 		lblSolicitarListaDe.setFont(new Font("Tahoma", Font.PLAIN, 30));
 		lblSolicitarListaDe.setBounds(281, 22, 366, 31);
 		contentPane.add(lblSolicitarListaDe);
-
-		JTextArea incidentsArea = new JTextArea();
-		incidentsArea.setEditable(false);
-		incidentsArea.setBounds(418, 100, 510, 253);
-		contentPane.add(incidentsArea);
 
 		JLabel lblNewLabel_1_1 = new JLabel("Rodovia");
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -120,10 +123,30 @@ public class RequestListOfIncidentsView extends JFrame {
 		highwayField.setText("");
 		highwayField.setBounds(65, 103, 214, 19);
 		contentPane.add(highwayField);
+		
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Lista de Incidentes", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel.setBounds(424, 90, 507, 290);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(6, 15, 495, 269);
+		panel.add(scrollPane);
+		
+		table = new JTable();
+		table.setBackground(Color.WHITE);
+		model = new DefaultTableModel();
+		Object[] column = {"Rodovia", "KM", "Data"};
+		Object[] row = new Object[3];
+		model.setColumnIdentifiers(column);
+		table.setModel(model);
+		scrollPane.setViewportView(table);
 
 		JButton btnRequestIncidents = new JButton("Solicitar");
 		btnRequestIncidents.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				model.setRowCount(0);
 				// solicitar lista de incidents
 				JsonObject message = new JsonObject();
 				Gson gson = new Gson();
@@ -152,12 +175,13 @@ public class RequestListOfIncidentsView extends JFrame {
 
 					JsonObject jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
 					JsonArray incidentsArr = jsonRecebido.get("lista_incidentes").getAsJsonArray();
-					System.out.println("------LISTA DE INCIDENTES------");
-					tempText = "";
 					incidentsArr.forEach((incident) -> {
-						tempText += incident.getAsJsonObject().get("rodovia").getAsString() + " ," +  incident.getAsJsonObject().get("km").getAsInt() + " ," + incident.getAsJsonObject().get("data").getAsString() + "\n";
+						row[0] = incident.getAsJsonObject().get("rodovia").getAsString();
+						row[1] = incident.getAsJsonObject().get("km").getAsInt();
+						row[2] = incident.getAsJsonObject().get("data").getAsString();
+						model.addRow(row);
 					});
-					incidentsArea.setText(tempText);
+					
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -167,6 +191,8 @@ public class RequestListOfIncidentsView extends JFrame {
 		});
 		btnRequestIncidents.setBounds(121, 416, 85, 21);
 		contentPane.add(btnRequestIncidents);
+		
+		
 
 	}
 }
