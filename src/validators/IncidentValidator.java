@@ -36,7 +36,7 @@ public class IncidentValidator extends Validator {
 			super.setOpResponse(super.getFailOpCode());
 			return false;
 		} else if (!validateField.validateKmRange(kmRange)) {
-			super.setErrorMessage("A faixa de km deve estar no formato: 111-999");
+			super.setErrorMessage("A faixa de km deve estar vazia ou no formato: 111-999");
 			super.setOpResponse(super.getFailOpCode());
 			return false;
 		} else if(!validateField.validatePeriod(period)) {

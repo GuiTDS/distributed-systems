@@ -96,8 +96,6 @@ public class IncidentControl {
 	public boolean getListOfIncidents(Incident reqIncident, String km, int period) {
 		conn = new ConexaoControl().conectaBD();
 		if (incidentValidator.isValidGetListOfIncidents(reqIncident, km, period)) {
-			// JA ESTA DEVOLVENDO O ARRAY DE INCIDENTES CORRETAMENTE, POREM FALTA FILTRAR OS
-			// RESULTADOS PARA A FAIXA DE KM E O PERIODO SOLICITADO
 			// SELECT * FROM incidentes WHERE data_incidente >= '2023-05-14
 			// 16:55:00'::timestamp
 			// AND data_incidente <= '2023-05-14 20:00:00'::timestamp order by
@@ -144,12 +142,14 @@ public class IncidentControl {
 				System.out.println("Data de fim do filtro: " + timestampEnd.toString());
 				String sql;
 				if (km.equals("")) {
+					System.out.println("Server: FAIXA DE KM VAZIA");
 					sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ? and data_incidente >= ? and data_incidente <= ?;";
 					pstm = conn.prepareStatement(sql);
 					pstm.setString(1, reqIncident.getHighway());
 					pstm.setTimestamp(2, timestampBegin);
 					pstm.setTimestamp(3, timestampEnd);
 				} else {
+					System.out.println("Server: FAIXA DE KM POSSUI VALORES");
 					String[] kmRange = km.split("-");
 					int beginRange = Integer.parseInt(kmRange[0]);
 					int endRange = Integer.parseInt(kmRange[1]);

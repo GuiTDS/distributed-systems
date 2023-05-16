@@ -62,7 +62,7 @@ public class ValidateField {
 	}
 
 	public boolean validateKmRange(String kmRange) {
-		if(kmRange.trim().length() >= 3 && kmRange.trim().length() <= 7)
+		if((kmRange.trim().length() >= 3 && kmRange.trim().length() <= 7) || kmRange.equals(""))
 			return true;
 		return false;
 	}

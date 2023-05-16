@@ -107,8 +107,7 @@ public class ClientLoginView {
 		btnSignUp.addActionListener(new ActionListener() { // ABRIR TELA DE CADASTRO
 			public void actionPerformed(ActionEvent e) {
 			ClientSignUpView signUpView = new ClientSignUpView(clientSocket, out, in);
-			signUpView.setVisible(true);
-				
+			signUpView.setVisible(true);	
 			}
 		});
 		btnSignUp.setBounds(182, 348, 141, 43);

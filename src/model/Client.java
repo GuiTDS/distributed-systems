@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class Client {
@@ -49,7 +50,7 @@ public class Client {
 		Gson gson = new Gson();
 		String name, email, password, passwordHash;
 		String respostaServidor;
-		JsonObject message = new JsonObject(), jsonRecebido = new JsonObject();
+		JsonObject message, jsonRecebido = new JsonObject();
 		while (run) {
 			System.out.println("Informe operacao: ");
 			System.out.println("1 - cadastro");
@@ -58,6 +59,7 @@ public class Client {
 			int op = Integer.parseInt(stdIn.readLine());
 			switch (op) {
 				case 1: // CADASTRO NO SISTEMA
+					message = new JsonObject();
 					System.out.println("Informe o nome: ");
 					name = stdIn.readLine();
 					System.out.println("Informe o email: ");
@@ -67,6 +69,7 @@ public class Client {
 					passwordHash = hashed(password);
 
 					// System.out.println(passwordHash);
+					
 					message.addProperty("id_operacao", 1);
 					message.addProperty("nome", name);
 					message.addProperty("email", email);
@@ -75,7 +78,7 @@ public class Client {
 					System.out.println("Cliente => " + message.toString());
 					out.println(message.toString());
 					respostaServidor = in.readLine();
-					System.out.println("Cliente => resposta no cliente : " + respostaServidor);
+					System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 					jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
 					if (jsonRecebido.get("codigo").getAsInt() == 200)
 						System.out.println("Cliente => Cadastro realizado com sucesso!");
@@ -118,7 +121,6 @@ public class Client {
 									System.out.println("------REPORTAR INCIDENTE------");
 									showIncidentTypeList(); // exibe lista com os tipos de incidentes possiveis
 									int incidentType = Integer.parseInt(stdIn.readLine());// tipo do incidente
-
 									System.out.println("Informe a rodovia:");
 									String highway = stdIn.readLine(); // rodovia
 
@@ -197,6 +199,13 @@ public class Client {
 									out.println(message.toString());
 									respostaServidor = in.readLine();
 									System.out.println("Cliente => resposta do servidor: " + respostaServidor);
+
+									jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
+									JsonArray incidentsArr = jsonRecebido.get("lista_incidentes").getAsJsonArray();
+									System.out.println("------LISTA DE INCIDENTES------");
+									incidentsArr.forEach((incident) -> {
+										System.out.println(incident);
+									});
 									break;
 								case 3:
 									System.out.println("Solicitar incidentes reportados por mim...");
@@ -221,10 +230,11 @@ public class Client {
 									email = stdIn.readLine();
 									System.out.println("Informe senha: ");
 									password = stdIn.readLine();
+									passwordHash = hashed(password);
 									message.addProperty("id_operacao", 2);
 									message.addProperty("nome", name);
 									message.addProperty("email", email);
-									message.addProperty("senha", password);
+									message.addProperty("senha", passwordHash);
 									message.addProperty("token", token);
 									message.addProperty("id_usuario", userId);
 									System.out.println("Cliente => " + message.toString());
@@ -260,7 +270,7 @@ public class Client {
 									System.out.println("Cliente => " + message.toString());
 									out.println(message.toString());
 									respostaServidor = in.readLine();
-									System.out.println("Cliente => " + respostaServidor);
+									System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 
 									break;
 								default:
