@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.ParseException;
 
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
@@ -90,13 +91,14 @@ public class RequestMyListOfIncidentsView extends JFrame {
 					String highway = (String)table.getValueAt(i, 1);
 					int km = (Integer)table.getValueAt(i, 2);
 					String data = (String)table.getValueAt(i, 3);
-					System.out.println(incidentId);
-					System.out.println(highway);
-					System.out.println(km);
-					System.out.println(data);
+					EditIncidentView editIncidentView = new EditIncidentView(incidentId, highway, km, data, userId, token, out, in);
+					editIncidentView.setVisible(true);
 					
 				} catch (ArrayIndexOutOfBoundsException outOfIndexError) {
 					JOptionPane.showMessageDialog(contentPane, "Selecione uma linha antes de editar!");
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 				
 

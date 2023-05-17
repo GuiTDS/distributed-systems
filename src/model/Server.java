@@ -244,17 +244,22 @@ public class Server extends Thread {
 							break;
 						case 5:
 							System.out.println("Solicitacao de incidentes na rodovia");
-							if(jsonValidator.isValidRequestListOfIncidents()) { // ja esta devolvendo a lista de incidentes , porem quando a faixa_km é vazio o servidor nao devolve nada ao cliente;
+							if (jsonValidator.isValidRequestListOfIncidents()) { // ja esta devolvendo a lista de
+																					// incidentes , porem quando a
+																					// faixa_km é vazio o servidor nao
+																					// devolve nada ao cliente;
 								String km = jsonRecebido.get("faixa_km").getAsString();
 								int period = jsonRecebido.get("periodo").getAsInt();
-								Incident incident = new Incident(jsonRecebido.get("data").getAsString(), jsonRecebido.get("rodovia").getAsString());
-								if(incidentControl.getListOfIncidents(incident, km, period)) {
-									message.addProperty("codigo", incidentControl.getIncidentValidator().getOpResponse());
+								Incident incident = new Incident(jsonRecebido.get("data").getAsString(),
+										jsonRecebido.get("rodovia").getAsString());
+								if (incidentControl.getListOfIncidents(incident, km, period)) {
+									message.addProperty("codigo",
+											incidentControl.getIncidentValidator().getOpResponse());
 									message.add("lista_incidentes", incidentControl.getIncidentsArray());
 									System.out.println("Server => " + message.toString());
 									out.println(message.toString());
 								}
-							}else {
+							} else {
 								message.addProperty("codigo", jsonValidator.getOpResponse());
 								message.addProperty("mensagem", jsonValidator.getErrorMessage());
 								System.out.println(message.toString());
@@ -266,7 +271,8 @@ public class Server extends Thread {
 								// criar usuario e validar token
 								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
 								if (incidentControl.getMyReports(user, jsonRecebido.get("token").getAsString())) {
-									message.addProperty("codigo", incidentControl.getIncidentValidator().getOpResponse());
+									message.addProperty("codigo",
+											incidentControl.getIncidentValidator().getOpResponse());
 									message.add("lista_incidentes", incidentControl.getIncidentsArray());
 									System.out.println("Server => " + message.toString());
 									out.println(message.toString());
@@ -305,7 +311,10 @@ public class Server extends Thread {
 								out.println(message);
 							}
 							break;
-
+						case 10:
+							message.addProperty("codigo", 200);
+							out.println(message.toString());
+							break;
 						default:
 							System.out.println("Opcao invalida");
 							message.addProperty("codigo", 500);
