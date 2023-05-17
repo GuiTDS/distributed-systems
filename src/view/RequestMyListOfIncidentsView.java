@@ -111,6 +111,33 @@ public class RequestMyListOfIncidentsView extends JFrame {
 		btnRemoveIncident.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// remover incidente
+				try {
+					gson = new Gson();
+					int i = table.getSelectedRow();
+					int incidentId = (Integer)table.getValueAt(i, 0);
+					message = new JsonObject();
+					message.addProperty("id_operacao", 7);
+					message.addProperty("token", token);
+					message.addProperty("id_incidente", incidentId);
+					message.addProperty("id_usuario", userId);
+					System.out.println("Cliente => " + message.toString());
+					out.println(message.toString());
+					try {
+						String respostaServidor = in.readLine();
+						System.out.println("Cliente => resposta do servidor: " + respostaServidor);
+						JsonObject jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
+						if(jsonServidor.get("codigo").getAsInt() == 200) {
+							JOptionPane.showMessageDialog(contentPane, "Incidente removido com sucesso!");
+						}else {
+							JOptionPane.showMessageDialog(contentPane, jsonServidor.get("mensagem").getAsString());
+						}
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(contentPane, "Erro ao receber mensagem do servidor");
+					}
+				} catch (ArrayIndexOutOfBoundsException outOfIndexError) {
+					JOptionPane.showMessageDialog(contentPane, "Selecione uma linha antes de editar!");
+				} 
 			}
 		});
 		btnRemoveIncident.setBounds(499, 380, 140, 42);

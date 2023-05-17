@@ -95,6 +95,10 @@ public class JsonValidator extends Validator {
 				super.opResponse = super.failOpCode;
 				super.errorMessage = "O json possui campos nulos!";
 				return false;
+			} catch(NumberFormatException e1) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "Formato de dados invalidos!";
+				return false;
 			}
 			
 		}

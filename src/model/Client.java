@@ -17,7 +17,7 @@ import com.google.gson.JsonObject;
 public class Client {
 	public static void main(String[] args) throws IOException, ParseException {
 
-		String serverHostname = new String("localhost");
+		String serverHostname = new String("10.40.3.216");
 		// ip ruivo: 26.10.188.162
 		// ip kenji: 26.20.133.105
 		// meu ip casa: 192.168.0.13
@@ -31,7 +31,7 @@ public class Client {
 		BufferedReader in = null;
 
 		try {
-			echoSocket = new Socket(serverHostname, 24001);
+			echoSocket = new Socket(serverHostname, 20540);
 			out = new PrintWriter(echoSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(
 					echoSocket.getInputStream()));
@@ -255,12 +255,12 @@ public class Client {
 								case 8:
 									message = new JsonObject();
 									message.addProperty("id_operacao", 9);
-									message.addProperty("token", "8=======D");
+									message.add("token", null);
 									message.addProperty("id_usuario", 234);
 									out.println(message.toString());
 									respostaServidor = in.readLine();
 									System.out.println("Cliente => " + respostaServidor);
-
+									break;
 								case 0:
 									login = false;
 									message = new JsonObject();
