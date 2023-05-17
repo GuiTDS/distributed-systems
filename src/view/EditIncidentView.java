@@ -7,9 +7,12 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.text.ParseException;
 
@@ -115,6 +118,8 @@ public class EditIncidentView extends JFrame {
 		btnUpdateIncident.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//atualizar
+				Gson gson = new Gson();
+				JsonObject jsonServidor = new JsonObject();
 				int incidentType = incidentTypeField.getSelectedIndex() + 1;
 				String highway = highwayField.getText();
 				int km = Integer.parseInt(kmField.getText());
@@ -134,6 +139,14 @@ public class EditIncidentView extends JFrame {
 				try {
 					String respostaServidor = in.readLine();
 					System.out.println("Cliente => resposta do servidor:  " + respostaServidor);
+					jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
+					if(jsonServidor.get("codigo").getAsInt() == 200) {
+						JOptionPane.showMessageDialog(contentPane, "Atualizacao de incidente realizada com sucesso!");
+						dispose();
+					} else {
+						JOptionPane.showMessageDialog(contentPane, jsonServidor.get("mensagem").getAsString());
+					}
+					
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
