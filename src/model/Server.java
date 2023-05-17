@@ -312,8 +312,34 @@ public class Server extends Thread {
 							}
 							break;
 						case 10:
-							message.addProperty("codigo", 200);
-							out.println(message.toString());
+							System.out.println("Pedido de edicao de incidente");
+							if(jsonValidator.isValidUpdateIncident()) {
+								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+								String token = jsonRecebido.get("token").getAsString();
+								if(userControl.checkToken(user, token)) {
+									Incident incident = new Incident(jsonRecebido.get("data").getAsString(), jsonRecebido.get("tipo_incidente").getAsInt(), jsonRecebido.get("km").getAsInt(), jsonRecebido.get("rodovia").getAsString());
+									if(incidentControl.updateIncident(incident, jsonRecebido.get("id_incidente").getAsInt(), jsonRecebido.get("id_usuario").getAsInt())) {
+										message.addProperty("codigo", incidentControl.getIncidentValidator().getOpResponse());
+										System.out.println("Server => " + message.toString());
+										out.println(message.toString());
+									} else {
+										message.addProperty("codigo", incidentControl.getIncidentValidator().getOpResponse());
+										message.addProperty("mensagem", incidentControl.getIncidentValidator().getErrorMessage());
+										System.out.println("Server => " + message.toString());
+									}
+								} else {
+									message.addProperty("codigo", userControl.getUpdateRegistrationValidator().getOpResponse());
+									message.addProperty("mensagem", userControl.getUpdateRegistrationValidator().getErrorMessage());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
+							} else {
+								message.addProperty("codigo", jsonValidator.getOpResponse());
+								message.addProperty("mensagem", jsonValidator.getErrorMessage());
+								System.out.println("Server => " + message.toString());
+								out.println(message.toString());
+							}
+							
 							break;
 						default:
 							System.out.println("Opcao invalida");

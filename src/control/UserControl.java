@@ -173,9 +173,13 @@ public class UserControl {
 					return true;
 				}
 			}
+			updateRegistrationValidator.setOpResponse(updateRegistrationValidator.getFailOpCode());
+			updateRegistrationValidator.setErrorMessage("Erro ao validar token");
 			return false;
 		} catch (SQLException erro) {
 			System.out.println("Erro ao validar token: " + erro);
+			updateRegistrationValidator.setOpResponse(updateRegistrationValidator.getFailOpCode());
+			updateRegistrationValidator.setErrorMessage("Erro com o banco de dados");
 			return false;
 		}
 	}

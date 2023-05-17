@@ -189,6 +189,30 @@ public class JsonValidator extends Validator {
 		}
 	}
 
+	public boolean isValidUpdateIncident() {
+		JsonObject objJson = getJsonObject();
+		if(!objJson.has("id_incidente") || !objJson.has("id_usuario") || !objJson.has("token") || !objJson.has("data") || !objJson.has("rodovia") || !objJson.has("km") || !objJson.has("tipo_incidente")) {
+			super.opResponse = super.failOpCode;
+			super.errorMessage = "O json enviado nao possui os campos necessarios para atualizar o incidente";
+			return false;
+		}else {
+			try {
+				int incidentId = objJson.get("id_incidente").getAsInt();
+				int userId = objJson.get("id_usuario").getAsInt();
+				String token = objJson.get("token").getAsString();
+				String date = objJson.get("data").getAsString();
+				String highway = objJson.get("rodovia").getAsString();
+				int km = objJson.get("km").getAsInt();
+				int incidentType = objJson.get("tipo_incidente").getAsInt();
+				return true;
+			}catch(UnsupportedOperationException e) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "O json possui campos nulos";
+				return false;
+			}
+		}
+	}
+
 	public JsonObject getJsonObject() {
 		return new Gson().fromJson(this.json, JsonObject.class);
 	}
