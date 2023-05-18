@@ -87,6 +87,8 @@ public class ClientLoginView {
 					if (jsonServidor.get("codigo").getAsInt() == 200) {
 						// ABRIR TELA PRINCIPAL
 						JOptionPane.showMessageDialog(frame, "Login realizado com sucesso!");
+						emailField.setText("");
+						passwordField.setText("");
 						String token = jsonServidor.get("token").getAsString();
 						int userId = jsonServidor.get("id_usuario").getAsInt();
 						ClientSignedInView signedInView = new ClientSignedInView(clientSocket, out, in, userId, token, email, passwordHash);

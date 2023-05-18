@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import org.mindrot.jbcrypt.BCrypt;
 
 import model.User;
+import validators.RemoveAccountValidator;
 import validators.SignInValidator;
 import validators.SignUpValidator;
 import validators.UpdateRegistrationValidator;
@@ -21,6 +22,7 @@ public class UserControl {
 	private SignUpValidator signUpValidator = new SignUpValidator();
 	private SignInValidator signInValidator = new SignInValidator();
 	private UpdateRegistrationValidator updateRegistrationValidator = new UpdateRegistrationValidator();
+	private RemoveAccountValidator removeAccountValidator = new RemoveAccountValidator();
 	private String token;
 
 	public SignUpValidator getSignUpValidator() {
@@ -33,6 +35,10 @@ public class UserControl {
 
 	public UpdateRegistrationValidator getUpdateRegistrationValidator() {
 		return updateRegistrationValidator;
+	}
+
+	public RemoveAccountValidator getRemoveAccountValidator() {
+		return removeAccountValidator;
 	}
 
 	public String getToken() {
@@ -49,7 +55,7 @@ public class UserControl {
 		if (this.signUpValidator.isValid()) {
 			try {
 				String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?);";
-				//String passwordHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+				// String passwordHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 				pstm = conn.prepareStatement(sql);
 				pstm.setString(1, user.getName());
 				pstm.setString(2, user.getEmail());
@@ -70,7 +76,7 @@ public class UserControl {
 	}
 
 	public boolean authenticateUser(User user) {
-		conn = new ConexaoControl().conectaBD(); 
+		conn = new ConexaoControl().conectaBD();
 		this.signInValidator.setUser(user);
 		if (signInValidator.isValid()) {
 			try {
@@ -124,14 +130,19 @@ public class UserControl {
 		}
 		return false;
 	}
-	
+
 	public boolean updateRegistration(User user, String token) {
-		conn = new ConexaoControl().conectaBD(); 
+		conn = new ConexaoControl().conectaBD();
 		this.updateRegistrationValidator.setUser(user);
-		if(updateRegistrationValidator.isValid()) {
-			if(checkToken(user,token)) {
+		if (updateRegistrationValidator.isValid()) {
+			if (checkToken(user, token)) {
 				try {
-					String sql = "UPDATE usuarios SET nome = ?, email = ?, senha = ? WHERE id_usuario = ?"; // CASO PRECISE ATUALIZAR O TOKEN, MUDAR AQUI
+					String sql = "UPDATE usuarios SET nome = ?, email = ?, senha = ? WHERE id_usuario = ?"; // CASO
+																											// PRECISE
+																											// ATUALIZAR
+																											// O TOKEN,
+																											// MUDAR
+																											// AQUI
 					pstm = conn.prepareStatement(sql);
 					pstm.setString(1, user.getName());
 					pstm.setString(2, user.getEmail());
@@ -141,13 +152,15 @@ public class UserControl {
 					System.out.println("Atualizou os dados do usuario!");
 					pstm.close();
 					return true;
-				}catch(SQLException erro) {
+				} catch (SQLException erro) {
 					System.out.println("Erro no update: " + erro);
-					updateRegistrationValidator.setErrorMessage("Erro ao atualizar dados no BD");//CASO O EMAIL JA EXISTA NO BD, CAI NESSE CATCH
+					updateRegistrationValidator.setErrorMessage("Erro ao atualizar dados no BD");// CASO O EMAIL JA
+																									// EXISTA NO BD, CAI
+																									// NESSE CATCH
 					updateRegistrationValidator.setOpResponse(updateRegistrationValidator.getFailOpCode());
 					return false;
 				}
-				
+
 			} else {
 				System.out.println("NAO VALIDOU O TOKEN");
 				updateRegistrationValidator.setErrorMessage("Erro ao validar token");
@@ -183,7 +196,50 @@ public class UserControl {
 			return false;
 		}
 	}
-	
+
+	public boolean removeAccount(User user) {
+		conn = new ConexaoControl().conectaBD();
+		this.removeAccountValidator.setUser(user);
+		if (this.removeAccountValidator.isValid()) {
+			try {
+				String sql = "SELECT email, senha FROM usuarios WHERE id_usuario = ?;";
+				pstm = conn.prepareStatement(sql);
+				pstm.setInt(1, user.getIdUsuario());
+				ResultSet result = pstm.executeQuery();
+				if (result.next()) {
+					String email = result.getString(1);
+					String password = result.getString(2);
+					if (email.equals(user.getEmail()) && password.equals(user.getPassword())) {
+						try {
+							sql = "DELETE FROM usuarios WHERE id_usuario = ?;";
+							pstm = conn.prepareStatement(sql);
+							pstm.setInt(1, user.getIdUsuario());
+							pstm.execute();
+							pstm.close();
+							removeAccountValidator.setOpResponse(removeAccountValidator.getSucessOpCode());
+							return true;
+						} catch (SQLException erro) {
+							System.out.println("erro no usuario control ao remover conta\n" + erro);
+							signInValidator.setErrorMessage("Erro ao inserir token");
+							signInValidator.setOpResponse(signInValidator.getFailOpCode());
+							return false;
+						}
+					} else {
+						signInValidator.setErrorMessage("Email ou senha incorretos!");
+						signInValidator.setOpResponse(signInValidator.getFailOpCode());
+						return false;
+					}
+				}
+			} catch (SQLException e) {
+				System.out.println("erro no usuario control ao remover conta: " + e);
+				removeAccountValidator.setOpResponse(removeAccountValidator.getFailOpCode());
+				removeAccountValidator.setErrorMessage("As informacoes passadas nao coincidem com as cadastradas!");
+				return false;
+			}
+		}
+		return false;
+	}
+
 	public boolean removeToken(User user) {
 		conn = new ConexaoControl().conectaBD();
 		try {
@@ -194,8 +250,8 @@ public class UserControl {
 			pstm.execute();
 			pstm.close();
 			return true;
-			
-		}catch(SQLException erro) {
+
+		} catch (SQLException erro) {
 			System.out.println("Erro ao remover token no logout");
 			System.out.println(erro);
 			return false;

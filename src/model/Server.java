@@ -316,6 +316,43 @@ public class Server extends Thread {
 							}
 							break;
 						case 8:
+							System.out.println("Pedido de remocao de conta");
+							if (jsonValidator.isValidRemoveAccount()) {
+								if (loggedInUsers.containsKey(jsonRecebido.get("id_usuario").getAsInt())) {
+									User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+									if (userControl.checkToken(user, jsonRecebido.get("token").getAsString())) {
+										user.setEmail(jsonRecebido.get("email").getAsString());
+										user.setPassword(jsonRecebido.get("senha").getAsString());
+										if(userControl.removeAccount(user)) {
+											System.out.println("Conta removida com sucesso!");
+											message.addProperty("codigo", userControl.getRemoveAccountValidator().getOpResponse());
+											System.out.println("Server => " + message.toString());
+											out.println(message.toString());
+										} else {
+											message.addProperty("codigo", userControl.getRemoveAccountValidator().getOpResponse());
+											message.addProperty("mensagem", userControl.getRemoveAccountValidator().getErrorMessage());
+											System.out.println("Server => " + message.toString());
+											out.println(message.toString());
+										}
+									} else {
+										message.addProperty("codigo", userControl.getUpdateRegistrationValidator().getOpResponse());
+										message.addProperty("mensagem", userControl.getUpdateRegistrationValidator().getErrorMessage());
+										System.out.println("Server => " + message.toString());
+										out.println(message.toString());
+									} 
+
+								} else {
+									message.addProperty("codigo", jsonValidator.getFailOpCode());
+									message.addProperty("mensagem", "O usuario nao esta logado!");
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
+							} else {
+								message.addProperty("codigo", jsonValidator.getOpResponse());
+								message.addProperty("mensagem", jsonValidator.getErrorMessage());
+								System.out.println("Server => " + message.toString());
+								out.println(message.toString());
+							}
 							break;
 						case 9:
 							System.out.println("Pedido de logout");

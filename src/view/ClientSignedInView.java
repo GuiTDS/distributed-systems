@@ -62,7 +62,7 @@ public class ClientSignedInView extends JFrame {
 	 * @param id
 	 */
 	public ClientSignedInView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId, String token, String email, String passwordHash) {
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 520, 511);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
