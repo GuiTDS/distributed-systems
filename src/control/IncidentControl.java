@@ -236,4 +236,21 @@ public class IncidentControl {
 
 	}
 
+	public boolean removeIncident(int incidentId) {
+		conn = new ConexaoControl().conectaBD();
+		try {
+			String sql = "DELETE FROM incidentes WHERE id_incidente = ?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, incidentId);
+			pstm.execute();
+			pstm.close();
+			incidentValidator.setOpResponse(incidentValidator.getSucessOpCode());
+			return true;
+		} catch (SQLException erro) {
+			incidentValidator.setErrorMessage("Erro de conexao com o BD");
+			System.out.println(erro);
+			incidentValidator.setOpResponse(incidentValidator.getFailOpCode());
+			return false;
+		}
+	}
 }

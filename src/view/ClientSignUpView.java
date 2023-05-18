@@ -29,13 +29,13 @@ public class ClientSignUpView extends JFrame {
 
 	private JPanel contentPane;
 
-    private JTextField nameField;
-    private JTextField emailField;
-    private JPasswordField passwordField;
-    private JsonObject message, jsonRecebido;
-    private String respostaServidor;
-    private Gson gson = new Gson();
-    
+	private JTextField nameField;
+	private JTextField emailField;
+	private JPasswordField passwordField;
+	private JsonObject message, jsonRecebido;
+	private String respostaServidor;
+	private Gson gson = new Gson();
+
 	/**
 	 * Launch the application.
 	 */
@@ -44,7 +44,7 @@ public class ClientSignUpView extends JFrame {
 			public void run() {
 				try {
 					ClientSignUpView frame = new ClientSignUpView(clientSocket, out, in);
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -54,13 +54,12 @@ public class ClientSignUpView extends JFrame {
 
 	/**
 	 * Create the frame.
-	 * @param clientSocket 
-	 * @param in 
-	 * @param out 
+	 * 
+	 * @param clientSocket
+	 * @param in
+	 * @param out
 	 */
 	public ClientSignUpView(Socket clientSocket, PrintWriter out, BufferedReader in) {
-	
-		//out.println("Enviando dados para o server a partir do mesmo socket mas em tela diferente");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 520, 510);
 		contentPane = new JPanel();
@@ -68,37 +67,37 @@ public class ClientSignUpView extends JFrame {
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		JLabel lblNewLabel = new JLabel("Cadastro");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		lblNewLabel.setBounds(196, 31, 97, 44);
 		contentPane.add(lblNewLabel);
-		
+
 		nameField = new JTextField();
 		nameField.setColumns(10);
 		nameField.setBounds(129, 127, 235, 19);
 		contentPane.add(nameField);
-		
+
 		JLabel lblName = new JLabel("Nome");
 		lblName.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		lblName.setBounds(227, 97, 38, 20);
 		contentPane.add(lblName);
-		
+
 		emailField = new JTextField();
 		emailField.setColumns(10);
 		emailField.setBounds(129, 211, 235, 19);
 		contentPane.add(emailField);
-		
+
 		JLabel lblEmail = new JLabel("Email");
 		lblEmail.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		lblEmail.setBounds(227, 181, 38, 20);
 		contentPane.add(lblEmail);
-		
+
 		JLabel lblPassword = new JLabel("Senha");
 		lblPassword.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		lblPassword.setBounds(227, 272, 38, 20);
 		contentPane.add(lblPassword);
-		
+
 		JButton btnSignUp = new JButton("Cadastrar-se");
 		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -106,7 +105,7 @@ public class ClientSignUpView extends JFrame {
 				String name = nameField.getText();
 				String email = emailField.getText();
 				String password = new String(passwordField.getPassword());
-				
+
 				String passwordHash = hashed(password);
 				message.addProperty("id_operacao", 1);
 				message.addProperty("nome", name);
@@ -117,30 +116,30 @@ public class ClientSignUpView extends JFrame {
 				out.println(message.toString());
 				try {
 					respostaServidor = in.readLine();
+					System.out.println("Cliente => resposta no cliente : " + respostaServidor);
+					jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
+					if (jsonRecebido.get("codigo").getAsInt() == 200) {
+						JOptionPane.showMessageDialog(contentPane, "Cadastro realizado com sucesso!");
+						dispose();
+					} else {
+						JOptionPane.showMessageDialog(contentPane, jsonRecebido.get("mensagem").getAsString());
+					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				System.out.println("Cliente => resposta no cliente : " + respostaServidor);
-				jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
-				if (jsonRecebido.get("codigo").getAsInt() == 200) {
-					JOptionPane.showMessageDialog(contentPane, "Cadastro realizado com sucesso!");
-					dispose();
-					}	
-				else {
-					JOptionPane.showMessageDialog(contentPane, jsonRecebido.get("mensagem").getAsString());
-				}
+
 			}
 		});
 		btnSignUp.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		btnSignUp.setBounds(178, 356, 141, 37);
 		contentPane.add(btnSignUp);
-		
+
 		passwordField = new JPasswordField();
 		passwordField.setBounds(129, 302, 235, 19);
 		contentPane.add(passwordField);
 	}
-	
+
 	public static String hashed(String pswd) {
 
 		String hashed = "";

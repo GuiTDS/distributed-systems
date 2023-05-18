@@ -17,10 +17,11 @@ import com.google.gson.JsonObject;
 public class Client {
 	public static void main(String[] args) throws IOException, ParseException {
 
-		String serverHostname = new String("10.40.3.216");
+		String serverHostname = new String("26.28.97.231");
 		// ip ruivo: 26.10.188.162
 		// ip kenji: 26.20.133.105
 		// meu ip casa: 192.168.0.13
+		//ip quintero: 26.28.97.231
 		if (args.length > 0)
 			serverHostname = args[0];
 		System.out.println("Attemping to connect to host " +
@@ -31,7 +32,7 @@ public class Client {
 		BufferedReader in = null;
 
 		try {
-			echoSocket = new Socket(serverHostname, 20540);
+			echoSocket = new Socket(serverHostname, 24001);
 			out = new PrintWriter(echoSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(
 					echoSocket.getInputStream()));

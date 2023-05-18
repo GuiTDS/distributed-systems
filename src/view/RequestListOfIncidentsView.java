@@ -156,7 +156,6 @@ public class RequestListOfIncidentsView extends JFrame {
 
 				String date = dateField.getText();
 				date += " 00:00:00";
-				System.out.println("Data no cliente: " + date);
 
 				int periodo = periodBox.getSelectedIndex() + 1;
 

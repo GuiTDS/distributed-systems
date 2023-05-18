@@ -107,6 +107,27 @@ public class RequestMyListOfIncidentsView extends JFrame {
 		btnEditIncident.setBounds(245, 380, 140, 42);
 		contentPane.add(btnEditIncident);
 
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
+				"Lista de incidentes", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel.setBounds(32, 70, 898, 269);
+		contentPane.add(panel);
+		panel.setLayout(null);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(6, 15, 886, 248);
+		panel.add(scrollPane);
+
+		table = new JTable();
+		model = new DefaultTableModel();
+		Object[] column = { "Id_incidente", "Rodovia", "KM", "Data" };
+		Object[] row = new Object[4];
+		model.setColumnIdentifiers(column);
+		table.setModel(model);
+		scrollPane.setViewportView(table);
+		updateList(userId, token, out, in, model, row);
+
 		JButton btnRemoveIncident = new JButton("Remover incidente");
 		btnRemoveIncident.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -128,6 +149,8 @@ public class RequestMyListOfIncidentsView extends JFrame {
 						JsonObject jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
 						if(jsonServidor.get("codigo").getAsInt() == 200) {
 							JOptionPane.showMessageDialog(contentPane, "Incidente removido com sucesso!");
+							model.setRowCount(0);
+							updateList(userId, token, out, in, model, row);
 						}else {
 							JOptionPane.showMessageDialog(contentPane, jsonServidor.get("mensagem").getAsString());
 						}
@@ -143,26 +166,11 @@ public class RequestMyListOfIncidentsView extends JFrame {
 		btnRemoveIncident.setBounds(499, 380, 140, 42);
 		contentPane.add(btnRemoveIncident);
 
-		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(
-				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
-				"Lista de incidentes", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel.setBounds(32, 70, 898, 269);
-		contentPane.add(panel);
-		panel.setLayout(null);
+		
+		
+	}
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(6, 15, 886, 248);
-		panel.add(scrollPane);
-
-		table = new JTable();
-		model = new DefaultTableModel();
-		Object[] column = { "Id_incidente", "Rodovia", "KM", "Data" };
-		Object[] row = new Object[4];
-		model.setColumnIdentifiers(column);
-		table.setModel(model);
-		scrollPane.setViewportView(table);
-
+	public void updateList(int userId, String token, PrintWriter out, BufferedReader in, DefaultTableModel model, Object[] row) {
 		if (getListOfIncidents(userId, token, out, in)) {
 			JsonArray incidentsArr = incidentList.get("lista_incidentes").getAsJsonArray();
 			incidentsArr.forEach((incident) -> {

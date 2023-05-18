@@ -28,14 +28,14 @@ public class ClientLoginView {
 
 	private JFrame frame;
 	private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
-    private JTextField emailField;
-    private JsonObject message, jsonServidor;
-    private String respostaServidor;
-    private Gson gson = new Gson();
-    private JPasswordField passwordField;
-    
+	private PrintWriter out;
+	private BufferedReader in;
+	private JTextField emailField;
+	private JsonObject message, jsonServidor;
+	private String respostaServidor;
+	private Gson gson = new Gson();
+	private JPasswordField passwordField;
+
 	/**
 	 * Launch the application.
 	 */
@@ -82,69 +82,71 @@ public class ClientLoginView {
 				out.println(message.toString());
 				try {
 					respostaServidor = in.readLine();
+					System.out.println("Cliente => resposta do servidor: " + respostaServidor);
+					jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
+					if (jsonServidor.get("codigo").getAsInt() == 200) {
+						// ABRIR TELA PRINCIPAL
+						JOptionPane.showMessageDialog(frame, "Login realizado com sucesso!");
+						String token = jsonServidor.get("token").getAsString();
+						int userId = jsonServidor.get("id_usuario").getAsInt();
+						ClientSignedInView signedInView = new ClientSignedInView(clientSocket, out, in, userId, token, email, passwordHash);
+						signedInView.setVisible(true);
+					} else {
+						// EXIBE ERRO
+						JOptionPane.showMessageDialog(frame, jsonServidor.get("mensagem").getAsString());
+					}
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				System.out.println("Cliente => resposta do servidor: " + respostaServidor);
-				jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
-				if (jsonServidor.get("codigo").getAsInt() == 200) {
-					//ABRIR TELA PRINCIPAL
-					JOptionPane.showMessageDialog(frame, "Login realizado com sucesso!");
-					String token = jsonServidor.get("token").getAsString();
-					int userId = jsonServidor.get("id_usuario").getAsInt();
-					ClientSignedInView signedInView = new ClientSignedInView(clientSocket, out, in, userId, token);
-					signedInView.setVisible(true);
-				}else {
-					//EXIBE ERRO
-					JOptionPane.showMessageDialog(frame, jsonServidor.get("mensagem").getAsString());
-				}
+
 			}
 		});
 		btnLogin.setBounds(182, 268, 141, 43);
 		frame.getContentPane().add(btnLogin);
-		
+
 		JButton btnSignUp = new JButton("Cadastro");
 		btnSignUp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnSignUp.addActionListener(new ActionListener() { // ABRIR TELA DE CADASTRO
 			public void actionPerformed(ActionEvent e) {
-			ClientSignUpView signUpView = new ClientSignUpView(clientSocket, out, in);
-			signUpView.setVisible(true);	
+				ClientSignUpView signUpView = new ClientSignUpView(clientSocket, out, in);
+				signUpView.setVisible(true);
 			}
 		});
 		btnSignUp.setBounds(182, 331, 141, 43);
 		frame.getContentPane().add(btnSignUp);
-		
+
 		JLabel lblNewLabel_2 = new JLabel("");
 		Image img = new ImageIcon(this.getClass().getResource("/icons8-logo-java-coffee-cup-50.png")).getImage();
 		lblNewLabel_2.setIcon(new ImageIcon(img));
 		lblNewLabel_2.setBounds(224, 0, 61, 90);
 		frame.getContentPane().add(lblNewLabel_2);
-		
+
 		JLabel lblEmail = new JLabel("Email");
 		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblEmail.setBounds(234, 100, 51, 20);
 		frame.getContentPane().add(lblEmail);
-		
+
 		emailField = new JTextField();
 		emailField.setBounds(136, 130, 235, 19);
 		frame.getContentPane().add(emailField);
 		emailField.setColumns(10);
-		
+
 		JLabel lblPassword = new JLabel("Senha");
 		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblPassword.setBounds(234, 173, 51, 20);
 		frame.getContentPane().add(lblPassword);
-		
+
 		passwordField = new JPasswordField();
 		passwordField.setBounds(136, 211, 235, 19);
 		frame.getContentPane().add(passwordField);
-		
+
 		JButton btnRequestListOfIncidents = new JButton("Solicitar lista de incidentes");
 		btnRequestListOfIncidents.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//abrir tela de solicitaçao de lista de incidentes
+				// abrir tela de solicitaçao de lista de incidentes
 				try {
-					RequestListOfIncidentsView listOfIncidentsView = new RequestListOfIncidentsView(clientSocket, out, in);
+					RequestListOfIncidentsView listOfIncidentsView = new RequestListOfIncidentsView(clientSocket, out,
+							in);
 					listOfIncidentsView.setVisible(true);
 				} catch (ParseException e1) {
 					// TODO Auto-generated catch block
@@ -156,21 +158,21 @@ public class ClientLoginView {
 		btnRequestListOfIncidents.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnRequestListOfIncidents.setBounds(136, 394, 245, 43);
 		frame.getContentPane().add(btnRequestListOfIncidents);
-		//SOQUETES
+		// SOQUETES
 		try {
-            clientSocket = new Socket("localhost", 24001);
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			clientSocket = new Socket("localhost", 24001);
+			out = new PrintWriter(clientSocket.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-        } catch (UnknownHostException e) {
-            System.out.println("Servidor desconhecido: " + e.getMessage());
-            System.exit(1);
-        } catch (IOException e) {
-            System.out.println("Erro ao conectar ao servidor: " + e.getMessage());
-            System.exit(1);
-        }
+		} catch (UnknownHostException e) {
+			System.out.println("Servidor desconhecido: " + e.getMessage());
+			System.exit(1);
+		} catch (IOException e) {
+			System.out.println("Erro ao conectar ao servidor: " + e.getMessage());
+			System.exit(1);
+		}
 	}
-	
+
 	public static String hashed(String pswd) {
 
 		String hashed = "";

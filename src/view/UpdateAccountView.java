@@ -121,6 +121,7 @@ public class UpdateAccountView extends JFrame {
 				out.println(message.toString());
 				try {
 					respostaServidor = in.readLine();
+					System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 					jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
 					if (jsonServidor.get("codigo").getAsInt() == 200) {
 						JOptionPane.showMessageDialog(contentPane, "Conta atualizada com sucesso!");

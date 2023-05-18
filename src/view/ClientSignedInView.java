@@ -37,11 +37,11 @@ public class ClientSignedInView extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, int userId,
-			String token) {
+			String token, String email, String passwordHash) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ClientSignedInView frame = new ClientSignedInView(clientSocket, out, in, userId, token);
+					ClientSignedInView frame = new ClientSignedInView(clientSocket, out, in, userId, token, email, passwordHash);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -57,9 +57,11 @@ public class ClientSignedInView extends JFrame {
 	 * @param out
 	 * @param clientSocket
 	 * @param token
+	 * @param passwordHash
+	 * @param email
 	 * @param id
 	 */
-	public ClientSignedInView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId, String token) {
+	public ClientSignedInView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId, String token, String email, String passwordHash) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 520, 511);
 		contentPane = new JPanel();
@@ -148,6 +150,31 @@ public class ClientSignedInView extends JFrame {
 		btnRemoveAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//remover cadastro
+				int confirm = JOptionPane.showConfirmDialog(contentPane, "Tem certeza que deseja remover a conta?(Essa acao e irreversivel)");
+				if(confirm == 0) {
+					message = new JsonObject();
+					message.addProperty("id_operacao", 8);
+					message.addProperty("email", email);
+					message.addProperty("senha", passwordHash);
+					message.addProperty("token", token);
+					message.addProperty("id_usuario", userId);
+					System.out.println("Cliente => " + message.toString());
+					out.println(message.toString());
+					try {
+						respostaServidor = in.readLine();
+						System.out.println("Cliente => resposta do servidor: " + respostaServidor);
+						jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
+						if(jsonServidor.get("codigo").getAsInt() == 200) {
+							JOptionPane.showMessageDialog(contentPane, "Conta removida com sucesso!");
+							dispose();
+						}else {
+							JOptionPane.showMessageDialog(contentPane, jsonServidor.get("mensagem").getAsString());
+						}
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 			}
 		});
 		btnRemoveAccount.setBounds(123, 317, 267, 31);

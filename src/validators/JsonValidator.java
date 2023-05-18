@@ -54,6 +54,10 @@ public class JsonValidator extends Validator {
 				super.opResponse = super.failOpCode;
 				super.errorMessage = "O json possui campos nulos!";
 				return false;
+			} catch(NumberFormatException e1) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "Formato de dados invalidos!";
+				return false;
 			}
 		
 	}
@@ -74,6 +78,10 @@ public class JsonValidator extends Validator {
 			}catch(UnsupportedOperationException e) {
 				super.opResponse = super.failOpCode;
 				super.errorMessage = "O json possui campos nulos!";
+				return false;
+			} catch(NumberFormatException e1) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "Formato de dados invalidos!";
 				return false;
 			}
 			
@@ -122,6 +130,10 @@ public class JsonValidator extends Validator {
 				super.opResponse = super.failOpCode;
 				super.errorMessage = "O json possui campos nulos!";
 				return false;
+			} catch(NumberFormatException e1) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "Formato de dados invalidos!";
+				return false;
 			}
 		
 	}
@@ -146,6 +158,10 @@ public class JsonValidator extends Validator {
 				super.opResponse = super.failOpCode;
 				super.errorMessage = "O json possui campos nulos!";
 				return false;
+			} catch(NumberFormatException e1) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "Formato de dados invalidos!";
+				return false;
 			}
 		
 	}
@@ -165,6 +181,10 @@ public class JsonValidator extends Validator {
 			}catch(UnsupportedOperationException e) {
 				super.opResponse = super.failOpCode;
 				super.errorMessage = "O json possui campos nulos!";
+				return false;
+			} catch(NumberFormatException e1) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "Formato de dados invalidos!";
 				return false;
 			}
 			
@@ -189,6 +209,10 @@ public class JsonValidator extends Validator {
 				super.opResponse = super.failOpCode;
 				super.errorMessage = "O json possui campos nulos!";
 				return false;
+			} catch(NumberFormatException e1) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "Formato de dados invalidos!";
+				return false;
 			}
 		}
 	}
@@ -212,6 +236,34 @@ public class JsonValidator extends Validator {
 			}catch(UnsupportedOperationException e) {
 				super.opResponse = super.failOpCode;
 				super.errorMessage = "O json possui campos nulos";
+				return false;
+			} catch(NumberFormatException e1) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "Formato de dados invalidos!";
+				return false;
+			}
+		}
+	}
+
+	public boolean isValidRemoveIncident() {
+		JsonObject objJson = getJsonObject();
+		if(!objJson.has("id_incidente") || !objJson.has("id_usuario") || !objJson.has("token")) {
+			super.opResponse = super.failOpCode;
+			super.errorMessage = "O json enviado nao possui os campos necessarios para remover o incidente";
+			return false;
+		}else {
+			try {
+				int incidentId = objJson.get("id_incidente").getAsInt();
+				int userId = objJson.get("id_usuario").getAsInt();
+				String token = objJson.get("token").getAsString();
+				return true;
+			}catch(UnsupportedOperationException e) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "O json possui campos nulos";
+				return false;
+			} catch(NumberFormatException e1) {
+				super.opResponse = super.failOpCode;
+				super.errorMessage = "Formato de dados invalidos!";
 				return false;
 			}
 		}

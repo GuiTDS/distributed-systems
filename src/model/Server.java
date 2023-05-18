@@ -244,10 +244,7 @@ public class Server extends Thread {
 							break;
 						case 5:
 							System.out.println("Solicitacao de incidentes na rodovia");
-							if (jsonValidator.isValidRequestListOfIncidents()) { // ja esta devolvendo a lista de
-																					// incidentes , porem quando a
-																					// faixa_km é vazio o servidor nao
-																					// devolve nada ao cliente;
+							if (jsonValidator.isValidRequestListOfIncidents()) {
 								String km = jsonRecebido.get("faixa_km").getAsString();
 								int period = jsonRecebido.get("periodo").getAsInt();
 								Incident incident = new Incident(jsonRecebido.get("data").getAsString(),
@@ -287,8 +284,38 @@ public class Server extends Thread {
 							break;
 						case 7:
 							System.out.println("Pedido de remocao de incidente");
-							message.addProperty("codigo", 200);
-							out.println(message.toString());
+							if (jsonValidator.isValidRemoveIncident()) {
+								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+								if (userControl.checkToken(user, jsonRecebido.get("token").getAsString())) {
+									if (incidentControl.removeIncident(jsonRecebido.get("id_incidente").getAsInt())) {
+										message.addProperty("codigo",
+												incidentControl.getIncidentValidator().getOpResponse());
+										System.out.println("Server=> " + message.toString());
+										out.println(message.toString());
+									} else {
+										message.addProperty("codigo",
+												incidentControl.getIncidentValidator().getOpResponse());
+										message.addProperty("mensagem",
+												incidentControl.getIncidentValidator().getErrorMessage());
+										System.out.println("Server => " + message.toString());
+										out.println(message.toString());
+									}
+								} else {
+									message.addProperty("codigo",
+											userControl.getUpdateRegistrationValidator().getOpResponse());
+									message.addProperty("mensagem",
+											userControl.getUpdateRegistrationValidator().getErrorMessage());
+									System.out.println(message.toString());
+									out.println(message.toString());
+								}
+							} else {
+								message.addProperty("codigo", jsonValidator.getOpResponse());
+								message.addProperty("mensagem", jsonValidator.getErrorMessage());
+								System.out.println("Server => " + message.toString());
+								out.println(message.toString());
+							}
+							break;
+						case 8:
 							break;
 						case 9:
 							System.out.println("Pedido de logout");
