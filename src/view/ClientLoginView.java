@@ -35,6 +35,7 @@ public class ClientLoginView {
 	private String respostaServidor;
 	private Gson gson = new Gson();
 	private JPasswordField passwordField;
+	private String serverIp, serverPort;
 
 	/**
 	 * Launch the application.
@@ -63,10 +64,15 @@ public class ClientLoginView {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+
 		frame = new JFrame();
 		frame.setBounds(100, 100, 520, 510);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+
+		serverIp = JOptionPane.showInputDialog("Informe o ip do server:");
+		serverPort = JOptionPane.showInputDialog("Informe a porta que deseja se conectar");
+		
 		JButton btnLogin = new JButton("Login");
 		btnLogin.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnLogin.addActionListener(new ActionListener() {
@@ -162,7 +168,7 @@ public class ClientLoginView {
 		frame.getContentPane().add(btnRequestListOfIncidents);
 		// SOQUETES
 		try {
-			clientSocket = new Socket("localhost", 24001);
+			clientSocket = new Socket(serverIp, Integer.parseInt(serverPort));
 			out = new PrintWriter(clientSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 

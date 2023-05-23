@@ -201,7 +201,7 @@ public class IncidentControl {
 					String[] kmRange = km.split("-");
 					int beginRange = Integer.parseInt(kmRange[0]);
 					int endRange = Integer.parseInt(kmRange[1]);
-					sql = sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ? and data_incidente >= ? and data_incidente <= ? and km >= ? and km <= ? ORDER BY data_incidente;";
+					sql = "SELECT id_incidente, data_incidente, rodovia, km, tipo_incidente FROM incidentes WHERE rodovia = ? and data_incidente >= ? and data_incidente <= ? and km >= ? and km <= ? ORDER BY data_incidente;";
 					pstm = conn.prepareStatement(sql);
 					pstm.setString(1, reqIncident.getHighway());
 					pstm.setTimestamp(2, timestampBegin);

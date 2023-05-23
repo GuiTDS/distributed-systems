@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -46,9 +47,9 @@ public class Server extends Thread {
 		ServerSocket serverSocket = null;
 
 		loggedInUsers = new HashMap<Integer, String>();
-
+		String serverPort = JOptionPane.showInputDialog("Informe a porta a ser aberta");
 		try {
-			serverSocket = new ServerSocket(24001);
+			serverSocket = new ServerSocket(Integer.parseInt(serverPort));
 			System.out.println("Connection Socket Created");
 
 			try {
