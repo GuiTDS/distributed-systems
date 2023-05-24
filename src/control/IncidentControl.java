@@ -155,33 +155,17 @@ public class IncidentControl {
 				LocalDateTime dataFormatada = LocalDateTime.parse(reqIncident.getDate(), formatter);
 				LocalDateTime localDateBegin, localDateEnd;
 				if (period == 1) {
-					localDateBegin = dataFormatada.withHour(6);
-					localDateBegin = localDateBegin.withMinute(0);
-					localDateBegin = localDateBegin.withSecond(0);
-					localDateEnd = dataFormatada.withHour(11);
-					localDateEnd = localDateEnd.withMinute(59);
-					localDateEnd = localDateEnd.withSecond(0);
+					localDateBegin = dataFormatada.withHour(6).withMinute(0).withSecond(0);
+					localDateEnd = dataFormatada.withHour(11).withMinute(59).withSecond(0);
 				} else if (period == 2) {
-					localDateBegin = dataFormatada.withHour(12);
-					localDateBegin = localDateBegin.withMinute(0);
-					localDateBegin = localDateBegin.withSecond(0);
-					localDateEnd = dataFormatada.withHour(17);
-					localDateEnd = localDateEnd.withMinute(59);
-					localDateEnd = localDateEnd.withSecond(0);
+					localDateBegin = dataFormatada.withHour(12).withMinute(0).withSecond(0);
+					localDateEnd = dataFormatada.withHour(17).withMinute(59).withSecond(0);
 				} else if (period == 3) {
-					localDateBegin = dataFormatada.withHour(18);
-					localDateBegin = localDateBegin.withMinute(0);
-					localDateBegin = localDateBegin.withSecond(0);
-					localDateEnd = dataFormatada.withHour(23);
-					localDateEnd = localDateEnd.withMinute(59);
-					localDateEnd = localDateEnd.withSecond(0);
+					localDateBegin = dataFormatada.withHour(18).withMinute(0).withSecond(0);
+					localDateEnd = dataFormatada.withHour(23).withMinute(59).withSecond(0);
 				} else {
-					localDateBegin = dataFormatada.withHour(0);
-					localDateBegin = localDateBegin.withMinute(0);
-					localDateBegin = localDateBegin.withSecond(0);
-					localDateEnd = dataFormatada.withHour(5);
-					localDateEnd = localDateEnd.withMinute(59);
-					localDateEnd = localDateEnd.withSecond(0);
+					localDateBegin = dataFormatada.withHour(0).withMinute(0).withSecond(0);
+					localDateEnd = dataFormatada.withHour(5).withMinute(59).withSecond(0);
 				}
 				timestampBegin = Timestamp.valueOf(localDateBegin);
 				timestampEnd = Timestamp.valueOf(localDateEnd);

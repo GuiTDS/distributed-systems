@@ -246,7 +246,20 @@ public class Server extends Thread {
 						case 5:
 							System.out.println("Solicitacao de incidentes na rodovia");
 							if (jsonValidator.isValidRequestListOfIncidents()) {
-								String km = jsonRecebido.get("faixa_km").getAsString();
+								String km = null;
+								try {
+									if(jsonRecebido.has("faixa_km")) {
+										km = jsonRecebido.get("faixa_km").getAsString();
+									} else {
+										km = "";
+									}
+								}catch(UnsupportedOperationException e) {
+									message.addProperty("codigo", 500);
+									message.addProperty("mensagem", "o json possui campos nulos");
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
+								
 								int period = jsonRecebido.get("periodo").getAsInt();
 								Incident incident = new Incident(jsonRecebido.get("data").getAsString(),
 										jsonRecebido.get("rodovia").getAsString());
@@ -261,6 +274,7 @@ public class Server extends Thread {
 								message.addProperty("codigo", jsonValidator.getOpResponse());
 								message.addProperty("mensagem", jsonValidator.getErrorMessage());
 								System.out.println(message.toString());
+								out.println(message.toString());
 							}
 							break;
 						case 6:

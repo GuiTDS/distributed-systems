@@ -8,8 +8,6 @@ import java.util.UUID;
 
 import javax.swing.JOptionPane;
 
-import org.mindrot.jbcrypt.BCrypt;
-
 import model.User;
 import validators.RemoveAccountValidator;
 import validators.SignInValidator;
@@ -137,12 +135,7 @@ public class UserControl {
 		if (updateRegistrationValidator.isValid()) {
 			if (checkToken(user, token)) {
 				try {
-					String sql = "UPDATE usuarios SET nome = ?, email = ?, senha = ? WHERE id_usuario = ?"; // CASO
-																											// PRECISE
-																											// ATUALIZAR
-																											// O TOKEN,
-																											// MUDAR
-																											// AQUI
+					String sql = "UPDATE usuarios SET nome = ?, email = ?, senha = ? WHERE id_usuario = ?"; 
 					pstm = conn.prepareStatement(sql);
 					pstm.setString(1, user.getName());
 					pstm.setString(2, user.getEmail());
@@ -154,9 +147,7 @@ public class UserControl {
 					return true;
 				} catch (SQLException erro) {
 					System.out.println("Erro no update: " + erro);
-					updateRegistrationValidator.setErrorMessage("Erro ao atualizar dados no BD");// CASO O EMAIL JA
-																									// EXISTA NO BD, CAI
-																									// NESSE CATCH
+					updateRegistrationValidator.setErrorMessage("Erro ao atualizar dados no BD");
 					updateRegistrationValidator.setOpResponse(updateRegistrationValidator.getFailOpCode());
 					return false;
 				}

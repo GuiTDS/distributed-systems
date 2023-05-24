@@ -220,15 +220,14 @@ public class JsonValidator extends Validator {
 
 	public boolean isValidRequestListOfIncidents() {
 		JsonObject objJson = getJsonObject();
-		if (!objJson.has("rodovia") || !objJson.has("data") || !objJson.has("faixa_km") || !objJson.has("periodo")) {
+		if (!objJson.has("rodovia") || !objJson.has("data") || !objJson.has("periodo")) {
 			super.opResponse = super.failOpCode;
-			super.errorMessage = "O json enviado nao possui os campos necessarios para solicitar os incidentes (rodovia, data, faixa_km, periodo)";
+			super.errorMessage = "O json enviado nao possui os campos necessarios para solicitar os incidentes (rodovia, data, periodo)";
 			return false;
 		} else {
 			try {
 				String rodovia = objJson.get("rodovia").getAsString();
 				String data = objJson.get("data").getAsString();
-				String faixa_km = objJson.get("faixa_km").getAsString();
 				int periodo = objJson.get("periodo").getAsInt();
 				super.opResponse = super.sucessOpCode;
 				return true;

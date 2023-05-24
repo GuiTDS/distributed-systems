@@ -155,7 +155,7 @@ public class RequestListOfIncidentsView extends JFrame {
 				String faixaKm = kmRangeField.getText();
 
 				String date = dateField.getText();
-				//date += " 00:00:00";
+				date += " 00:00:00";
 
 				int periodo = periodBox.getSelectedIndex() + 1;
 
