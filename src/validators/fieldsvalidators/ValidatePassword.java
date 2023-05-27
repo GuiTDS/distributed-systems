@@ -2,8 +2,7 @@ package validators.fieldsvalidators;
 
 import com.google.gson.JsonObject;
 
-public class ValidatePassword implements FieldValidation {
-	private String errorMessage;
+public class ValidatePassword extends Field implements FieldValidation {
 
 	public boolean validate(JsonObject message) {
 		try {
@@ -11,23 +10,20 @@ public class ValidatePassword implements FieldValidation {
 			if (password.length() >= 8 && password.length() <= 32) {
 				return true;
 			}
-			this.errorMessage = "Senha deve possuir no minimo 8 e no maximo 32 caracteres";
+			super.errorMessage = "Senha deve possuir no minimo 8 e no maximo 32 caracteres";
 			return false;
 		} catch (NullPointerException e) {
-			this.errorMessage = "O campo senha nao foi enviado!";
+			super.errorMessage = "O campo senha nao foi enviado!";
 			return false;
 		} catch (UnsupportedOperationException e) {
-			this.errorMessage = "O json possui campos nulos!";
+			super.errorMessage = "O json possui campos nulos!";
 			return false;
 		} catch (NumberFormatException e1) {
-			this.errorMessage = "Formato de dados invalidos!";
+			super.errorMessage = "Formato de dados invalidos!";
 			return false;
 		}
 
 	}
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
 
 }
