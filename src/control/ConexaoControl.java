@@ -3,7 +3,7 @@ package control;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.*;
+
 
 public class ConexaoControl {
 	 //public Statement stm; // Responsavel por preparar e realizar pesquisas no banco de dados;

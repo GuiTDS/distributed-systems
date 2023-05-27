@@ -1,7 +1,7 @@
 package model;
 
 public class User {
-	private String name, email, password, token;
+	private String name, email, password, token;;
 	private int idUsuario;
 
 	public User(String name, String email, String password) {
@@ -10,16 +10,12 @@ public class User {
 		this.email = email;
 		this.password = password;
 	}
-	
+
 	public User(String email, String password) {
 		this.email = email;
 		this.password = password;
 	}
-	
-	public User() {
-		
-	}
-	
+
 	public User(String name, String email, String password, int idUsuario) {
 		this.name = name;
 		this.email = email;
@@ -71,7 +67,4 @@ public class User {
 		this.token = token;
 	}
 
-	
-	
-	
 }
