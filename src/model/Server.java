@@ -85,7 +85,7 @@ public class Server extends Thread {
 
 	public void run() {
 		System.out.println("New Communication Thread Started");
-
+		User loggedUser = new User();
 		try {
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),
 					true);
@@ -190,6 +190,8 @@ public class Server extends Thread {
 								if (userControl.authenticateUser(userLogin)) {
 									loggedInUsers.put(userLogin.getIdUsuario(), userLogin.getEmail());
 									idLoggedInUser = userLogin.getIdUsuario();
+									loggedUser.setIdUsuario(userLogin.getIdUsuario());
+									loggedUser.setToken(userControl.getToken());
 									System.out.println("Usuario autenticado");
 									message.addProperty("codigo", userControl.getSignInValidator().getOpResponse());
 									message.addProperty("token", userControl.getToken());
@@ -295,6 +297,13 @@ public class Server extends Thread {
 									message.addProperty("codigo",
 											incidentControl.getIncidentValidator().getOpResponse());
 									message.add("lista_incidentes", incidentControl.getIncidentsArray());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								} else {
+									message.addProperty("codigo",
+											incidentControl.getIncidentValidator().getOpResponse());
+									message.addProperty("mensagem",
+											incidentControl.getIncidentValidator().getErrorMessage());
 									System.out.println("Server => " + message.toString());
 									out.println(message.toString());
 								}
@@ -469,6 +478,9 @@ public class Server extends Thread {
 		} catch (IOException e) {
 			System.err.println("Problem with Communication Server");
 			loggedInUsers.remove(idLoggedInUser);
+			if (loggedUser.getToken() != null)
+				new UserControl().removeToken(loggedUser);
+				
 			reloadInterface();
 
 		}
