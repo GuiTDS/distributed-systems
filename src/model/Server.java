@@ -85,6 +85,7 @@ public class Server extends Thread {
 
 	public void run() {
 		System.out.println("New Communication Thread Started");
+		System.out.println("FEATURE");
 		User loggedUser = new User();
 		try {
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),
