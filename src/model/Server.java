@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import control.IncidentControl;
 import control.UserControl;
 import validators.JsonValidator;
+import validators.ValidateField;
 
 import java.awt.Font;
 import java.awt.TextArea;
@@ -161,7 +162,7 @@ public class Server extends Thread {
 									System.out.println("Atualizacao de cadastro realizada com sucesso!");
 									message.addProperty("codigo",
 											userControl.getUpdateRegistrationValidator().getOpResponse());
-									message.addProperty("token", jsonRecebido.get("token").getAsString());
+									message.addProperty("token", userControl.getToken());
 									System.out.println("Server ==> " + message.toString());
 									out.println(message.toString());
 								} else {
@@ -248,25 +249,33 @@ public class Server extends Thread {
 							if (jsonValidator.isValidRequestListOfIncidents()) {
 								String km = null;
 								try {
-									if(jsonRecebido.has("faixa_km")) {
+									if (jsonRecebido.has("faixa_km")) {
 										km = jsonRecebido.get("faixa_km").getAsString();
 									} else {
 										km = "";
 									}
-								}catch(UnsupportedOperationException e) {
+								} catch (UnsupportedOperationException e) {
 									message.addProperty("codigo", 500);
 									message.addProperty("mensagem", "o json possui campos nulos");
 									System.out.println("Server => " + message.toString());
 									out.println(message.toString());
+									break;
 								}
-								
-								int period = jsonRecebido.get("periodo").getAsInt();
-								Incident incident = new Incident(jsonRecebido.get("data").getAsString(),
-										jsonRecebido.get("rodovia").getAsString());
-								if (incidentControl.getListOfIncidents(incident, km, period)) {
-									message.addProperty("codigo",
-											incidentControl.getIncidentValidator().getOpResponse());
-									message.add("lista_incidentes", incidentControl.getIncidentsArray());
+								if (new ValidateField().validateKmRange(km)) {
+
+									int period = jsonRecebido.get("periodo").getAsInt();
+									Incident incident = new Incident(jsonRecebido.get("data").getAsString(),
+											jsonRecebido.get("rodovia").getAsString());
+									if (incidentControl.getListOfIncidents(incident, km, period)) {
+										message.addProperty("codigo",
+												incidentControl.getIncidentValidator().getOpResponse());
+										message.add("lista_incidentes", incidentControl.getIncidentsArray());
+										System.out.println("Server => " + message.toString());
+										out.println(message.toString());
+									}
+								} else {
+									message.addProperty("codigo", 500);
+									message.addProperty("mensagem", "Faixa de km nao esta no padrao");
 									System.out.println("Server => " + message.toString());
 									out.println(message.toString());
 								}
@@ -338,23 +347,28 @@ public class Server extends Thread {
 									if (userControl.checkToken(user, jsonRecebido.get("token").getAsString())) {
 										user.setEmail(jsonRecebido.get("email").getAsString());
 										user.setPassword(jsonRecebido.get("senha").getAsString());
-										if(userControl.removeAccount(user)) {
+										if (userControl.removeAccount(user)) {
 											System.out.println("Conta removida com sucesso!");
-											message.addProperty("codigo", userControl.getRemoveAccountValidator().getOpResponse());
+											message.addProperty("codigo",
+													userControl.getRemoveAccountValidator().getOpResponse());
 											System.out.println("Server => " + message.toString());
 											out.println(message.toString());
 										} else {
-											message.addProperty("codigo", userControl.getRemoveAccountValidator().getOpResponse());
-											message.addProperty("mensagem", userControl.getRemoveAccountValidator().getErrorMessage());
+											message.addProperty("codigo",
+													userControl.getRemoveAccountValidator().getOpResponse());
+											message.addProperty("mensagem",
+													userControl.getRemoveAccountValidator().getErrorMessage());
 											System.out.println("Server => " + message.toString());
 											out.println(message.toString());
 										}
 									} else {
-										message.addProperty("codigo", userControl.getUpdateRegistrationValidator().getOpResponse());
-										message.addProperty("mensagem", userControl.getUpdateRegistrationValidator().getErrorMessage());
+										message.addProperty("codigo",
+												userControl.getUpdateRegistrationValidator().getOpResponse());
+										message.addProperty("mensagem",
+												userControl.getUpdateRegistrationValidator().getErrorMessage());
 										System.out.println("Server => " + message.toString());
 										out.println(message.toString());
-									} 
+									}
 
 								} else {
 									message.addProperty("codigo", jsonValidator.getFailOpCode());

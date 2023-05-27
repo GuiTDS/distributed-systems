@@ -22,6 +22,9 @@ import javax.swing.JTextField;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
+import model.User;
+
 import javax.swing.JPasswordField;
 
 public class ClientLoginView {
@@ -81,6 +84,7 @@ public class ClientLoginView {
 				String email = emailField.getText();
 				String password = new String(passwordField.getPassword());
 				String passwordHash = hashed(password);
+				User user = new User(email, passwordHash);
 				message.addProperty("id_operacao", 3);
 				message.addProperty("email", email);
 				message.addProperty("senha", passwordHash);
@@ -97,7 +101,9 @@ public class ClientLoginView {
 						passwordField.setText("");
 						String token = jsonServidor.get("token").getAsString();
 						int userId = jsonServidor.get("id_usuario").getAsInt();
-						ClientSignedInView signedInView = new ClientSignedInView(clientSocket, out, in, userId, token, email, passwordHash);
+						user.setIdUsuario(userId);
+						user.setToken(token);
+						ClientSignedInView signedInView = new ClientSignedInView(clientSocket, out, in, user);
 						signedInView.setVisible(true);
 					} else {
 						// EXIBE ERRO

@@ -9,6 +9,8 @@ import javax.swing.border.EmptyBorder;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import model.User;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -31,17 +33,16 @@ public class ClientSignedInView extends JFrame {
 	private JPanel contentPane;
 	private Gson gson = new Gson();
 	private JsonObject message, jsonServidor;
-    private String respostaServidor;
+	private String respostaServidor;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, int userId,
-			String token, String email, String passwordHash) {
+	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, User user) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ClientSignedInView frame = new ClientSignedInView(clientSocket, out, in, userId, token, email, passwordHash);
+					ClientSignedInView frame = new ClientSignedInView(clientSocket, out, in, user);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -61,7 +62,7 @@ public class ClientSignedInView extends JFrame {
 	 * @param email
 	 * @param id
 	 */
-	public ClientSignedInView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId, String token, String email, String passwordHash) {
+	public ClientSignedInView(Socket clientSocket, PrintWriter out, BufferedReader in, User user) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 520, 511);
 		contentPane = new JPanel();
@@ -80,7 +81,7 @@ public class ClientSignedInView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				ReportIncidentView reportView;
 				try {
-					reportView = new ReportIncidentView(clientSocket, out, in, userId, token);
+					reportView = new ReportIncidentView(clientSocket, out, in, user);
 					reportView.setVisible(true);
 				} catch (ParseException e1) {
 					// TODO Auto-generated catch block
@@ -95,10 +96,11 @@ public class ClientSignedInView extends JFrame {
 		JButton btnRequestMyIncidents = new JButton("Solicitar lista de incidentes reportados por mim");
 		btnRequestMyIncidents.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//solicitar incidentes reportados por mim
-				RequestMyListOfIncidentsView myListOfIncidents = new RequestMyListOfIncidentsView(clientSocket, out, in, userId, token);
+				// solicitar incidentes reportados por mim
+				RequestMyListOfIncidentsView myListOfIncidents = new RequestMyListOfIncidentsView(clientSocket, out, in,
+						user);
 				myListOfIncidents.setVisible(true);
-				
+
 			}
 		});
 		btnRequestMyIncidents.setBounds(123, 202, 267, 31);
@@ -109,25 +111,26 @@ public class ClientSignedInView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				message = new JsonObject();
 				message.addProperty("id_operacao", 9);
-				message.addProperty("token", token);
-				message.addProperty("id_usuario", userId);
+				message.addProperty("token", user.getToken());
+				message.addProperty("id_usuario", user.getIdUsuario());
 				System.out.println("Cliente => " + message.toString());
 				out.println(message.toString());
 				try {
 					respostaServidor = in.readLine();
 					System.out.println("Cliente => Resposta servidor: " + respostaServidor);
 					jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
-					if(jsonServidor.get("codigo").getAsInt() == 200)
+					if (jsonServidor.get("codigo").getAsInt() == 200)
 						dispose();
-					else{
+					else {
 						JOptionPane.showMessageDialog(contentPane, jsonServidor.get("mensagem").getAsString());
 						dispose();
 					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(contentPane, "Erro ao ler resposta do servidor!");
-				} catch(NullPointerException e1) {
-					JOptionPane.showMessageDialog(contentPane, "Erro de comunicacao com o servidor!(Erro no campo do json)");
+				} catch (NullPointerException e1) {
+					JOptionPane.showMessageDialog(contentPane,
+							"Erro de comunicacao com o servidor!(Erro no campo do json)");
 				}
 			}
 		});
@@ -137,9 +140,9 @@ public class ClientSignedInView extends JFrame {
 		JButton btnUpdateAccount = new JButton("Atualizar cadastro");
 		btnUpdateAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//atualizar cadastro
+				// atualizar cadastro
 				UpdateAccountView updateAccountView;
-				updateAccountView = new UpdateAccountView(clientSocket, out, in, userId, token);
+				updateAccountView = new UpdateAccountView(clientSocket, out, in, user);
 				updateAccountView.setVisible(true);
 			}
 		});
@@ -149,25 +152,26 @@ public class ClientSignedInView extends JFrame {
 		JButton btnRemoveAccount = new JButton("Remover cadastro");
 		btnRemoveAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//remover cadastro
-				int confirm = JOptionPane.showConfirmDialog(contentPane, "Tem certeza que deseja remover a conta?(Essa acao e irreversivel)");
-				if(confirm == 0) {
+				// remover cadastro
+				int confirm = JOptionPane.showConfirmDialog(contentPane,
+						"Tem certeza que deseja remover a conta?(Essa acao e irreversivel)");
+				if (confirm == 0) {
 					message = new JsonObject();
 					message.addProperty("id_operacao", 8);
-					message.addProperty("email", email);
-					message.addProperty("senha", passwordHash);
-					message.addProperty("token", token);
-					message.addProperty("id_usuario", userId);
+					message.addProperty("email", user.getEmail());
+					message.addProperty("senha", user.getPassword());
+					message.addProperty("token", user.getToken());
+					message.addProperty("id_usuario", user.getIdUsuario());
 					System.out.println("Cliente => " + message.toString());
 					out.println(message.toString());
 					try {
 						respostaServidor = in.readLine();
 						System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 						jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
-						if(jsonServidor.get("codigo").getAsInt() == 200) {
+						if (jsonServidor.get("codigo").getAsInt() == 200) {
 							JOptionPane.showMessageDialog(contentPane, "Conta removida com sucesso!");
 							dispose();
-						}else {
+						} else {
 							JOptionPane.showMessageDialog(contentPane, jsonServidor.get("mensagem").getAsString());
 						}
 					} catch (IOException e1) {
@@ -179,13 +183,14 @@ public class ClientSignedInView extends JFrame {
 		});
 		btnRemoveAccount.setBounds(123, 317, 267, 31);
 		contentPane.add(btnRemoveAccount);
-		
+
 		JButton btnRequestListOfIncidents = new JButton("Solicitar lista de incidentes");
 		btnRequestListOfIncidents.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//abrir a tela de solicitar lista de incidentes
+				// abrir a tela de solicitar lista de incidentes
 				try {
-					RequestListOfIncidentsView listOfIncidentsView = new RequestListOfIncidentsView(clientSocket, out, in);
+					RequestListOfIncidentsView listOfIncidentsView = new RequestListOfIncidentsView(clientSocket, out,
+							in);
 					listOfIncidentsView.setVisible(true);
 				} catch (ParseException e1) {
 					// TODO Auto-generated catch block

@@ -12,6 +12,9 @@ import javax.swing.border.EmptyBorder;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
+import model.User;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -35,12 +38,11 @@ public class UpdateAccountView extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, int userId,
-			String token) {
+	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, User user) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UpdateAccountView frame = new UpdateAccountView(clientSocket, out, in, userId, token);
+					UpdateAccountView frame = new UpdateAccountView(clientSocket, out, in, user);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,7 +60,7 @@ public class UpdateAccountView extends JFrame {
 	 * @param out
 	 * @param clientSocket
 	 */
-	public UpdateAccountView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId, String token) {
+	public UpdateAccountView(Socket clientSocket, PrintWriter out, BufferedReader in, User user) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 520, 510);
 		contentPane = new JPanel();
@@ -115,8 +117,8 @@ public class UpdateAccountView extends JFrame {
 				message.addProperty("nome", name);
 				message.addProperty("email", email);
 				message.addProperty("senha", passwordHash);
-				message.addProperty("token", token);
-				message.addProperty("id_usuario", userId);
+				message.addProperty("token", user.getToken());
+				message.addProperty("id_usuario", user.getIdUsuario());
 				System.out.println("Cliente => " + message.toString());
 				out.println(message.toString());
 				try {
@@ -124,6 +126,7 @@ public class UpdateAccountView extends JFrame {
 					System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 					jsonServidor = gson.fromJson(respostaServidor, JsonObject.class);
 					if (jsonServidor.get("codigo").getAsInt() == 200) {
+						user.setToken(jsonServidor.get("token").getAsString());
 						JOptionPane.showMessageDialog(contentPane, "Conta atualizada com sucesso!");
 						dispose();
 					} else {

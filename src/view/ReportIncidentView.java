@@ -11,6 +11,8 @@ import javax.swing.text.MaskFormatter;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import model.User;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -42,12 +44,11 @@ public class ReportIncidentView extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, int userId,
-			String token) {
+	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, User user) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReportIncidentView frame = new ReportIncidentView(clientSocket, out, in, userId, token);
+					ReportIncidentView frame = new ReportIncidentView(clientSocket, out, in, user);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -66,7 +67,7 @@ public class ReportIncidentView extends JFrame {
 	 * @param id
 	 * @throws ParseException
 	 */
-	public ReportIncidentView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId, String token)
+	public ReportIncidentView(Socket clientSocket, PrintWriter out, BufferedReader in, User user)
 			throws ParseException {
 		Gson gson = new Gson();
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -144,8 +145,8 @@ public class ReportIncidentView extends JFrame {
 				message.addProperty("rodovia", highway);
 				message.addProperty("km", km);
 				message.addProperty("tipo_incidente", incidentType);
-				message.addProperty("token", token);
-				message.addProperty("id_usuario", userId);
+				message.addProperty("token", user.getToken());
+				message.addProperty("id_usuario", user.getIdUsuario());
 				System.out.println("Cliente => " + message.toString());
 				out.println(message.toString());
 				String respostaServidor = "";

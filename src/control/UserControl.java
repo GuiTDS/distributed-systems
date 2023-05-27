@@ -135,15 +135,19 @@ public class UserControl {
 		if (updateRegistrationValidator.isValid()) {
 			if (checkToken(user, token)) {
 				try {
-					String sql = "UPDATE usuarios SET nome = ?, email = ?, senha = ? WHERE id_usuario = ?"; 
+					UUID uuid = UUID.randomUUID();
+					String newToken = uuid.toString();
+					String sql = "UPDATE usuarios SET nome = ?, email = ?, senha = ?, token = ? WHERE id_usuario = ?"; 
 					pstm = conn.prepareStatement(sql);
 					pstm.setString(1, user.getName());
 					pstm.setString(2, user.getEmail());
 					pstm.setString(3, user.getPassword());
-					pstm.setInt(4, user.getIdUsuario());
+					pstm.setString(4, newToken);
+					pstm.setInt(5, user.getIdUsuario());
 					pstm.execute();
 					System.out.println("Atualizou os dados do usuario!");
 					pstm.close();
+					this.token = newToken;
 					return true;
 				} catch (SQLException erro) {
 					System.out.println("Erro no update: " + erro);

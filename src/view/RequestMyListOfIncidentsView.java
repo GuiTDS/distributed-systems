@@ -25,6 +25,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import model.User;
+
 import javax.swing.border.EtchedBorder;
 import java.awt.Color;
 import java.awt.event.ActionListener;
@@ -42,13 +44,11 @@ public class RequestMyListOfIncidentsView extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, int userId,
-			String token) {
+	public static void main(String[] args, Socket clientSocket, PrintWriter out, BufferedReader in, User user) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RequestMyListOfIncidentsView frame = new RequestMyListOfIncidentsView(clientSocket, out, in, userId,
-							token);
+					RequestMyListOfIncidentsView frame = new RequestMyListOfIncidentsView(clientSocket, out, in, user);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -66,8 +66,7 @@ public class RequestMyListOfIncidentsView extends JFrame {
 	 * @param out
 	 * @param clientSocket
 	 */
-	public RequestMyListOfIncidentsView(Socket clientSocket, PrintWriter out, BufferedReader in, int userId,
-			String token) {
+	public RequestMyListOfIncidentsView(Socket clientSocket, PrintWriter out, BufferedReader in, User user) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 980, 514);
 		contentPane = new JPanel();
@@ -91,7 +90,7 @@ public class RequestMyListOfIncidentsView extends JFrame {
 					String highway = (String)table.getValueAt(i, 1);
 					int km = (Integer)table.getValueAt(i, 2);
 					String data = (String)table.getValueAt(i, 3);
-					EditIncidentView editIncidentView = new EditIncidentView(incidentId, highway, km, data, userId, token, out, in);
+					EditIncidentView editIncidentView = new EditIncidentView(incidentId, highway, km, data, user,out, in);
 					editIncidentView.setVisible(true);
 					
 				} catch (ArrayIndexOutOfBoundsException outOfIndexError) {
@@ -126,7 +125,7 @@ public class RequestMyListOfIncidentsView extends JFrame {
 		model.setColumnIdentifiers(column);
 		table.setModel(model);
 		scrollPane.setViewportView(table);
-		updateList(userId, token, out, in, model, row);
+		updateList(user.getIdUsuario(), user.getToken(), out, in, model, row);
 
 		JButton btnRemoveIncident = new JButton("Remover incidente");
 		btnRemoveIncident.addActionListener(new ActionListener() {
@@ -138,9 +137,9 @@ public class RequestMyListOfIncidentsView extends JFrame {
 					int incidentId = (Integer)table.getValueAt(i, 0);
 					message = new JsonObject();
 					message.addProperty("id_operacao", 7);
-					message.addProperty("token", token);
+					message.addProperty("token", user.getToken());
 					message.addProperty("id_incidente", incidentId);
-					message.addProperty("id_usuario", userId);
+					message.addProperty("id_usuario", user.getIdUsuario());
 					System.out.println("Cliente => " + message.toString());
 					out.println(message.toString());
 					try {
@@ -150,7 +149,7 @@ public class RequestMyListOfIncidentsView extends JFrame {
 						if(jsonServidor.get("codigo").getAsInt() == 200) {
 							JOptionPane.showMessageDialog(contentPane, "Incidente removido com sucesso!");
 							model.setRowCount(0);
-							updateList(userId, token, out, in, model, row);
+							updateList(user.getIdUsuario(), user.getToken(), out, in, model, row);
 						}else {
 							JOptionPane.showMessageDialog(contentPane, jsonServidor.get("mensagem").getAsString());
 						}

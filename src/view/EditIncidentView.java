@@ -10,6 +10,8 @@ import javax.swing.text.MaskFormatter;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import model.User;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -35,11 +37,11 @@ public class EditIncidentView extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, int incidentId, String highway, int km, String data, int userId, String token, PrintWriter out, BufferedReader in) {
+	public static void main(String[] args, int incidentId, String highway, int km, String data, User user, PrintWriter out, BufferedReader in) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					EditIncidentView frame = new EditIncidentView(incidentId, highway, km, data, userId, token, out, in);
+					EditIncidentView frame = new EditIncidentView(incidentId, highway, km, data, user, out, in);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -60,7 +62,7 @@ public class EditIncidentView extends JFrame {
 	 * @param out
 	 * @throws ParseException 
 	 */
-	public EditIncidentView(int incidentId, String highway, int km, String data, int userId, String token, PrintWriter out, BufferedReader in) throws ParseException {
+	public EditIncidentView(int incidentId, String highway, int km, String data, User user, PrintWriter out, BufferedReader in) throws ParseException {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 520, 509);
 		contentPane = new JPanel();
@@ -127,9 +129,9 @@ public class EditIncidentView extends JFrame {
 
 				JsonObject message = new JsonObject();
 				message.addProperty("id_operacao", 10); 
-				message.addProperty("token", token);
+				message.addProperty("token", user.getToken());
 				message.addProperty("id_incidente", incidentId);
-				message.addProperty("id_usuario", userId);
+				message.addProperty("id_usuario", user.getIdUsuario());
 				message.addProperty("data", date);
 				message.addProperty("rodovia", highway);
 				message.addProperty("km", km);
