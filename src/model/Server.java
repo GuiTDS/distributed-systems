@@ -13,6 +13,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import control.handlers.GetKmRange;
+import control.handlers.HandlerGetKmRange;
 import control.handlers.HandlerLogin;
 import control.handlers.HandlerLogout;
 import control.handlers.HandlerReportIncident;
@@ -23,8 +25,10 @@ import validators.fieldsvalidators.ValidateEmail;
 import validators.fieldsvalidators.ValidateHighway;
 import validators.fieldsvalidators.ValidateIncidentType;
 import validators.fieldsvalidators.ValidateKM;
+import validators.fieldsvalidators.ValidateKmRange;
 import validators.fieldsvalidators.ValidateName;
 import validators.fieldsvalidators.ValidatePassword;
+import validators.fieldsvalidators.ValidatePeriod;
 import validators.fieldsvalidators.ValidateToken;
 import validators.fieldsvalidators.ValidateUserId;
 import validators.operationsvalidators.JsonValidator;
@@ -236,21 +240,38 @@ public class Server extends Thread {
 								Incident incident = new Incident(jsonRecebido.get("data").getAsString(),
 										jsonRecebido.get("tipo_incidente").getAsInt(),
 										jsonRecebido.get("km").getAsInt(), jsonRecebido.get("rodovia").getAsString());
-										HandlerReportIncident handlerReportIncident = new HandlerReportIncident(user, incident);
-										if(handlerReportIncident.execute()) {
-											message.addProperty("codigo", handlerReportIncident.getOpResponse());
-											System.out.println("Server => " + message.toString());
-											out.println(message.toString());
-										} else {
-											message.addProperty("codigo", handlerReportIncident.getOpResponse());
-											message.addProperty("mensagem", handlerReportIncident.getErrorMessage());
-											System.out.println("Server => " + message.toString());
-											out.println(message.toString());
-										}
+								HandlerReportIncident handlerReportIncident = new HandlerReportIncident(user, incident);
+								if (handlerReportIncident.execute()) {
+									message.addProperty("codigo", handlerReportIncident.getOpResponse());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								} else {
+									message.addProperty("codigo", handlerReportIncident.getOpResponse());
+									message.addProperty("mensagem", handlerReportIncident.getErrorMessage());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
 							} else {
 								message.addProperty("codigo", fieldValidator.getOpResponse());
 								message.addProperty("mensagem", fieldValidator.getErrorMessage());
 								System.out.println(message.toString());
+								out.println(message.toString());
+							}
+							break;
+						case 5:
+							System.out.println("Pedido de lista de incidentes na rodovia");
+							ValidateKmRange validateKmRange = new ValidateKmRange();
+							fieldValidator = new FieldValidator(jsonRecebido,
+									Arrays.asList(new ValidateHighway(), new ValidateDate(), new ValidatePeriod(),
+											validateKmRange));
+							if (fieldValidator.isValid()) {
+								String kmRange = validateKmRange.getKmRange();
+								
+
+							} else {
+								message.addProperty("codigo", fieldValidator.getOpResponse());
+								message.addProperty("mensagem", fieldValidator.getErrorMessage());
+								System.out.println("Server => " + message.toString());
 								out.println(message.toString());
 							}
 							break;
