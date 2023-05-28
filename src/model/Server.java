@@ -15,9 +15,14 @@ import com.google.gson.JsonObject;
 
 import control.handlers.HandlerLogin;
 import control.handlers.HandlerLogout;
+import control.handlers.HandlerReportIncident;
 import control.handlers.HandlerSignUp;
 import control.handlers.HandlerUpdate;
+import validators.fieldsvalidators.ValidateDate;
 import validators.fieldsvalidators.ValidateEmail;
+import validators.fieldsvalidators.ValidateHighway;
+import validators.fieldsvalidators.ValidateIncidentType;
+import validators.fieldsvalidators.ValidateKM;
 import validators.fieldsvalidators.ValidateName;
 import validators.fieldsvalidators.ValidatePassword;
 import validators.fieldsvalidators.ValidateToken;
@@ -220,7 +225,34 @@ public class Server extends Thread {
 							break;
 
 						case 4:
-							
+							System.out.println("Pedido de cadastro de incidente");
+							fieldValidator = new FieldValidator(jsonRecebido,
+									Arrays.asList(new ValidateDate(), new ValidateHighway(), new ValidateKM(),
+											new ValidateIncidentType(),
+											new ValidateToken(), new ValidateUserId()));
+							if (fieldValidator.isValid()) {
+								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+								user.setToken(jsonRecebido.get("token").getAsString());
+								Incident incident = new Incident(jsonRecebido.get("data").getAsString(),
+										jsonRecebido.get("tipo_incidente").getAsInt(),
+										jsonRecebido.get("km").getAsInt(), jsonRecebido.get("rodovia").getAsString());
+										HandlerReportIncident handlerReportIncident = new HandlerReportIncident(user, incident);
+										if(handlerReportIncident.execute()) {
+											message.addProperty("codigo", handlerReportIncident.getOpResponse());
+											System.out.println("Server => " + message.toString());
+											out.println(message.toString());
+										} else {
+											message.addProperty("codigo", handlerReportIncident.getOpResponse());
+											message.addProperty("mensagem", handlerReportIncident.getErrorMessage());
+											System.out.println("Server => " + message.toString());
+											out.println(message.toString());
+										}
+							} else {
+								message.addProperty("codigo", fieldValidator.getOpResponse());
+								message.addProperty("mensagem", fieldValidator.getErrorMessage());
+								System.out.println(message.toString());
+								out.println(message.toString());
+							}
 							break;
 						case 9:
 							System.out.println("Pedido de logout recebido");

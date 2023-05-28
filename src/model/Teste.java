@@ -1,5 +1,11 @@
 package model;
 
+
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -18,9 +24,12 @@ public class Teste {
             String cod = jsonRecebido.get("codigo").getAsString();
             System.out.println("codigo == " + cod);
         } */
-        JsonObject message = new JsonObject();
-        message.addProperty("codigo", 500);
-        message.get("teste").getAsString();
+        String dataStr = "2023-05-20 16:00:00";
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime localDate = LocalDateTime.parse(dataStr, formatter);
+        Timestamp timestamp = Timestamp.valueOf(localDate);
+        System.out.println(timestamp);
 
 
     }
