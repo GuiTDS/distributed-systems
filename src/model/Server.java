@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import control.handlers.HandlerLogin;
 import control.handlers.HandlerLogout;
 import control.handlers.HandlerSignUp;
+import control.handlers.HandlerUpdate;
 import validators.fieldsvalidators.ValidateEmail;
 import validators.fieldsvalidators.ValidateName;
 import validators.fieldsvalidators.ValidatePassword;
@@ -160,6 +161,35 @@ public class Server extends Thread {
 							}
 							break;
 						case 2:
+							System.out.println("Pedido de atualizacao de cadastro!");
+							fieldValidator = new FieldValidator(jsonRecebido,
+									Arrays.asList(new ValidateEmail(), new ValidateName(), new ValidatePassword(),
+											new ValidateToken(), new ValidateUserId()));
+							if (fieldValidator.isValid()) {
+								User user = new User(jsonRecebido.get("nome").getAsString(),
+										jsonRecebido.get("email").getAsString(),
+										jsonRecebido.get("senha").getAsString(),
+										jsonRecebido.get("token").getAsString(),
+										jsonRecebido.get("id_usuario").getAsInt());
+
+								HandlerUpdate handlerUpdate = new HandlerUpdate(user);
+								if(handlerUpdate.execute()) {
+									message.addProperty("codigo", handlerUpdate.getOpResponse());
+									message.addProperty("token", user.getToken());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								} else {
+									message.addProperty("codigo", handlerUpdate.getOpResponse());
+									message.addProperty("mensagem", handlerUpdate.getErrorMessage());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
+							} else {
+								message.addProperty("codigo", fieldValidator.getOpResponse());
+								message.addProperty("mensagem", fieldValidator.getErrorMessage());
+								System.out.println("Server => " + message.toString());
+								out.println(message.toString());
+							}
 							break;
 						case 3:
 							System.out.println("Server => Login solicitado");

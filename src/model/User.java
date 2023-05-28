@@ -23,6 +23,14 @@ public class User {
 		this.idUsuario = idUsuario;
 	}
 
+	public User(String name, String email, String password, String token, int idUsuario) {
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.token = token;
+		this.idUsuario = idUsuario;
+	}
+
 	public User(int idUsuario) {
 		this.idUsuario = idUsuario;
 	}

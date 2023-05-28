@@ -2,6 +2,8 @@ package control.handlers;
 
 import java.sql.SQLException;
 
+import org.postgresql.util.PSQLException;
+
 import control.ConexaoControl;
 import model.User;
 
@@ -26,11 +28,17 @@ public class HandlerSignUp extends Handler {
             pstm.close();
             super.opResponse = super.getSucessOpCode();
             return true;
+        } catch (PSQLException e) {
+            super.errorMessage = "Email ja cadastrado!";
+            super.opResponse = super.getFailOpCode();
+            return false;
         } catch (SQLException erro) {
+            System.out.println("Erro ao atualizar : " + erro);
             super.errorMessage = "Erro com o BD!";
             super.opResponse = super.getFailOpCode();
             return false;
         }
+
     }
 
 }
