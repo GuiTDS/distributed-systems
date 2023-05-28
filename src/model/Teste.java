@@ -1,14 +1,11 @@
 package model;
 
 
-import java.sql.Time;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
 
 public class Teste {
     public static void main(String[] args) {
@@ -30,6 +27,9 @@ public class Teste {
         LocalDateTime localDate = LocalDateTime.parse(dataStr, formatter);
         Timestamp timestamp = Timestamp.valueOf(localDate);
         System.out.println(timestamp);
+        String testee = timestamp.toString();
+        Timestamp tse = Timestamp.valueOf(testee);
+        System.out.println(tse);
 
 
     }

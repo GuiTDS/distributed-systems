@@ -7,7 +7,19 @@ public class Incident {
 	private int incidentType, km;
 	private String highway;
 	private final int incidentTypes = 14; //numero de tipos de incidentes possiveis para ser cadastrados
+	private int period;
+	private String kmRange;
+
 	
+
+
+	public Incident(String date, String highway, int period, String kmRange) {
+		this.date = date;
+		this.highway = highway;
+		this.period = period;
+		this.kmRange = kmRange;
+	}
+
 	public Incident(String date, int incidentType, int km, String highway) {
 		super();
 		this.date = date;
@@ -39,6 +51,14 @@ public class Incident {
 
 	public int getIncidentTypes() {
 		return incidentTypes;
+	}
+
+	public int getPeriod() {
+		return period;
+	}
+
+	public String getKmRange() {
+		return kmRange;
 	}
 
 	

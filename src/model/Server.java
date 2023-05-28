@@ -13,8 +13,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import control.handlers.GetKmRange;
-import control.handlers.HandlerGetKmRange;
+
+import control.handlers.HandlerGetListOfIncidents;
 import control.handlers.HandlerLogin;
 import control.handlers.HandlerLogout;
 import control.handlers.HandlerReportIncident;
@@ -266,7 +266,21 @@ public class Server extends Thread {
 											validateKmRange));
 							if (fieldValidator.isValid()) {
 								String kmRange = validateKmRange.getKmRange();
-								
+								Incident incident = new Incident(jsonRecebido.get("data").getAsString(),
+										jsonRecebido.get("rodovia").getAsString(),
+										jsonRecebido.get("periodo").getAsInt(), kmRange);
+								HandlerGetListOfIncidents handlerGetListOfIncidents = new HandlerGetListOfIncidents(incident);
+								if(handlerGetListOfIncidents.execute()) {
+									message.addProperty("codigo", handlerGetListOfIncidents.getOpResponse());
+									message.add("lista_incidentes", handlerGetListOfIncidents.getIncidentsArray());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								} else {
+									message.addProperty("codigo", handlerGetListOfIncidents.getOpResponse());
+									message.addProperty("mensagem", handlerGetListOfIncidents.getErrorMessage());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
 
 							} else {
 								message.addProperty("codigo", fieldValidator.getOpResponse());
