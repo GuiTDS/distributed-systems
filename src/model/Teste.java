@@ -20,7 +20,7 @@ public class Teste {
         } */
         JsonObject message = new JsonObject();
         message.addProperty("codigo", 500);
-        String teste = message.get("teste").getAsString();
+        message.get("teste").getAsString();
 
 
     }

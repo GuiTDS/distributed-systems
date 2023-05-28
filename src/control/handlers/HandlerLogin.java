@@ -17,6 +17,7 @@ public class HandlerLogin extends Handler {
     @Override
     public boolean execute() {
         conn = new ConexaoControl().conectaBD();
+
         try {
             String sql = "SELECT id_usuario, senha FROM usuarios WHERE email = ?;";
             pstm = conn.prepareStatement(sql);
@@ -41,7 +42,7 @@ public class HandlerLogin extends Handler {
                         super.opResponse = super.getSucessOpCode();
                         return true;
                     } catch (SQLException erro) {
-                        System.out.println("erro no usuario control ao inserir token\n" + erro);
+                        System.out.println("erro ao inserir token\n" + erro);
                         super.errorMessage = "Erro ao inserir token!";
                         super.opResponse = super.getFailOpCode();
                         return false;
@@ -63,6 +64,6 @@ public class HandlerLogin extends Handler {
             super.opResponse = super.getFailOpCode();
             return false;
         }
-    }
 
+    }
 }

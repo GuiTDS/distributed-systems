@@ -18,6 +18,8 @@ import control.handlers.HandlerSignUp;
 import validators.fieldsvalidators.ValidateEmail;
 import validators.fieldsvalidators.ValidateName;
 import validators.fieldsvalidators.ValidatePassword;
+import validators.fieldsvalidators.ValidateToken;
+import validators.fieldsvalidators.ValidateUserId;
 import validators.operationsvalidators.JsonValidator;
 import validators.operationsvalidators.FieldValidator;
 
@@ -160,11 +162,13 @@ public class Server extends Thread {
 							break;
 						case 3:
 							System.out.println("Server => Login solicitado");
-							fieldValidator = new FieldValidator(jsonRecebido, Arrays.asList(new ValidateEmail(), new ValidatePassword()));
-							if(fieldValidator.isValid()) {
-								User user = new User(jsonRecebido.get("email").getAsString(), jsonRecebido.get("senha").getAsString());
+							fieldValidator = new FieldValidator(jsonRecebido,
+									Arrays.asList(new ValidateEmail(), new ValidatePassword()));
+							if (fieldValidator.isValid()) {
+								User user = new User(jsonRecebido.get("email").getAsString(),
+										jsonRecebido.get("senha").getAsString());
 								HandlerLogin handlerLogin = new HandlerLogin(user);
-								if(handlerLogin.execute()) {
+								if (handlerLogin.execute()) {
 									message.addProperty("codigo", handlerLogin.getOpResponse());
 									message.addProperty("token", user.getToken());
 									message.addProperty("id_usuario", user.getIdUsuario());
@@ -183,6 +187,18 @@ public class Server extends Thread {
 								out.println(message.toString());
 							}
 
+							break;
+						case 9:
+							System.out.println("Pedido de logout recebido");
+							fieldValidator = new FieldValidator(jsonRecebido, Arrays.asList(new ValidateUserId(), new ValidateToken()));
+							if(fieldValidator.isValid()) {
+								
+							}else {
+								message.addProperty("codigo", fieldValidator.getOpResponse());
+								message.addProperty("mensagem", fieldValidator.getErrorMessage());
+								System.out.println("Server => " + message.toString());
+								out.println(message.toString());
+							}
 							break;
 
 					}
