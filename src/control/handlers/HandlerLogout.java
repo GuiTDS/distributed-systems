@@ -11,7 +11,14 @@ public class HandlerLogout extends Handler {
 
     @Override
     public boolean execute() {
-        return true;
+        HandlerRemoveToken removeToken = new HandlerRemoveToken(this.user);
+        if(removeToken.execute()) {
+            super.opResponse = removeToken.getOpResponse();
+            return true;
+        }
+        super.opResponse = removeToken.getOpResponse();
+        super.errorMessage = removeToken.getErrorMessage();
+        return false;
     }
 
     public User getUser() {

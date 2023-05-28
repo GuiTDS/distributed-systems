@@ -14,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import control.handlers.HandlerLogin;
+import control.handlers.HandlerLogout;
 import control.handlers.HandlerSignUp;
 import validators.fieldsvalidators.ValidateEmail;
 import validators.fieldsvalidators.ValidateName;
@@ -190,10 +191,23 @@ public class Server extends Thread {
 							break;
 						case 9:
 							System.out.println("Pedido de logout recebido");
-							fieldValidator = new FieldValidator(jsonRecebido, Arrays.asList(new ValidateUserId(), new ValidateToken()));
-							if(fieldValidator.isValid()) {
-								
-							}else {
+							fieldValidator = new FieldValidator(jsonRecebido,
+									Arrays.asList(new ValidateUserId(), new ValidateToken()));
+							if (fieldValidator.isValid()) {
+								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+								user.setToken(jsonRecebido.get("token").getAsString());
+								HandlerLogout handlerLogout = new HandlerLogout(user);
+								if (handlerLogout.execute()) {
+									message.addProperty("codigo", handlerLogout.getOpResponse());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								} else {
+									message.addProperty("codigo", handlerLogout.getOpResponse());
+									message.addProperty("mensagem", handlerLogout.getErrorMessage());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
+							} else {
 								message.addProperty("codigo", fieldValidator.getOpResponse());
 								message.addProperty("mensagem", fieldValidator.getErrorMessage());
 								System.out.println("Server => " + message.toString());
