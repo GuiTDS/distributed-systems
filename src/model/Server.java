@@ -173,7 +173,7 @@ public class Server extends Thread {
 										jsonRecebido.get("id_usuario").getAsInt());
 
 								HandlerUpdate handlerUpdate = new HandlerUpdate(user);
-								if(handlerUpdate.execute()) {
+								if (handlerUpdate.execute()) {
 									message.addProperty("codigo", handlerUpdate.getOpResponse());
 									message.addProperty("token", user.getToken());
 									System.out.println("Server => " + message.toString());
@@ -217,7 +217,10 @@ public class Server extends Thread {
 								System.out.println("Server => " + message.toString());
 								out.println(message.toString());
 							}
+							break;
 
+						case 4:
+							
 							break;
 						case 9:
 							System.out.println("Pedido de logout recebido");
