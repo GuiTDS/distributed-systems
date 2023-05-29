@@ -23,6 +23,7 @@ import control.handlers.HandlerUpdate;
 import validators.fieldsvalidators.ValidateDate;
 import validators.fieldsvalidators.ValidateEmail;
 import validators.fieldsvalidators.ValidateHighway;
+import validators.fieldsvalidators.ValidateIncidentId;
 import validators.fieldsvalidators.ValidateIncidentType;
 import validators.fieldsvalidators.ValidateKM;
 import validators.fieldsvalidators.ValidateKmRange;
@@ -308,6 +309,21 @@ public class Server extends Thread {
 									System.out.println("Server => " + message.toString());
 									out.println(message.toString());
 								}
+							} else {
+								message.addProperty("codigo", fieldValidator.getOpResponse());
+								message.addProperty("mensagem", fieldValidator.getErrorMessage());
+								System.out.println("Server => " + message.toString());
+								out.println(message.toString());
+							}
+							break;
+						case 7:
+							System.out.println("Pedido de remocao de incidente");
+							fieldValidator = new FieldValidator(jsonRecebido, Arrays.asList(new ValidateToken(), new ValidateIncidentId(), new ValidateUserId()));
+							if(fieldValidator.isValid()) {
+								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+								user.setToken(jsonRecebido.get("token").getAsString());
+								Incident incident = new Incident(jsonRecebido.get("id_incidente").getAsInt());
+								
 							} else {
 								message.addProperty("codigo", fieldValidator.getOpResponse());
 								message.addProperty("mensagem", fieldValidator.getErrorMessage());
