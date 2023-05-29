@@ -22,6 +22,7 @@ import control.handlers.HandlerRemoveIncident;
 import control.handlers.HandlerReportIncident;
 import control.handlers.HandlerSignUp;
 import control.handlers.HandlerUpdate;
+import control.handlers.HandlerUpdateIncident;
 import validators.fieldsvalidators.ValidateDate;
 import validators.fieldsvalidators.ValidateEmail;
 import validators.fieldsvalidators.ValidateHighway;
@@ -404,8 +405,25 @@ public class Server extends Thread {
 									Arrays.asList(new ValidateToken(), new ValidateIncidentId(), new ValidateUserId(),
 											new ValidateDate(), new ValidateHighway(), new ValidateKM(),
 											new ValidateIncidentType()));
-							if(fieldValidator.isValid()) {
-								
+							if (fieldValidator.isValid()) {
+								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+								user.setToken(jsonRecebido.get("token").getAsString());
+								Incident incident = new Incident(jsonRecebido.get("data").getAsString(),
+										jsonRecebido.get("tipo_incidente").getAsInt(),
+										jsonRecebido.get("km").getAsInt(), jsonRecebido.get("rodovia").getAsString(),
+										jsonRecebido.get("id_incidente").getAsInt());
+
+								HandlerUpdateIncident handlerUpdateIncident = new HandlerUpdateIncident(user, incident);
+								if (handlerUpdateIncident.execute()) {
+									message.addProperty("codigo", handlerUpdateIncident.getOpResponse());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								} else {
+									message.addProperty("codigo", handlerUpdateIncident.getOpResponse());
+									message.addProperty("mensagem", handlerUpdateIncident.getErrorMessage());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
 							} else {
 								message.addProperty("codigo", fieldValidator.getOpResponse());
 								message.addProperty("mensagem", fieldValidator.getErrorMessage());

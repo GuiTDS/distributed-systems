@@ -45,10 +45,6 @@ public class HandlerReportIncident extends Handler {
                 super.errorMessage = "Erro ao cadastrar incidente no BD!";
                 super.opResponse = super.getFailOpCode();
                 return false;
-            } catch (Exception e) {
-                super.errorMessage = "Erro ao converter data!";
-                super.opResponse = super.getFailOpCode();
-                return false;
             }
         }
         super.errorMessage = checkToken.getErrorMessage();

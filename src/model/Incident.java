@@ -35,6 +35,14 @@ public class Incident {
 		this.highway = highway;
 	}
 
+	public Incident(String date, int incidentType, int km, String highway, int idIncident) {
+		this.date = date;
+		this.incidentType = incidentType;
+		this.km = km;
+		this.highway = highway;
+		this.idIncident = idIncident;
+	}
+
 	public String getDate() {
 		return date;
 	}
@@ -66,9 +74,6 @@ public class Incident {
 	public int getIdIncident() {
 		return idIncident;
 	}
-
-	
-	
 	
 	
 }
