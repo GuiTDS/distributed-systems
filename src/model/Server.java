@@ -14,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import control.handlers.HandlerGetListOfIncidents;
+import control.handlers.HandlerGetMyListOfIncidents;
 import control.handlers.HandlerLogin;
 import control.handlers.HandlerLogout;
 import control.handlers.HandlerReportIncident;
@@ -293,7 +294,20 @@ public class Server extends Thread {
 							System.out.println("Pedido de lista de incidentes reportados pelo usuario");
 							fieldValidator = new FieldValidator(jsonRecebido, Arrays.asList(new ValidateToken(), new ValidateUserId()));
 							if(fieldValidator.isValid()) {
-								
+								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
+								user.setToken(jsonRecebido.get("token").getAsString());
+								HandlerGetMyListOfIncidents handlerGetMyListOfIncidents = new HandlerGetMyListOfIncidents(user);
+								if(handlerGetMyListOfIncidents.execute()) {
+									message.addProperty("codigo", handlerGetMyListOfIncidents.getOpResponse());
+									message.add("lista_incidentes", handlerGetMyListOfIncidents.getIncidentsArray());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								} else {
+									message.addProperty("codigo", handlerGetMyListOfIncidents.getOpResponse());
+									message.addProperty("mensagem", handlerGetMyListOfIncidents.getErrorMessage());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
 							} else {
 								message.addProperty("codigo", fieldValidator.getOpResponse());
 								message.addProperty("mensagem", fieldValidator.getErrorMessage());
