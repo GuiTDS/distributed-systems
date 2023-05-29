@@ -400,7 +400,18 @@ public class Server extends Thread {
 							break;
 						case 10:
 							System.out.println("Pedido de edicao de incidente");
-
+							fieldValidator = new FieldValidator(jsonRecebido,
+									Arrays.asList(new ValidateToken(), new ValidateIncidentId(), new ValidateUserId(),
+											new ValidateDate(), new ValidateHighway(), new ValidateKM(),
+											new ValidateIncidentType()));
+							if(fieldValidator.isValid()) {
+								
+							} else {
+								message.addProperty("codigo", fieldValidator.getOpResponse());
+								message.addProperty("mensagem", fieldValidator.getErrorMessage());
+								System.out.println("Server => " + message.toString());
+								out.println(message.toString());
+							}
 							break;
 					}
 
