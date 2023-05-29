@@ -17,6 +17,7 @@ import control.handlers.HandlerGetListOfIncidents;
 import control.handlers.HandlerGetMyListOfIncidents;
 import control.handlers.HandlerLogin;
 import control.handlers.HandlerLogout;
+import control.handlers.HandlerRemoveAccount;
 import control.handlers.HandlerRemoveIncident;
 import control.handlers.HandlerReportIncident;
 import control.handlers.HandlerSignUp;
@@ -349,8 +350,22 @@ public class Server extends Thread {
 							System.out.println("Pedido de remocao de conta");
 							fieldValidator = new FieldValidator(jsonRecebido, Arrays.asList(new ValidateEmail(),
 									new ValidatePassword(), new ValidateUserId(), new ValidateToken()));
-							if(fieldValidator.isValid()) {
-								
+							if (fieldValidator.isValid()) {
+								User user = new User(jsonRecebido.get("email").getAsString(),
+										jsonRecebido.get("senha").getAsString());
+								user.setIdUsuario(jsonRecebido.get("id_usuario").getAsInt());
+								user.setToken(jsonRecebido.get("token").getAsString());
+								HandlerRemoveAccount handlerRemoveAccount = new HandlerRemoveAccount(user);
+								if (handlerRemoveAccount.execute()) {
+									message.addProperty("codigo", handlerRemoveAccount.getOpResponse());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								} else {
+									message.addProperty("codigo", handlerRemoveAccount.getOpResponse());
+									message.addProperty("mensagem", handlerRemoveAccount.getErrorMessage());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
 							} else {
 								message.addProperty("codigo", fieldValidator.getOpResponse());
 								message.addProperty("mensagem", fieldValidator.getErrorMessage());
