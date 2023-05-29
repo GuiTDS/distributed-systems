@@ -294,12 +294,14 @@ public class Server extends Thread {
 							break;
 						case 6:
 							System.out.println("Pedido de lista de incidentes reportados pelo usuario");
-							fieldValidator = new FieldValidator(jsonRecebido, Arrays.asList(new ValidateToken(), new ValidateUserId()));
-							if(fieldValidator.isValid()) {
+							fieldValidator = new FieldValidator(jsonRecebido,
+									Arrays.asList(new ValidateToken(), new ValidateUserId()));
+							if (fieldValidator.isValid()) {
 								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
 								user.setToken(jsonRecebido.get("token").getAsString());
-								HandlerGetMyListOfIncidents handlerGetMyListOfIncidents = new HandlerGetMyListOfIncidents(user);
-								if(handlerGetMyListOfIncidents.execute()) {
+								HandlerGetMyListOfIncidents handlerGetMyListOfIncidents = new HandlerGetMyListOfIncidents(
+										user);
+								if (handlerGetMyListOfIncidents.execute()) {
 									message.addProperty("codigo", handlerGetMyListOfIncidents.getOpResponse());
 									message.add("lista_incidentes", handlerGetMyListOfIncidents.getIncidentsArray());
 									System.out.println("Server => " + message.toString());
@@ -319,13 +321,14 @@ public class Server extends Thread {
 							break;
 						case 7:
 							System.out.println("Pedido de remocao de incidente");
-							fieldValidator = new FieldValidator(jsonRecebido, Arrays.asList(new ValidateToken(), new ValidateIncidentId(), new ValidateUserId()));
-							if(fieldValidator.isValid()) {
+							fieldValidator = new FieldValidator(jsonRecebido,
+									Arrays.asList(new ValidateToken(), new ValidateIncidentId(), new ValidateUserId()));
+							if (fieldValidator.isValid()) {
 								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
 								user.setToken(jsonRecebido.get("token").getAsString());
 								Incident incident = new Incident(jsonRecebido.get("id_incidente").getAsInt());
 								HandlerRemoveIncident handlerRemoveIncident = new HandlerRemoveIncident(user, incident);
-								if(handlerRemoveIncident.execute()) {
+								if (handlerRemoveIncident.execute()) {
 									message.addProperty("codigo", handlerRemoveIncident.getOpResponse());
 									System.out.println("Server => " + message.toString());
 									out.println(message.toString());
@@ -335,6 +338,19 @@ public class Server extends Thread {
 									System.out.println("Server => " + message.toString());
 									out.println(message.toString());
 								}
+							} else {
+								message.addProperty("codigo", fieldValidator.getOpResponse());
+								message.addProperty("mensagem", fieldValidator.getErrorMessage());
+								System.out.println("Server => " + message.toString());
+								out.println(message.toString());
+							}
+							break;
+						case 8:
+							System.out.println("Pedido de remocao de conta");
+							fieldValidator = new FieldValidator(jsonRecebido, Arrays.asList(new ValidateEmail(),
+									new ValidatePassword(), new ValidateUserId(), new ValidateToken()));
+							if(fieldValidator.isValid()) {
+								
 							} else {
 								message.addProperty("codigo", fieldValidator.getOpResponse());
 								message.addProperty("mensagem", fieldValidator.getErrorMessage());
@@ -367,7 +383,10 @@ public class Server extends Thread {
 								out.println(message.toString());
 							}
 							break;
+						case 10:
+							System.out.println("Pedido de edicao de incidente");
 
+							break;
 					}
 
 				}
