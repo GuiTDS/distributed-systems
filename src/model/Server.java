@@ -17,6 +17,7 @@ import control.handlers.HandlerGetListOfIncidents;
 import control.handlers.HandlerGetMyListOfIncidents;
 import control.handlers.HandlerLogin;
 import control.handlers.HandlerLogout;
+import control.handlers.HandlerRemoveIncident;
 import control.handlers.HandlerReportIncident;
 import control.handlers.HandlerSignUp;
 import control.handlers.HandlerUpdate;
@@ -323,7 +324,17 @@ public class Server extends Thread {
 								User user = new User(jsonRecebido.get("id_usuario").getAsInt());
 								user.setToken(jsonRecebido.get("token").getAsString());
 								Incident incident = new Incident(jsonRecebido.get("id_incidente").getAsInt());
-								
+								HandlerRemoveIncident handlerRemoveIncident = new HandlerRemoveIncident(user, incident);
+								if(handlerRemoveIncident.execute()) {
+									message.addProperty("codigo", handlerRemoveIncident.getOpResponse());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								} else {
+									message.addProperty("codigo", handlerRemoveIncident.getOpResponse());
+									message.addProperty("mensagem", handlerRemoveIncident.getErrorMessage());
+									System.out.println("Server => " + message.toString());
+									out.println(message.toString());
+								}
 							} else {
 								message.addProperty("codigo", fieldValidator.getOpResponse());
 								message.addProperty("mensagem", fieldValidator.getErrorMessage());
