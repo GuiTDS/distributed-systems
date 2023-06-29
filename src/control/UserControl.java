@@ -196,12 +196,14 @@ public class UserControl {
 		conn = new ConexaoControl().conectaBD();
 		this.removeAccountValidator.setUser(user);
 		if (this.removeAccountValidator.isValid()) {
+			System.out.println("Validou os campos");
 			try {
 				String sql = "SELECT email, senha FROM usuarios WHERE id_usuario = ?;";
 				pstm = conn.prepareStatement(sql);
 				pstm.setInt(1, user.getIdUsuario());
 				ResultSet result = pstm.executeQuery();
 				if (result.next()) {
+					System.out.println("Buscou no bd");
 					String email = result.getString(1);
 					String password = result.getString(2);
 					if (email.equals(user.getEmail()) && password.equals(user.getPassword())) {
@@ -215,13 +217,14 @@ public class UserControl {
 							return true;
 						} catch (SQLException erro) {
 							System.out.println("erro no usuario control ao remover conta\n" + erro);
-							signInValidator.setErrorMessage("Erro ao inserir token");
-							signInValidator.setOpResponse(signInValidator.getFailOpCode());
+							removeAccountValidator.setErrorMessage("Erro ao inserir token");
+							removeAccountValidator.setOpResponse(signInValidator.getFailOpCode());
 							return false;
 						}
 					} else {
-						signInValidator.setErrorMessage("Email ou senha incorretos!");
-						signInValidator.setOpResponse(signInValidator.getFailOpCode());
+						System.out.println("email ou senha incorretos");
+						removeAccountValidator.setErrorMessage("Email ou senha incorretos!");
+						removeAccountValidator.setOpResponse(signInValidator.getFailOpCode());
 						return false;
 					}
 				}
@@ -232,6 +235,9 @@ public class UserControl {
 				return false;
 			}
 		}
+		System.out.println("nao validou campos");
+		removeAccountValidator.setOpResponse(removeAccountValidator.getFailOpCode());
+		removeAccountValidator.setErrorMessage(removeAccountValidator.getErrorMessage());
 		return false;
 	}
 

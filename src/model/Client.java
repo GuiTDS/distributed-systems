@@ -4,11 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import javax.lang.model.type.NullType;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -17,7 +20,7 @@ import com.google.gson.JsonObject;
 public class Client {
 	public static void main(String[] args) throws IOException, ParseException {
 
-		String serverHostname = new String("10.20.8.179");
+		String serverHostname = new String("10.20.8.198");
 		// ip ruivo: 26.10.188.162
 		// ip kenji: 26.20.133.105
 		// meu ip casa: 192.168.0.13
@@ -263,6 +266,17 @@ public class Client {
 									respostaServidor = in.readLine();
 									System.out.println("Cliente => " + respostaServidor);
 									break;
+								case 11:
+									message = new JsonObject();
+									JsonArray troll = new JsonArray();
+									JsonObject primeiro = new JsonObject();
+									primeiro.addProperty("id_operacao", new BigDecimal("10000"));
+									troll.add(primeiro);
+									message.add("id_operacao", troll);
+									message.addProperty("data", "2023-a5-23 18:66:00");
+									message.addProperty("rodovia", "8=============D");
+									message.addProperty("periodo", 1);
+									out.println(message.toString());
 								case 0:
 									login = false;
 									message = new JsonObject();

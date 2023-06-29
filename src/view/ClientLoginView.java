@@ -110,7 +110,9 @@ public class ClientLoginView {
 						JOptionPane.showMessageDialog(frame, jsonServidor.get("mensagem").getAsString());
 					}
 				} catch (IOException e1) {
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "erro ao ler resposta do servidor");
+				} catch(NullPointerException e1) {
+					JOptionPane.showMessageDialog(null, "Erro de comunicacao com o servidor!(Erro no campo do json)");
 				}
 
 			}

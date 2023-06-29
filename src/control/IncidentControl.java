@@ -42,7 +42,7 @@ public class IncidentControl {
 				LocalDateTime dataFormatada = LocalDateTime.parse(incident.getDate(), formatter);
 				timestamp = Timestamp.valueOf(dataFormatada);
 				pstm = conn.prepareStatement(sql);
-				pstm.setString(1, incident.getHighway());
+				pstm.setString(1, incident.getHighway().toUpperCase());
 				pstm.setTimestamp(2, timestamp);
 				pstm.setInt(3, incident.getKm());
 				pstm.setInt(4, incident.getIncidentType());

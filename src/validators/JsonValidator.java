@@ -1,5 +1,7 @@
 package validators;
 
+import java.text.ParseException;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -227,6 +229,9 @@ public class JsonValidator extends Validator {
 		} else {
 			try {
 				String rodovia = objJson.get("rodovia").getAsString();
+				String [] rodoviaPartes = rodovia.split("-");
+				int primeiroKm = Integer.parseInt(rodoviaPartes[0]);
+				int segundoKm = Integer.parseInt(rodoviaPartes[1]);
 				String data = objJson.get("data").getAsString();
 				int periodo = objJson.get("periodo").getAsInt();
 				super.opResponse = super.sucessOpCode;

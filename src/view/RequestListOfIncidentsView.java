@@ -12,6 +12,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JFormattedTextField;
@@ -40,6 +42,7 @@ public class RequestListOfIncidentsView extends JFrame {
 	private static String tempText;
 	private JTable table;
 	private DefaultTableModel model;
+
 	/**
 	 * Launch the application.
 	 */
@@ -123,21 +126,23 @@ public class RequestListOfIncidentsView extends JFrame {
 		highwayField.setText("");
 		highwayField.setBounds(65, 103, 214, 19);
 		contentPane.add(highwayField);
-		
+
 		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Lista de Incidentes", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
+				"Lista de Incidentes", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		panel.setBounds(424, 90, 507, 290);
 		contentPane.add(panel);
 		panel.setLayout(null);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(6, 15, 495, 269);
 		panel.add(scrollPane);
-		
+
 		table = new JTable();
 		table.setBackground(Color.WHITE);
 		model = new DefaultTableModel();
-		Object[] column = {"Rodovia", "KM", "Data"};
+		Object[] column = { "Rodovia", "KM", "Data" };
 		Object[] row = new Object[3];
 		model.setColumnIdentifiers(column);
 		table.setModel(model);
@@ -173,25 +178,30 @@ public class RequestListOfIncidentsView extends JFrame {
 					System.out.println("Cliente => resposta do servidor: " + respostaServidor);
 
 					JsonObject jsonRecebido = gson.fromJson(respostaServidor, JsonObject.class);
-					JsonArray incidentsArr = jsonRecebido.get("lista_incidentes").getAsJsonArray();
-					incidentsArr.forEach((incident) -> {
-						row[0] = incident.getAsJsonObject().get("rodovia").getAsString();
-						row[1] = incident.getAsJsonObject().get("km").getAsInt();
-						row[2] = incident.getAsJsonObject().get("data").getAsString();
-						model.addRow(row);
-					});
-					
+					if (jsonRecebido.get("codigo").getAsInt() == 200) {
+						JsonArray incidentsArr = jsonRecebido.get("lista_incidentes").getAsJsonArray();
+						incidentsArr.forEach((incident) -> {
+							row[0] = incident.getAsJsonObject().get("rodovia").getAsString();
+							row[1] = incident.getAsJsonObject().get("km").getAsInt();
+							row[2] = incident.getAsJsonObject().get("data").getAsString();
+							model.addRow(row);
+						});
+					} else {
+						JOptionPane.showMessageDialog(null, "Nenhum incidente reportado!");
+					}
+
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "erro ao ler resposta do servidor");
+				} catch (NullPointerException e1) {
+					JOptionPane.showMessageDialog(null,
+							"Erro de comunicacao com o servidor!(Erro no campo do json)");
 				}
 
 			}
 		});
 		btnRequestIncidents.setBounds(121, 416, 85, 21);
 		contentPane.add(btnRequestIncidents);
-		
-		
 
 	}
 }

@@ -160,7 +160,10 @@ public class ReportIncidentView extends JFrame {
 						JOptionPane.showMessageDialog(contentPane, jsonRecebido.get("mensagem").getAsString());
 					}
 				} catch (IOException e1) {
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "erro ao ler resposta do servidor");
+				} catch (NullPointerException e1) {
+					JOptionPane.showMessageDialog(null,
+							"Erro de comunicacao com o servidor!(Erro no campo do json)");
 				}
 
 			}

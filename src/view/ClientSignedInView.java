@@ -176,7 +176,10 @@ public class ClientSignedInView extends JFrame {
 						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "erro ao ler resposta do servidor");
+					} catch (NullPointerException e1) {
+						JOptionPane.showMessageDialog(null,
+								"Erro de comunicacao com o servidor!(Erro no campo do json)");
 					}
 				}
 			}

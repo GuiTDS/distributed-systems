@@ -351,9 +351,12 @@ public class Server extends Thread {
 						case 8:
 							System.out.println("Pedido de remocao de conta");
 							if (jsonValidator.isValidRemoveAccount()) {
+								System.out.println("validou json");
 								if (loggedInUsers.containsKey(jsonRecebido.get("id_usuario").getAsInt())) {
+									System.out.println("validou login");
 									User user = new User(jsonRecebido.get("id_usuario").getAsInt());
 									if (userControl.checkToken(user, jsonRecebido.get("token").getAsString())) {
+										System.out.println("Validou token");
 										user.setEmail(jsonRecebido.get("email").getAsString());
 										user.setPassword(jsonRecebido.get("senha").getAsString());
 										if (userControl.removeAccount(user)) {
