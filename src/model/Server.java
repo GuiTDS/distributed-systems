@@ -123,10 +123,6 @@ public class Server extends Thread {
 				JsonObject message = new JsonObject();
 
 				System.out.println("----------- SERVIDOR -----------");
-				System.out.println("Quantidade de usuarios logados: " + loggedInUsers.size());
-				System.out.println("Lista de usuarios logados:");
-				System.out.println(loggedInUsers);
-				System.out.println("---------------------------------");
 				inputLine = in.readLine();
 				if (inputLine == null) {
 					System.out.println("Desconectando socket: " + clientSocket.getInetAddress().getHostName());
@@ -217,6 +213,7 @@ public class Server extends Thread {
 									message.addProperty("token", user.getToken());
 									message.addProperty("id_usuario", user.getIdUsuario());
 									System.out.println("Server => " + message.toString());
+									loggedInUsers.put(user.getIdUsuario(), user.getEmail());
 									out.println(message.toString());
 								} else {
 									message.addProperty("codigo", handlerLogin.getOpResponse());
