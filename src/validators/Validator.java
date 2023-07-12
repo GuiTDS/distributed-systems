@@ -1,18 +1,11 @@
 package validators;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-
-import model.User;
-
 public abstract class Validator {
 	protected String errorMessage;
 	protected int opResponse;
-	protected final int sucessOpCode = 200;
-	protected final int failOpCode = 500;
-	protected Connection conn;
-	protected PreparedStatement pstm;
-	
+	private final int sucessOpCode = 200;
+	private final int failOpCode = 500;
+
 	public abstract boolean isValid();
 
 	public String getErrorMessage() {
@@ -23,24 +16,11 @@ public abstract class Validator {
 		return opResponse;
 	}
 
-	public int getFailOpCode() {
-		return failOpCode;
-	}
-
-	public int getSucessOpCode() {
+	protected int getSucessOpCode() {
 		return sucessOpCode;
 	}
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
+	protected int getFailOpCode() {
+		return failOpCode;
 	}
-
-	public void setOpResponse(int opResponse) {
-		this.opResponse = opResponse;
-	}
-	
-	
-	
-	
-	
 }
