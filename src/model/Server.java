@@ -213,6 +213,7 @@ public class Server extends Thread {
 									message.addProperty("token", user.getToken());
 									message.addProperty("id_usuario", user.getIdUsuario());
 									System.out.println("Server => " + message.toString());
+									idLoggedInUser = user.getIdUsuario();
 									loggedInUsers.put(user.getIdUsuario(), user.getEmail());
 									out.println(message.toString());
 								} else {
@@ -380,6 +381,7 @@ public class Server extends Thread {
 								user.setToken(jsonRecebido.get("token").getAsString());
 								HandlerLogout handlerLogout = new HandlerLogout(user);
 								if (handlerLogout.execute()) {
+									loggedInUsers.remove(user.getIdUsuario());
 									message.addProperty("codigo", handlerLogout.getOpResponse());
 									System.out.println("Server => " + message.toString());
 									out.println(message.toString());
@@ -429,9 +431,9 @@ public class Server extends Thread {
 							}
 							break;
 					}
-
+					reloadInterface();
 				}
-				reloadInterface();
+				
 			}
 			out.close();
 			in.close();
