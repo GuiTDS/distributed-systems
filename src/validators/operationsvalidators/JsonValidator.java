@@ -1,6 +1,5 @@
 package validators.operationsvalidators;
 
-import java.text.ParseException;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonNull;
